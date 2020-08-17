@@ -1,0 +1,17 @@
+{
+  "name": "@online-games-shop/server",
+  "version": "1.0.0",
+  "scripts": {
+    "watch-ts": "tsc -w",
+    "build": "tsc",
+    "start": "concurrently \"yarn watch-ts\" \"nodemon ./dist/index.js\"",
+    "clear": "rm -rf dist",
+    "test": "jest --runInBand"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^4.1.0",
+    "nodemon": "^2.0.2",
+    "typescript": "^3.7.5"
+  }
+}

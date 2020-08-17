@@ -1,0 +1,11 @@
+{
+  "name": "online-games-shop",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": "true",
+  "repository": "https://github.com/SpiderQshka/online-games-shop.git",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ]
+}
