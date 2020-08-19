@@ -2,16 +2,35 @@
   "name": "@online-games-shop/server",
   "version": "1.0.0",
   "scripts": {
-    "watch-ts": "tsc -w",
+    "watch": "tsc -w",
     "build": "tsc",
-    "start": "concurrently \"yarn watch-ts\" \"nodemon ./dist/index.js\"",
+    "start": "concurrently \"yarn watch\" \"nodemon ./dist/index.js\"",
     "clear": "rm -rf dist",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "migrate:make": "knex --knexfile src/db/knexfile.ts migrate:make",
+    "migrate:latest": "knex --knexfile src/db/knexfile.ts migrate:latest",
+    "migrate:rollback": "knex --knexfile src/db/knexfile.ts migrate:rollback",
+    "seed:run": "knex --knexfile src/db/knexfile.ts seed:run"
   },
   "license": "ISC",
   "devDependencies": {
+    "@types/koa": "^2.11.4",
+    "@types/koa-bodyparser": "^4.3.0",
+    "@types/koa-json": "^2.0.18",
+    "@types/koa-logger": "^3.1.1",
+    "@types/koa-router": "^7.4.1",
     "concurrently": "^4.1.0",
     "nodemon": "^2.0.2",
+    "ts-node": "^8.10.2",
     "typescript": "^3.7.5"
+  },
+  "dependencies": {
+    "knex": "^0.21.5",
+    "koa": "^2.13.0",
+    "koa-bodyparser": "^4.3.0",
+    "koa-json": "^2.0.2",
+    "koa-logger": "^3.2.1",
+    "koa-router": "^9.4.0",
+    "pg": "^8.3.2"
   }
 }
