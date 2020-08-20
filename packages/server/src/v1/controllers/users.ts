@@ -1,5 +1,9 @@
 import { Middleware } from "koa";
 import knex from "../../db/knex";
+import { Model } from "objection";
+import { User } from "../../models/User";
+
+Model.knex(knex);
 
 interface IUsersController {
   login: Middleware;
@@ -14,27 +18,30 @@ export const usersController: IUsersController = {
     ctx.body = "Login user";
   },
   get: async (ctx) => {
-    const result = await knex.select().from("users").where("id", ctx.params.id);
+    const result = await User.query().findById(ctx.params.id);
 
     ctx.body = result;
   },
   put: async (ctx) => {
-    const result = await knex("users").where("id", ctx.params.id).update({
-      login: "Updated!",
-    });
+    const body = ctx.request.body;
+
+    const result = await User.query()
+      .findById(ctx.params.id)
+      .patchAndFetchById(ctx.params.id, body);
+
     ctx.body = result;
   },
   post: async (ctx) => {
-    const result = await knex("users").insert({
-      login: "Test",
-      password: "testtest",
-      boughtGames: [],
-      achievements: [],
+    const body = ctx.request.body;
+
+    const result = await User.query().insert({
+      ...body,
     });
+
     ctx.body = result;
   },
   delete: async (ctx) => {
-    const result = await knex("users").where("id", ctx.params.id).del();
+    const result = await User.query().deleteById(ctx.params.id);
     ctx.body = result;
   },
 };

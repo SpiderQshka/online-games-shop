@@ -1,13 +1,53 @@
-import Router from "koa-router";
 import { usersController } from "../controllers/users";
+import koaRouter from "koa-joi-router";
+const Joi = koaRouter.Joi;
+const router = koaRouter();
 
-const router = new Router();
+router.route({
+  method: "post",
+  path: "/api/v1/users",
+  validate: {
+    type: "json",
+    body: {
+      login: Joi.string().min(5).required(),
+      password: Joi.string().min(5).required(),
+    },
+  },
+  handler: usersController.post,
+});
 
-router.get("/api/v1/users/:id", usersController.get);
+router.route({
+  method: "get",
+  path: "/api/v1/users/:id",
+  validate: {},
+  handler: usersController.get,
+});
 
-router.post("/api/v1/users/login", usersController.login);
-router.post("/api/v1/users", usersController.post);
-router.put("/api/v1/users/:id", usersController.put);
-router.delete("/api/v1/users/:id", usersController.delete);
+router.route({
+  method: "put",
+  path: "/api/v1/users/:id",
+  validate: {
+    type: "json",
+    body: {
+      login: Joi.string().min(5),
+      password: Joi.string().min(5),
+    },
+  },
+  handler: usersController.put,
+});
 
-export default router.routes();
+router.route({
+  method: "post",
+  path: "/api/v1/users/login",
+  validate: {},
+  handler: usersController.login,
+});
+
+router.route({
+  method: "delete",
+  path: "/api/v1/users/:id",
+  validate: {},
+  handler: usersController.delete,
+});
+
+export default router.middleware();

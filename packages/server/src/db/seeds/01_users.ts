@@ -1,4 +1,4 @@
-import * as Knex from "knex";
+import Knex from "knex";
 
 export async function seed(knex: Knex): Promise<void> {
   await knex("users").del();
@@ -7,8 +7,16 @@ export async function seed(knex: Knex): Promise<void> {
       id: 1,
       login: "Leo",
       password: "password",
-      boughtGames: [],
-      achievements: [],
+      boughtGames: null,
+      achievements: null,
     },
   ]);
+  // await User.query().del();
+  // await User.query().insert({
+  //   id: 1,
+  //   login: "Leo",
+  //   password: "password",
+  //   boughtGames: null,
+  //   achievements: null,
+  // });
 }
