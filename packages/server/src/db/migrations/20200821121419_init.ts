@@ -16,7 +16,8 @@ export async function up(knex: Knex): Promise<void> {
     .createTable("discounts", (table) => {
       table.uuid("id").unique().primary().notNullable();
       table.integer("time").notNullable();
-      table.integer("amount").notNullable();
+      table.string("amount").notNullable();
+      table.integer("duration").notNullable();
     })
     .createTable("genres", (table) => {
       table.uuid("id").unique().primary().notNullable();
@@ -36,7 +37,7 @@ export async function up(knex: Knex): Promise<void> {
       table.string("name").notNullable();
       table.string("logo").notNullable();
       table.string("description").notNullable();
-      table.integer("ageRating").notNullable();
+      table.integer("age_rating").notNullable();
       table.integer("price").notNullable();
       table.integer("number_of_physical_copies").notNullable();
       table
@@ -46,12 +47,12 @@ export async function up(knex: Knex): Promise<void> {
         .inTable("game_creators");
     })
     .createTable("used_discounts", (table) => {
-      table.increments();
+      table.uuid("id").unique().primary().notNullable();
       table.uuid("discount_id").references("discounts.id").onDelete("CASCADE");
       table.uuid("game_id").references("games.id").onDelete("CASCADE");
     })
     .createTable("used_genres", (table) => {
-      table.increments();
+      table.uuid("id").unique().primary().notNullable();
       table
         .uuid("genre_id")
         .notNullable()
@@ -64,7 +65,7 @@ export async function up(knex: Knex): Promise<void> {
         .onDelete("CASCADE");
     })
     .createTable("ordered_games", (table) => {
-      table.increments();
+      table.uuid("id").unique().primary().notNullable();
       table
         .uuid("order_id")
         .notNullable()
@@ -83,7 +84,7 @@ export async function up(knex: Knex): Promise<void> {
       table.integer("price").notNullable();
     })
     .createTable("unlocked_achievements", (table) => {
-      table.increments();
+      table.uuid("id").unique().primary().notNullable();
       table
         .uuid("user_id")
         .notNullable()

@@ -4,19 +4,9 @@ export async function seed(knex: Knex): Promise<void> {
   await knex("users").del();
   await knex("users").insert([
     {
-      id: 1,
+      id: "345ae4d0-f2c3-4342-91a2-5b45cb8db57f",
       login: "Leo",
       password: "password",
-      boughtGames: null,
-      achievements: null,
     },
   ]);
-  // await User.query().del();
-  // await User.query().insert({
-  //   id: 1,
-  //   login: "Leo",
-  //   password: "password",
-  //   boughtGames: null,
-  //   achievements: null,
-  // });
 }
