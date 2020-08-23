@@ -7,11 +7,11 @@ export async function up(knex: Knex): Promise<void> {
       table.string("login").notNullable().unique();
       table.string("password").notNullable();
     })
-    .createTable("game_creators", (table) => {
+    .createTable("gameCreators", (table) => {
       table.uuid("id").unique().primary().notNullable();
       table.string("name").notNullable().unique();
       table.string("logo").notNullable();
-      table.integer("year_of_foundation").notNullable();
+      table.integer("yearOfFoundation").notNullable();
     })
     .createTable("discounts", (table) => {
       table.uuid("id").unique().primary().notNullable();
@@ -25,7 +25,7 @@ export async function up(knex: Knex): Promise<void> {
     })
     .createTable("orders", (table) => {
       table.uuid("id").unique().primary().notNullable();
-      table.integer("created_at").notNullable();
+      table.integer("createdAt").notNullable();
       table.integer("price").notNullable();
     })
     .createTable("achievements", (table) => {
@@ -37,88 +37,50 @@ export async function up(knex: Knex): Promise<void> {
       table.string("name").notNullable();
       table.string("logo").notNullable();
       table.string("description").notNullable();
-      table.integer("age_rating").notNullable();
+      table.integer("ageRating").notNullable();
       table.integer("price").notNullable();
-      table.integer("number_of_physical_copies").notNullable();
+      table.integer("numberOfPhysicalCopies").notNullable();
       table
-        .uuid("game_creator_id")
+        .uuid("gameCreatorId")
         .notNullable()
         .references("id")
-        .inTable("game_creators");
+        .inTable("gameCreators");
     })
-    .createTable("used_discounts", (table) => {
+    .createTable("usedDiscounts", (table) => {
       table.uuid("id").unique().primary().notNullable();
-      table.uuid("discount_id").references("discounts.id").onDelete("CASCADE");
-      table.uuid("game_id").references("games.id").onDelete("CASCADE");
+      table.uuid("discountId").references("discounts.id").onDelete("CASCADE");
+      table.uuid("gameId").references("games.id").onDelete("CASCADE");
     })
-    .createTable("used_genres", (table) => {
+    .createTable("usedGenres", (table) => {
       table.uuid("id").unique().primary().notNullable();
-      table
-        .uuid("genre_id")
-        .notNullable()
-        .references("genres.id")
-        .onDelete("CASCADE");
-      table
-        .uuid("game_id")
-        .notNullable()
-        .references("games.id")
-        .onDelete("CASCADE");
+      table.uuid("genreId").notNullable().references("genres.id");
+      table.uuid("gameId").notNullable().references("games.id");
     })
-    .createTable("ordered_games", (table) => {
+    .createTable("orderedGames", (table) => {
       table.uuid("id").unique().primary().notNullable();
-      table
-        .uuid("order_id")
-        .notNullable()
-        .references("orders.id")
-        .onDelete("CASCADE");
-      table
-        .uuid("user_id")
-        .notNullable()
-        .references("users.id")
-        .onDelete("CASCADE");
-      table
-        .uuid("game_id")
-        .notNullable()
-        .references("games.id")
-        .onDelete("CASCADE");
+      table.uuid("orderId").notNullable().references("orders.id");
+      table.uuid("userId").notNullable().references("users.id");
+      table.uuid("gameId").notNullable().references("games.id");
       table.integer("price").notNullable();
     })
-    .createTable("unlocked_achievements", (table) => {
+    .createTable("unlockedAchievements", (table) => {
       table.uuid("id").unique().primary().notNullable();
-      table
-        .uuid("user_id")
-        .notNullable()
-        .references("users.id")
-        .onDelete("CASCADE");
-      table
-        .uuid("achievement_id")
-        .notNullable()
-        .references("achievements.id")
-        .onDelete("CASCADE");
+      table.uuid("userId").notNullable().references("users.id");
+      table.uuid("achievementId").notNullable().references("achievements.id");
     });
 }
 
 export async function down(knex: Knex): Promise<void> {
   return knex.schema
-    .raw("DROP TABLE users CASCADE")
-    .raw("DROP TABLE game_creators CASCADE")
-    .raw("DROP TABLE discounts CASCADE")
-    .raw("DROP TABLE genres CASCADE")
-    .raw("DROP TABLE orders CASCADE")
-    .raw("DROP TABLE achievements CASCADE")
-    .raw("DROP TABLE games CASCADE")
-    .raw("DROP TABLE used_discounts CASCADE")
-    .raw("DROP TABLE used_genres CASCADE")
-    .raw("DROP TABLE ordered_games CASCADE")
-    .raw("DROP TABLE unlocked_achievements CASCADE");
-  // .dropTableIfExists("game_creators")
-  // .dropTableIfExists("discounts")
-  // .dropTableIfExists("genres")
-  // .dropTableIfExists("orders")
-  // .dropTableIfExists("achievements")
-  // .dropTableIfExists("games")
-  // .dropTableIfExists("used_discounts")
-  // .dropTableIfExists("used_genres")
-  // .dropTableIfExists("ordered_games")
-  // .dropTableIfExists("unlocked_achievements");
+    .raw("DROP TABLE IF EXISTS users CASCADE")
+    .raw("DROP TABLE IF EXISTS gameCreators CASCADE")
+    .raw("DROP TABLE IF EXISTS discounts CASCADE")
+    .raw("DROP TABLE IF EXISTS genres CASCADE")
+    .raw("DROP TABLE IF EXISTS orders CASCADE")
+    .raw("DROP TABLE IF EXISTS achievements CASCADE")
+    .raw("DROP TABLE IF EXISTS games CASCADE")
+    .raw("DROP TABLE IF EXISTS usedDiscounts CASCADE")
+    .raw("DROP TABLE IF EXISTS usedGenres CASCADE")
+    .raw("DROP TABLE IF EXISTS orderedGames CASCADE")
+    .raw("DROP TABLE IF EXISTS unlockedAchievements CASCADE");
 }
