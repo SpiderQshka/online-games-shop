@@ -15,7 +15,7 @@ export async function up(knex: Knex): Promise<void> {
     })
     .createTable("discounts", (table) => {
       table.uuid("id").unique().primary().notNullable();
-      table.date("time").notNullable();
+      table.date("startDate").notNullable();
       table.string("amount").notNullable();
       table.bigInteger("duration").notNullable();
     })
