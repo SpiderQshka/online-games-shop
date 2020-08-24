@@ -1,6 +1,6 @@
 import { Model } from "objection";
 
-export class Achievements extends Model {
+export class Achievement extends Model {
   id!: number;
   name!: string;
   static tableName = "achievements";

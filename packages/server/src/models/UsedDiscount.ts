@@ -1,36 +1,37 @@
 import { Model } from "objection";
-// import { Genre } from "./Genre";
 // import { Game } from "./Game";
+// import { Discount } from "./Discount";
 
-export class UsedGenre extends Model {
+export class UsedDiscount extends Model {
   id!: number;
-  genreId!: string;
+  discountId!: string;
   gameId!: string;
-  static tableName = "used_genres";
+
+  static tableName = "used_discounts";
   static get jsonSchema() {
     return {
       type: "object",
       properties: {
         id: { type: "uuid" },
-        genreId: { type: "uuid" },
+        discountId: { type: "uuid" },
         gameId: { type: "uuid" },
       },
     };
   }
   // static relationMappings = {
-  //   genreId: {
+  //   discountId: {
   //     relation: Model.BelongsToOneRelation,
-  //     modelClass: Genre,
+  //     modelClass: Discount,
   //     join: {
-  //       from: "used_genres.genreId",
-  //       to: "genres.id",
+  //       from: "used_discounts.discountId",
+  //       to: "discounts.id",
   //     },
   //   },
   //   gameId: {
   //     relation: Model.BelongsToOneRelation,
   //     modelClass: Game,
   //     join: {
-  //       from: "used_genres.gameId",
+  //       from: "used_discounts.gameId",
   //       to: "games.id",
   //     },
   //   },

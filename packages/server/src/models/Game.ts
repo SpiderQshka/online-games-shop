@@ -1,5 +1,5 @@
 import { Model } from "objection";
-import { GameCreator } from "./GameCreator";
+// import { GameCreator } from "./GameCreator";
 export class Game extends Model {
   id!: number;
   name!: string;
@@ -22,17 +22,18 @@ export class Game extends Model {
         ageRating: { type: ["integer", "null"] },
         price: { type: "number" },
         numberOfPhysicalCopies: { type: "integer" },
+        gameCreatorId: { type: "uuid" },
       },
     };
   }
-  static relationMappings = {
-    gameCreatorId: {
-      relation: Model.BelongsToOneRelation,
-      modelClass: GameCreator,
-      join: {
-        from: "games.gameCreatorId",
-        to: "game_creators.id",
-      },
-    },
-  };
+  // static relationMappings = {
+  //   gameCreatorId: {
+  //     relation: Model.BelongsToOneRelation,
+  //     modelClass: GameCreator,
+  //     join: {
+  //       from: "games.gameCreatorId",
+  //       to: "game_creators.id",
+  //     },
+  //   },
+  // };
 }
