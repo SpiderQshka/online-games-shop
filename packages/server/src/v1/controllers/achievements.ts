@@ -1,13 +1,12 @@
 import { Middleware } from "koa";
 import knex from "../../db/knex";
 import { Model } from "objection";
-import { User } from "../../models/User";
 import { v4 } from "uuid";
+import { Achievement } from "../../models/Achievement";
 
 Model.knex(knex);
 
-interface IUsersController {
-  login: Middleware;
+interface IAchievementsController {
   get: Middleware;
   getAll: Middleware;
   put: Middleware;
@@ -15,24 +14,21 @@ interface IUsersController {
   delete: Middleware;
 }
 
-export const usersController: IUsersController = {
-  login: async (ctx) => {
-    ctx.body = "Login user";
-  },
+export const achievementsController: IAchievementsController = {
   get: async (ctx) => {
-    const result = await User.query().findById(ctx.params.id);
+    const result = await Achievement.query().findById(ctx.params.id);
 
     ctx.body = result;
   },
   getAll: async (ctx) => {
-    const result = await User.query();
+    const result = await Achievement.query();
 
     ctx.body = result;
   },
   put: async (ctx) => {
     const body = ctx.request.body;
 
-    const result = await User.query()
+    const result = await Achievement.query()
       .findById(ctx.params.id)
       .patchAndFetchById(ctx.params.id, body);
 
@@ -41,7 +37,7 @@ export const usersController: IUsersController = {
   post: async (ctx) => {
     const body = ctx.request.body;
 
-    const result = await User.query().insert({
+    const result = await Achievement.query().insert({
       id: v4(),
       ...body,
     });
@@ -49,7 +45,7 @@ export const usersController: IUsersController = {
     ctx.body = result;
   },
   delete: async (ctx) => {
-    const result = await User.query().deleteById(ctx.params.id);
+    const result = await Achievement.query().deleteById(ctx.params.id);
     ctx.body = result;
   },
 };

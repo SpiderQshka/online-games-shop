@@ -1,6 +1,6 @@
 import { usersController } from "../controllers/users";
 import koaRouter from "koa-joi-router";
-const Joi = koaRouter.Joi;
+import { usersRoutesValidation } from "../routes-validation/users";
 const router = koaRouter();
 
 router.route({
@@ -8,10 +8,7 @@ router.route({
   path: "/api/v1/users",
   validate: {
     type: "json",
-    body: {
-      login: Joi.string().min(5).required(),
-      password: Joi.string().min(5).required(),
-    },
+    body: usersRoutesValidation.post,
   },
   handler: usersController.post,
 });
@@ -24,14 +21,18 @@ router.route({
 });
 
 router.route({
+  method: "get",
+  path: "/api/v1/users",
+  validate: {},
+  handler: usersController.getAll,
+});
+
+router.route({
   method: "put",
   path: "/api/v1/users/:id",
   validate: {
     type: "json",
-    body: {
-      login: Joi.string().min(5),
-      password: Joi.string().min(5),
-    },
+    body: usersRoutesValidation.put,
   },
   handler: usersController.put,
 });
