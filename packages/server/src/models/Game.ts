@@ -1,5 +1,5 @@
 import { Model } from "objection";
-// import { GameCreator } from "./GameCreator";
+
 export class Game extends Model {
   id!: number;
   name!: string;

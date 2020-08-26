@@ -16,6 +16,7 @@ import orderedGames from "./v1/routes/orderedGames";
 import unlockedAchievements from "./v1/routes/unlockedAchievements";
 import usedDiscounts from "./v1/routes/usedDiscounts";
 import usedGenres from "./v1/routes/usedGenres";
+import auth from "./v1/routes/auth";
 
 const app = new Koa();
 
@@ -40,6 +41,7 @@ app.use(orderedGames);
 app.use(unlockedAchievements);
 app.use(usedDiscounts);
 app.use(usedGenres);
+app.use(auth);
 
 app.listen(3000, () => {
   console.log("Koa started");
