@@ -47,9 +47,11 @@ export const usersController: IUsersController = {
   },
   post: async (ctx) => {
     const body = ctx.request.body;
-
+    const password = await User.hashPassword(ctx.request.body.password);
     const result = await User.query().insert({
       ...body,
+      id: "1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed", // JUST FOR TEST, FIXED IN BRANCH feature/migrations_and_seed_update
+      password,
     });
 
     ctx.body = result;

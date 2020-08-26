@@ -13,9 +13,9 @@ passport.use(
     },
     function (login, password, done) {
       User.query()
-        .findOne({ login, password })
+        .findOne({ login })
         .then((user) => {
-          if (!user || user.password !== password)
+          if (!user || !User.checkPassword(password, user.password))
             return done(true, false, { message: "(" });
           return done(null, user);
         });

@@ -1,23 +1,28 @@
 import { Model } from "objection";
+import bcrypt from "bcrypt";
+
 export class User extends Model {
   id!: number;
   login!: string;
   password!: string;
-  boughtGames!: number[] | null;
-  achievements!: number[] | null;
   static tableName = "users";
   static get jsonSchema() {
     return {
       type: "object",
       required: ["login", "password"],
       properties: {
-        id: { type: "integer" },
+        id: { type: "uuid" },
         login: { type: "string" },
         password: { type: "string" },
-        // boughtGames: { type: "array", item: { type: "integer" } },
-        // achievements: { type: "array", item: { type: "integer" } },
       },
     };
   }
+  static hashPassword = async (password: string) => {
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
+  };
+  static checkPassword = (password: string, hash: string) => {
+    if (!password || !hash) return false;
+    return bcrypt.compareSync(password, hash);
+  };
 }
-// , items: { type: "integer" }
