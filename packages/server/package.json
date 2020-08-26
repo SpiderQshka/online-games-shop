@@ -10,11 +10,13 @@
     "migrate:make": "knex --knexfile src/db/knexfile.ts migrate:make",
     "migrate:latest": "knex --knexfile src/db/knexfile.ts migrate:latest",
     "migrate:rollback": "knex --knexfile src/db/knexfile.ts migrate:rollback",
-    "seed:run": "knex --knexfile src/db/knexfile.ts seed:run"
+    "seed:run": "knex --knexfile src/db/knexfile.ts seed:run",
+    "seed:make": "knex --knexfile src/db/knexfile.ts seed:make"
   },
   "license": "ISC",
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
+    "@types/faker": "^4.1.12",
     "@types/koa": "^2.11.4",
     "@types/koa-bodyparser": "^4.3.0",
     "@types/koa-joi-router": "^5.2.3",
@@ -27,6 +29,7 @@
     "@types/node": "^14.6.0",
     "@types/passport-jwt": "^3.0.3",
     "@types/passport-local": "^1.0.33",
+    "@types/uuid": "^8.3.0",
     "concurrently": "^4.1.0",
     "nodemon": "^2.0.2",
     "ts-node": "^8.10.2",
@@ -34,6 +37,7 @@
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
+    "faker": "^4.1.0",
     "knex": "^0.21.5",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
@@ -47,5 +51,7 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "pg": "^8.3.2"
+    "node": "^14.8.0",
+    "uuid": "^8.3.0"
   }
 }

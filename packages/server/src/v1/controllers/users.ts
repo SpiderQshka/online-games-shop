@@ -5,12 +5,14 @@ import { User } from "../../models/User";
 import passport from "koa-passport";
 import jwt from "jsonwebtoken";
 import { config } from "../../config";
+import { v4 } from "uuid";
 
 Model.knex(knex);
 
 interface IUsersController {
   login: Middleware;
   get: Middleware;
+  getAll: Middleware;
   put: Middleware;
   post: Middleware;
   delete: Middleware;
@@ -36,6 +38,11 @@ export const usersController: IUsersController = {
 
     ctx.body = result;
   },
+  getAll: async (ctx) => {
+    const result = await User.query();
+
+    ctx.body = result;
+  },
   put: async (ctx) => {
     const body = ctx.request.body;
 
@@ -49,8 +56,8 @@ export const usersController: IUsersController = {
     const body = ctx.request.body;
     const password = await User.hashPassword(ctx.request.body.password);
     const result = await User.query().insert({
+      id: v4(),
       ...body,
-      id: "1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed", // JUST FOR TEST, FIXED IN BRANCH feature/migrations_and_seed_update
       password,
     });
 
