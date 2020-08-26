@@ -2,6 +2,9 @@ import { Middleware } from "koa";
 import knex from "../../db/knex";
 import { Model } from "objection";
 import { User } from "../../models/User";
+import passport from "koa-passport";
+import jwt from "jsonwebtoken";
+import { config } from "../../config";
 
 Model.knex(knex);
 
@@ -14,8 +17,19 @@ interface IUsersController {
 }
 
 export const usersController: IUsersController = {
-  login: async (ctx) => {
-    ctx.body = "Login user";
+  login: async (ctx, next) => {
+    await passport.authenticate("local", (err, user) => {
+      if (err) {
+        ctx.body = "Login failed";
+      } else {
+        const payload = {
+          ...user,
+        };
+        const token = jwt.sign(payload, config.jwtSecretKey);
+
+        ctx.body = { user: user.id, token };
+      }
+    })(ctx, next);
   },
   get: async (ctx) => {
     const result = await User.query().findById(ctx.params.id);
