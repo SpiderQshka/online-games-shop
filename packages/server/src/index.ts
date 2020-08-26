@@ -3,6 +3,9 @@ import bodyParser from "koa-bodyparser";
 import logger from "koa-logger";
 import json from "koa-json";
 import users from "./v1/routes/users";
+import session from "koa-session";
+import passport from "koa-passport";
+import "./v1/auth/setup";
 import games from "./v1/routes/games";
 import genres from "./v1/routes/genres";
 import gameCreators from "./v1/routes/gameCreators";
@@ -15,6 +18,12 @@ import usedDiscounts from "./v1/routes/usedDiscounts";
 import usedGenres from "./v1/routes/usedGenres";
 
 const app = new Koa();
+
+app.keys = ["secret"];
+app.use(session({}, app));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(json());
 app.use(logger());

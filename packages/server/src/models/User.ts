@@ -1,4 +1,6 @@
 import { Model } from "objection";
+import bcrypt from "bcrypt";
+
 export class User extends Model {
   id!: string;
   login!: string;
@@ -15,4 +17,12 @@ export class User extends Model {
       },
     };
   }
+  static hashPassword = async (password: string) => {
+    const salt = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
+  };
+  static checkPassword = (password: string, hash: string) => {
+    if (!password || !hash) return false;
+    return bcrypt.compareSync(password, hash);
+  };
 }
