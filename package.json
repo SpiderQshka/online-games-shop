@@ -6,10 +6,7 @@
   "repository": "https://github.com/SpiderQshka/online-games-shop.git",
   "license": "MIT",
   "workspaces": [
-    "packages/*"
-  ],
-  "scripts": {
-    "server-build": "yarn workspace @online-games-shop/server build",
-    "server-watch": "yarn workspace @online-games-shop/server start"
-  }
+    "client",
+    "server"
+  ]
 }

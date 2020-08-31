@@ -2,7 +2,6 @@ import { Middleware } from "koa";
 import knex from "../../db/knex";
 import { Model } from "objection";
 import { GameCreator } from "../../models/GameCreator";
-import { v4 } from "uuid";
 
 Model.knex(knex);
 
@@ -38,7 +37,6 @@ export const gameCreatorsController: IGameCreatorsController = {
     const body = ctx.request.body;
 
     const result = await GameCreator.query().insert({
-      id: v4(),
       ...body,
     });
 

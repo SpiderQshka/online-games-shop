@@ -10,7 +10,7 @@ export class GameCreator extends Model {
       type: "object",
       required: ["name"],
       properties: {
-        id: { type: "uuid" },
+        id: { type: "integer" },
         name: { type: "string" },
         logo: { type: "string" },
         yearOfFoundation: { type: "integer" },

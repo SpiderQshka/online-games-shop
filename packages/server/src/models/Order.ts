@@ -10,7 +10,7 @@ export class Order extends Model {
       type: "object",
       required: ["createdAt", "price"],
       properties: {
-        id: { type: "uuid" },
+        id: { type: "integer" },
         createdAt: { type: "string", format: "date" },
         price: { type: "number" },
       },

@@ -1,8 +1,7 @@
 import passport from "koa-passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
-import { User } from "../../models/User";
-import { config } from "../../config";
+import { User } from "models/User";
 
 passport.use(
   new LocalStrategy(
@@ -25,7 +24,7 @@ passport.use(
 
 const jwtOptions = {
   jwtFromRequest: ExtractJwt.fromHeader("token"),
-  secretOrKey: config.jwtSecretKey,
+  secretOrKey: process.env.JWT_SECRET_KEY as string,
 };
 
 passport.use(

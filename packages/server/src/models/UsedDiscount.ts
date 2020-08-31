@@ -12,9 +12,9 @@ export class UsedDiscount extends Model {
     return {
       type: "object",
       properties: {
-        id: { type: "uuid" },
-        discountId: { type: "uuid" },
-        gameId: { type: "uuid" },
+        id: { type: "integer" },
+        discountId: { type: "integer" },
+        gameId: { type: "integer" },
       },
     };
   }

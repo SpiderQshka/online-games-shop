@@ -1,11 +1,9 @@
 import { Middleware } from "koa";
-import knex from "../../db/knex";
+import knex from "db/knex";
 import { Model } from "objection";
-import { User } from "../../models/User";
+import { User } from "models/User";
 import passport from "koa-passport";
 import jwt from "jsonwebtoken";
-import { config } from "../../config";
-import { v4 } from "uuid";
 
 Model.knex(knex);
 
@@ -27,13 +25,15 @@ export const usersController: IUsersController = {
         const payload = {
           ...user,
         };
-        const token = jwt.sign(payload, config.jwtSecretKey);
+        const token = jwt.sign(payload, process.env.JWT_SECRET_KEY as string);
 
         ctx.body = { user: user.id, token };
       }
     })(ctx, next);
   },
   get: async (ctx) => {
+    console.log(ctx.params.id);
+
     const result = await User.query().findById(ctx.params.id);
 
     ctx.body = result;
@@ -56,7 +56,6 @@ export const usersController: IUsersController = {
     const body = ctx.request.body;
     const password = await User.hashPassword(ctx.request.body.password);
     const result = await User.query().insert({
-      id: v4(),
       ...body,
       password,
     });

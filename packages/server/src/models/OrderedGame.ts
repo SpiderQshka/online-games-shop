@@ -15,10 +15,10 @@ export class OrderedGame extends Model {
     return {
       type: "object",
       properties: {
-        id: { type: "uuid" },
-        orderId: { type: "uuid" },
-        userId: { type: "uuid" },
-        gameId: { type: "uuid" },
+        id: { type: "integer" },
+        orderId: { type: "integer" },
+        userId: { type: "integer" },
+        gameId: { type: "integer" },
         price: { type: "number" },
       },
     };

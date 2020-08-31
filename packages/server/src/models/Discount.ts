@@ -11,7 +11,7 @@ export class Discount extends Model {
       type: "object",
       required: ["startDate", "duration", "amount"],
       properties: {
-        id: { type: "uuid" },
+        id: { type: "integer" },
         startDate: { type: "string", format: "date" },
         duration: { type: "number" },
         amount: { type: "string" },

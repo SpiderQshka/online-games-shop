@@ -1,11 +1,8 @@
 {
-  "name": "@online-games-shop/server",
+  "name": "server",
   "version": "1.0.0",
   "scripts": {
-    "watch": "tsc -w",
-    "build": "tsc",
-    "start": "concurrently \"yarn watch\" \"nodemon ./dist/index.js\"",
-    "clear": "rm -rf dist",
+    "start": "nodemon",
     "test": "jest --runInBand",
     "migrate:make": "knex --knexfile src/db/knexfile.ts migrate:make",
     "migrate:latest": "knex --knexfile src/db/knexfile.ts migrate:latest",
@@ -19,6 +16,7 @@
     "@types/faker": "^4.1.12",
     "@types/koa": "^2.11.4",
     "@types/koa-bodyparser": "^4.3.0",
+    "@types/koa-compose": "^3.2.5",
     "@types/koa-joi-router": "^5.2.3",
     "@types/koa-json": "^2.0.18",
     "@types/koa-logger": "^3.1.1",
@@ -29,10 +27,11 @@
     "@types/node": "^14.6.0",
     "@types/passport-jwt": "^3.0.3",
     "@types/passport-local": "^1.0.33",
-    "@types/uuid": "^8.3.0",
     "concurrently": "^4.1.0",
+    "dotenv": "^8.2.0",
     "nodemon": "^2.0.2",
-    "ts-node": "^8.10.2",
+    "ts-node": "^9.0.0",
+    "tsconfig-paths": "^3.9.0",
     "typescript": "^3.7.5"
   },
   "dependencies": {
@@ -41,6 +40,7 @@
     "knex": "^0.21.5",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
+    "koa-compose": "^4.1.0",
     "koa-joi-router": "^6.0.2",
     "koa-json": "^2.0.2",
     "koa-logger": "^3.2.1",
@@ -51,7 +51,6 @@
     "objection": "^2.2.3",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "pg": "^8.3.2",
-    "uuid": "^8.3.0"
+    "pg": "^8.3.2"
   }
 }

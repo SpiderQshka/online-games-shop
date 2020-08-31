@@ -1,23 +1,26 @@
 import Knex from "knex";
 import faker from "faker";
+import { User } from "models/User";
 
 export async function seed(knex: Knex): Promise<void> {
-  await knex("users").del();
   await knex("users").insert([
     {
-      id: "345ae4d0-f2c3-4342-91a2-5b45cb8db57f",
-      login: faker.name.findName(),
-      password: faker.internet.password(),
+      id: 1,
+      login: "login",
+      password: await User.hashPassword("password"),
+      isAdmin: true,
     },
     {
-      id: faker.random.uuid(),
+      id: 2,
       login: faker.name.findName(),
       password: faker.internet.password(),
+      isAdmin: false,
     },
     {
-      id: faker.random.uuid(),
+      id: 3,
       login: faker.name.findName(),
       password: faker.internet.password(),
+      isAdmin: false,
     },
   ]);
 }

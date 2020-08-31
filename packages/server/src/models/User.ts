@@ -2,7 +2,7 @@ import { Model } from "objection";
 import bcrypt from "bcrypt";
 
 export class User extends Model {
-  id!: string;
+  id!: number;
   login!: string;
   password!: string;
   static tableName = "users";
@@ -11,7 +11,7 @@ export class User extends Model {
       type: "object",
       required: ["login", "password"],
       properties: {
-        id: { type: "uuid" },
+        id: { type: "integer" },
         login: { type: "string" },
         password: { type: "string" },
       },

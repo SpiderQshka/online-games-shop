@@ -15,14 +15,14 @@ export class Game extends Model {
       type: "object",
       required: ["name", "price", "gameCreatorId"],
       properties: {
-        id: { type: "uuid" },
+        id: { type: "integer" },
         name: { type: "string" },
         logo: { type: ["string", "null"] },
         description: { type: ["string", "null"] },
         ageRating: { type: ["integer", "null"] },
         price: { type: "number" },
         numberOfPhysicalCopies: { type: "integer" },
-        gameCreatorId: { type: "uuid" },
+        gameCreatorId: { type: "integer" },
       },
     };
   }

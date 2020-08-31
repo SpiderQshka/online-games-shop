@@ -5,7 +5,7 @@ const router = koaRouter();
 
 router.route({
   method: "post",
-  path: "/api/v1/users/login",
+  path: "/api/v1/login",
   validate: {
     type: "json",
     body: usersRoutesValidation.post,

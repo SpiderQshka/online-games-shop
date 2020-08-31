@@ -1,7 +1,6 @@
 import { Middleware } from "koa";
 import knex from "../../db/knex";
 import { Model } from "objection";
-import { v4 } from "uuid";
 import { Order } from "../../models/Order";
 
 Model.knex(knex);
@@ -38,7 +37,6 @@ export const ordersController: IOrdersController = {
     const body = ctx.request.body;
 
     const result = await Order.query().insert({
-      id: v4(),
       ...body,
     });
 

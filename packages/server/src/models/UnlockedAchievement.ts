@@ -11,9 +11,9 @@ export class UnlockedAchievement extends Model {
     return {
       type: "object",
       properties: {
-        id: { type: "uuid" },
-        achievementId: { type: "uuid" },
-        userId: { type: "uuid" },
+        id: { type: "integer" },
+        achievementId: { type: "integer" },
+        userId: { type: "integer" },
       },
     };
   }

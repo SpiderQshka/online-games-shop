@@ -1,7 +1,6 @@
 import { Middleware } from "koa";
 import knex from "../../db/knex";
 import { Model } from "objection";
-import { v4 } from "uuid";
 import { Achievement } from "../../models/Achievement";
 
 Model.knex(knex);
@@ -38,7 +37,6 @@ export const achievementsController: IAchievementsController = {
     const body = ctx.request.body;
 
     const result = await Achievement.query().insert({
-      id: v4(),
       ...body,
     });
 

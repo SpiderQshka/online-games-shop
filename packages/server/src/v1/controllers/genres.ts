@@ -1,8 +1,7 @@
 import { Middleware } from "koa";
-import knex from "../../db/knex";
+import knex from "db/knex";
 import { Model } from "objection";
-import { v4 } from "uuid";
-import { Genre } from "../../models/Genre";
+import { Genre } from "models/Genre";
 
 Model.knex(knex);
 
@@ -38,7 +37,6 @@ export const genresController: IGenresController = {
     const body = ctx.request.body;
 
     const result = await Genre.query().insert({
-      id: v4(),
       ...body,
     });
 

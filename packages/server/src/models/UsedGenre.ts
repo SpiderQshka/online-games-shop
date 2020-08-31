@@ -11,9 +11,9 @@ export class UsedGenre extends Model {
     return {
       type: "object",
       properties: {
-        id: { type: "uuid" },
-        genreId: { type: "uuid" },
-        gameId: { type: "uuid" },
+        id: { type: "integer" },
+        genreId: { type: "integer" },
+        gameId: { type: "integer" },
       },
     };
   }

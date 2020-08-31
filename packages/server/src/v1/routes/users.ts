@@ -1,6 +1,6 @@
 import { usersController } from "../controllers/users";
 import koaRouter from "koa-joi-router";
-import { checkAuth } from "../auth";
+import { checkAuth, checkAdmin } from "../auth";
 import { usersRoutesValidation } from "../routes-validation/users";
 const router = koaRouter();
 
@@ -26,7 +26,7 @@ router.route({
   method: "get",
   path: "/api/v1/users",
   validate: {},
-  pre: checkAuth,
+  pre: checkAdmin,
   handler: usersController.getAll,
 });
 

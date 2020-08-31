@@ -1,12 +1,13 @@
 require("ts-node/register");
+require("dotenv").config({ path: "../../.env" });
 
 module.exports = {
   development: {
-    client: "postgresql",
+    client: process.env.DB_CLIENT,
     connection: {
-      database: "postgres",
-      user: "postgres",
-      password: "73732121",
+      database: process.env.DB_NAME,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
     },
     migrations: {
       tableName: "table_migrations",
@@ -18,11 +19,11 @@ module.exports = {
   },
 
   production: {
-    client: "postgresql",
+    client: process.env.DB_CLIENT,
     connection: {
-      database: "postgres",
-      user: "postgres",
-      password: "73732121",
+      database: process.env.DB_NAME,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
     },
     migrations: {
       tableName: "table_migrations",

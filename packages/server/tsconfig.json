@@ -2,22 +2,18 @@
   "compilerOptions": {
     "module": "commonjs",
     "esModuleInterop": true,
-    "target": "es5",
+    "target": "es2019",
     "moduleResolution": "node",
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
     "sourceMap": true,
-    "rootDir": "src",
     "outDir": "dist",
-    "baseUrl": "src",
+    "baseUrl": "./src",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "suppressImplicitAnyIndexErrors": true,
-    "typeRoots": ["./types", "./node_modules/@types"],
-    "paths": {
-      "": ["src/*"]
-    }
+    "typeRoots": ["./types", "./node_modules/@types"]
+    // "paths": {
+    //   "@src/*": ["src/*"]
+    // }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "src/tests"]

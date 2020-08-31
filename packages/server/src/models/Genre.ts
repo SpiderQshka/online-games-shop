@@ -9,7 +9,7 @@ export class Genre extends Model {
       type: "object",
       required: ["name"],
       properties: {
-        id: { type: "uuid" },
+        id: { type: "integer" },
         name: { type: "string" },
       },
     };
