@@ -15,7 +15,7 @@ passport.use(
         .findOne({ login })
         .then((user) => {
           if (!user || !User.checkPassword(password, user.password))
-            return done(true, false, { message: "(" });
+            return done(true, false);
           return done(null, user);
         });
     }
@@ -32,7 +32,7 @@ passport.use(
     User.query()
       .findById(payload.id)
       .then((user) => {
-        if (!user) return done(true, null, { message: "User not found" });
+        if (!user) return done(true, null);
         return done(null, user);
       });
   })

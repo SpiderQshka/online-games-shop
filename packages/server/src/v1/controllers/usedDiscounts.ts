@@ -1,7 +1,7 @@
 import { Middleware } from "koa";
-import knex from "../../db/knex";
+import knex from "db/knex";
 import { Model } from "objection";
-import { UsedDiscount } from "../../models/UsedDiscount";
+import { UsedDiscount } from "models/UsedDiscount";
 
 Model.knex(knex);
 
@@ -15,35 +15,71 @@ interface IUsedDiscountsController {
 
 export const usedDiscountsController: IUsedDiscountsController = {
   get: async (ctx) => {
-    const result = await UsedDiscount.query().findById(ctx.params.id);
+    let response;
 
-    ctx.body = result;
+    try {
+      response = await UsedDiscount.query().findById(ctx.params.id);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
+
+    if (!response)
+      ctx.throw(404, `Used discount with id '${ctx.params.id}' was not found`);
+
+    ctx.body = response;
   },
   getAll: async (ctx) => {
-    const result = await UsedDiscount.query();
+    let response;
 
-    ctx.body = result;
+    try {
+      response = await UsedDiscount.query();
+    } catch (e) {
+      ctx.throw(500, "Server error", { ...e });
+    }
+
+    if (!response) ctx.throw(404, `No used discounts found`);
+
+    ctx.body = response;
   },
   put: async (ctx) => {
-    const body = ctx.request.body;
+    let response;
 
-    const result = await UsedDiscount.query()
-      .findById(ctx.params.id)
-      .patchAndFetchById(ctx.params.id, body);
+    try {
+      response = await UsedDiscount.query()
+        .findById(ctx.params.id)
+        .patchAndFetchById(ctx.params.id, ctx.request.body);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
 
-    ctx.body = result;
+    if (!response)
+      ctx.throw(404, `Used discount with id '${ctx.params.id}' was not found`);
+
+    ctx.body = response;
   },
   post: async (ctx) => {
-    const body = ctx.request.body;
+    let response;
 
-    const result = await UsedDiscount.query().insert({
-      ...body,
-    });
+    try {
+      response = await UsedDiscount.query().insert(ctx.request.body);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
 
-    ctx.body = result;
+    ctx.body = response;
   },
   delete: async (ctx) => {
-    const result = await UsedDiscount.query().deleteById(ctx.params.id);
-    ctx.body = result;
+    let response;
+
+    try {
+      response = await UsedDiscount.query().deleteById(ctx.params.id);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
+
+    if (!response)
+      ctx.throw(404, `Used discount with id '${ctx.params.id}' was not found`);
+
+    ctx.body = `${response} rows deleted`;
   },
 };

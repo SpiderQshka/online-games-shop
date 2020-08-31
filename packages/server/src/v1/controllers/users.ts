@@ -2,13 +2,10 @@ import { Middleware } from "koa";
 import knex from "db/knex";
 import { Model } from "objection";
 import { User } from "models/User";
-import passport from "koa-passport";
-import jwt from "jsonwebtoken";
 
 Model.knex(knex);
 
 interface IUsersController {
-  login: Middleware;
   get: Middleware;
   getAll: Middleware;
   put: Middleware;
@@ -17,53 +14,72 @@ interface IUsersController {
 }
 
 export const usersController: IUsersController = {
-  login: async (ctx, next) => {
-    await passport.authenticate("local", (err, user) => {
-      if (err) {
-        ctx.body = "Login failed";
-      } else {
-        const payload = {
-          ...user,
-        };
-        const token = jwt.sign(payload, process.env.JWT_SECRET_KEY as string);
-
-        ctx.body = { user: user.id, token };
-      }
-    })(ctx, next);
-  },
   get: async (ctx) => {
-    console.log(ctx.params.id);
+    let response;
 
-    const result = await User.query().findById(ctx.params.id);
+    try {
+      response = await User.query().findById(ctx.params.id);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
 
-    ctx.body = result;
+    if (!response)
+      ctx.throw(404, `User with id '${ctx.params.id}' was not found`);
+
+    ctx.body = response;
   },
   getAll: async (ctx) => {
-    const result = await User.query();
+    let response;
 
-    ctx.body = result;
+    try {
+      response = await User.query();
+    } catch (e) {
+      ctx.throw(500, "Server error", { ...e });
+    }
+
+    if (!response) ctx.throw(404, `No users found`);
+
+    ctx.body = response;
   },
   put: async (ctx) => {
-    const body = ctx.request.body;
+    let response;
 
-    const result = await User.query()
-      .findById(ctx.params.id)
-      .patchAndFetchById(ctx.params.id, body);
+    try {
+      response = await User.query()
+        .findById(ctx.params.id)
+        .patchAndFetchById(ctx.params.id, ctx.request.body);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
 
-    ctx.body = result;
+    if (!response)
+      ctx.throw(404, `User with id '${ctx.params.id}' was not found`);
+
+    ctx.body = response;
   },
   post: async (ctx) => {
-    const body = ctx.request.body;
-    const password = await User.hashPassword(ctx.request.body.password);
-    const result = await User.query().insert({
-      ...body,
-      password,
-    });
+    let response;
 
-    ctx.body = result;
+    try {
+      response = await User.query().insert(ctx.request.body);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
+
+    ctx.body = response;
   },
   delete: async (ctx) => {
-    const result = await User.query().deleteById(ctx.params.id);
-    ctx.body = result;
+    let response;
+
+    try {
+      response = await User.query().deleteById(ctx.params.id);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
+
+    if (!response)
+      ctx.throw(404, `User with id '${ctx.params.id}' was not found`);
+
+    ctx.body = `${response} rows deleted`;
   },
 };

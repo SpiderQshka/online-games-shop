@@ -1,7 +1,7 @@
 import { Middleware } from "koa";
-import knex from "../../db/knex";
+import knex from "db/knex";
 import { Model } from "objection";
-import { Achievement } from "../../models/Achievement";
+import { Achievement } from "models/Achievement";
 
 Model.knex(knex);
 
@@ -15,35 +15,71 @@ interface IAchievementsController {
 
 export const achievementsController: IAchievementsController = {
   get: async (ctx) => {
-    const result = await Achievement.query().findById(ctx.params.id);
+    let response;
 
-    ctx.body = result;
+    try {
+      response = await Achievement.query().findById(ctx.params.id);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
+
+    if (!response)
+      ctx.throw(404, `Achievement with id '${ctx.params.id}' was not found`);
+
+    ctx.body = response;
   },
   getAll: async (ctx) => {
-    const result = await Achievement.query();
+    let response;
 
-    ctx.body = result;
+    try {
+      response = await Achievement.query();
+    } catch (e) {
+      ctx.throw(500, "Server error", { ...e });
+    }
+
+    if (!response) ctx.throw(404, `No achievements found`);
+
+    ctx.body = response;
   },
   put: async (ctx) => {
-    const body = ctx.request.body;
+    let response;
 
-    const result = await Achievement.query()
-      .findById(ctx.params.id)
-      .patchAndFetchById(ctx.params.id, body);
+    try {
+      response = await Achievement.query()
+        .findById(ctx.params.id)
+        .patchAndFetchById(ctx.params.id, ctx.request.body);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
 
-    ctx.body = result;
+    if (!response)
+      ctx.throw(404, `Achievement with id '${ctx.params.id}' was not found`);
+
+    ctx.body = response;
   },
   post: async (ctx) => {
-    const body = ctx.request.body;
+    let response;
 
-    const result = await Achievement.query().insert({
-      ...body,
-    });
+    try {
+      response = await Achievement.query().insert(ctx.request.body);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
 
-    ctx.body = result;
+    ctx.body = response;
   },
   delete: async (ctx) => {
-    const result = await Achievement.query().deleteById(ctx.params.id);
-    ctx.body = result;
+    let response;
+
+    try {
+      response = await Achievement.query().deleteById(ctx.params.id);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
+
+    if (!response)
+      ctx.throw(404, `Achievement with id '${ctx.params.id}' was not found`);
+
+    ctx.body = `${response} rows deleted`;
   },
 };

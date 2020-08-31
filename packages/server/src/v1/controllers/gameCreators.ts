@@ -1,7 +1,7 @@
 import { Middleware } from "koa";
-import knex from "../../db/knex";
+import knex from "db/knex";
 import { Model } from "objection";
-import { GameCreator } from "../../models/GameCreator";
+import { GameCreator } from "models/GameCreator";
 
 Model.knex(knex);
 
@@ -15,35 +15,71 @@ interface IGameCreatorsController {
 
 export const gameCreatorsController: IGameCreatorsController = {
   get: async (ctx) => {
-    const result = await GameCreator.query().findById(ctx.params.id);
+    let response;
 
-    ctx.body = result;
+    try {
+      response = await GameCreator.query().findById(ctx.params.id);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
+
+    if (!response)
+      ctx.throw(404, `Game creator with id '${ctx.params.id}' was not found`);
+
+    ctx.body = response;
   },
   getAll: async (ctx) => {
-    const result = await GameCreator.query();
+    let response;
 
-    ctx.body = result;
+    try {
+      response = await GameCreator.query();
+    } catch (e) {
+      ctx.throw(500, "Server error", { ...e });
+    }
+
+    if (!response) ctx.throw(404, `No game creators found`);
+
+    ctx.body = response;
   },
   put: async (ctx) => {
-    const body = ctx.request.body;
+    let response;
 
-    const result = await GameCreator.query()
-      .findById(ctx.params.id)
-      .patchAndFetchById(ctx.params.id, body);
+    try {
+      response = await GameCreator.query()
+        .findById(ctx.params.id)
+        .patchAndFetchById(ctx.params.id, ctx.request.body);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
 
-    ctx.body = result;
+    if (!response)
+      ctx.throw(404, `Game creator with id '${ctx.params.id}' was not found`);
+
+    ctx.body = response;
   },
   post: async (ctx) => {
-    const body = ctx.request.body;
+    let response;
 
-    const result = await GameCreator.query().insert({
-      ...body,
-    });
+    try {
+      response = await GameCreator.query().insert(ctx.request.body);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
 
-    ctx.body = result;
+    ctx.body = response;
   },
   delete: async (ctx) => {
-    const result = await GameCreator.query().deleteById(ctx.params.id);
-    ctx.body = result;
+    let response;
+
+    try {
+      response = await GameCreator.query().deleteById(ctx.params.id);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
+
+    if (!response)
+      ctx.throw(404, `Game creator with id '${ctx.params.id}' was not found`);
+
+    ctx.body = `${response} rows deleted`;
   },
 };

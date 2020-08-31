@@ -1,6 +1,6 @@
-import { usersController } from "../controllers/users";
+import { authController } from "../controllers/auth";
 import koaRouter from "koa-joi-router";
-import { usersRoutesValidation } from "../routes-validation/users";
+import { authRoutesValidation } from "v1/routes-validation/auth";
 const router = koaRouter();
 
 router.route({
@@ -8,9 +8,9 @@ router.route({
   path: "/api/v1/login",
   validate: {
     type: "json",
-    body: usersRoutesValidation.post,
+    body: authRoutesValidation.post,
   },
-  handler: usersController.login,
+  handler: authController.login,
 });
 
 export default router.middleware();

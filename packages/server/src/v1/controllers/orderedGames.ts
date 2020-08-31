@@ -1,7 +1,7 @@
 import { Middleware } from "koa";
-import knex from "../../db/knex";
+import knex from "db/knex";
 import { Model } from "objection";
-import { OrderedGame } from "../../models/OrderedGame";
+import { OrderedGame } from "models/OrderedGame";
 
 Model.knex(knex);
 
@@ -15,35 +15,71 @@ interface IOrderedGamesController {
 
 export const orderedGamesController: IOrderedGamesController = {
   get: async (ctx) => {
-    const result = await OrderedGame.query().findById(ctx.params.id);
+    let response;
 
-    ctx.body = result;
+    try {
+      response = await OrderedGame.query().findById(ctx.params.id);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
+
+    if (!response)
+      ctx.throw(404, `Ordered game with id '${ctx.params.id}' was not found`);
+
+    ctx.body = response;
   },
   getAll: async (ctx) => {
-    const result = await OrderedGame.query();
+    let response;
 
-    ctx.body = result;
+    try {
+      response = await OrderedGame.query();
+    } catch (e) {
+      ctx.throw(500, "Server error", { ...e });
+    }
+
+    if (!response) ctx.throw(404, `No ordered games found`);
+
+    ctx.body = response;
   },
   put: async (ctx) => {
-    const body = ctx.request.body;
+    let response;
 
-    const result = await OrderedGame.query()
-      .findById(ctx.params.id)
-      .patchAndFetchById(ctx.params.id, body);
+    try {
+      response = await OrderedGame.query()
+        .findById(ctx.params.id)
+        .patchAndFetchById(ctx.params.id, ctx.request.body);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
 
-    ctx.body = result;
+    if (!response)
+      ctx.throw(404, `Ordered game with id '${ctx.params.id}' was not found`);
+
+    ctx.body = response;
   },
   post: async (ctx) => {
-    const body = ctx.request.body;
+    let response;
 
-    const result = await OrderedGame.query().insert({
-      ...body,
-    });
+    try {
+      response = await OrderedGame.query().insert(ctx.request.body);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
 
-    ctx.body = result;
+    ctx.body = response;
   },
   delete: async (ctx) => {
-    const result = await OrderedGame.query().deleteById(ctx.params.id);
-    ctx.body = result;
+    let response;
+
+    try {
+      response = await OrderedGame.query().deleteById(ctx.params.id);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
+
+    if (!response)
+      ctx.throw(404, `Ordered game with id '${ctx.params.id}' was not found`);
+
+    ctx.body = `${response} rows deleted`;
   },
 };
