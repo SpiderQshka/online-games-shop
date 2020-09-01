@@ -1,0 +1,23 @@
+require("tsconfig-paths/register");
+import * as Knex from "knex";
+import { Models } from "models";
+
+export async function up(knex: Knex): Promise<void> {
+  return knex.schema.createTable(
+    Models.unlockedAchievements.tableName,
+    (table) => {
+      table.increments();
+      table.integer("userId").notNullable().references("users.id");
+      table
+        .integer("achievementId")
+        .notNullable()
+        .references("achievements.id");
+    }
+  );
+}
+
+export async function down(knex: Knex): Promise<void> {
+  return await knex.schema.dropTableIfExists(
+    Models.unlockedAchievements.tableName
+  );
+}

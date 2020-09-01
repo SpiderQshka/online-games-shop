@@ -6,6 +6,7 @@
   "repository": "https://github.com/SpiderQshka/online-games-shop.git",
   "license": "MIT",
   "workspaces": [
-    "packages/*"
+    "client",
+    "server"
   ]
 }

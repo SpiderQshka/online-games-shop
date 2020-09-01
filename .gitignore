@@ -1,6 +1,7 @@
 node_modules
 .vscode
 packages/server/dist
+packages/server/.env
 packages/client/build
 
 .DS_Store
