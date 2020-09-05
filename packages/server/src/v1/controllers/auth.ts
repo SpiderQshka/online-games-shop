@@ -18,7 +18,10 @@ export const authController: IAuthController = {
       if (!process.env.JWT_SECRET_KEY)
         ctx.throw(400, "Cannot find jwt secret key");
 
-      const token = jwt.sign(user, process.env.JWT_SECRET_KEY as string);
+      const token = jwt.sign(
+        user.toJSON(),
+        process.env.JWT_SECRET_KEY as string
+      );
 
       ctx.body = { user, token };
     })(ctx, next);

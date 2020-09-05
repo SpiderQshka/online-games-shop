@@ -1,5 +1,12 @@
 import { Model } from "objection";
 
+export interface IDiscount {
+  id: number;
+  startDate: Date;
+  duration: number;
+  amount: string;
+}
+
 export class Discount extends Model {
   id!: number;
   startDate!: Date;

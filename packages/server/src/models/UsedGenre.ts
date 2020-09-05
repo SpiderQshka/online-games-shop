@@ -1,11 +1,15 @@
 import { Model } from "objection";
-// import { Genre } from "./Genre";
-// import { Game } from "./Game";
+
+export interface IUsedGenre {
+  id: number;
+  genreId: number;
+  gameId: number;
+}
 
 export class UsedGenre extends Model {
   id!: number;
-  genreId!: string;
-  gameId!: string;
+  genreId!: number;
+  gameId!: number;
   static tableName = "used_genres";
   static get jsonSchema() {
     return {
@@ -17,22 +21,4 @@ export class UsedGenre extends Model {
       },
     };
   }
-  // static relationMappings = {
-  //   genreId: {
-  //     relation: Model.BelongsToOneRelation,
-  //     modelClass: Genre,
-  //     join: {
-  //       from: "used_genres.genreId",
-  //       to: "genres.id",
-  //     },
-  //   },
-  //   gameId: {
-  //     relation: Model.BelongsToOneRelation,
-  //     modelClass: Game,
-  //     join: {
-  //       from: "used_genres.gameId",
-  //       to: "games.id",
-  //     },
-  //   },
-  // };
 }

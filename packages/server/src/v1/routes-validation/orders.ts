@@ -9,11 +9,9 @@ interface IOrdersRoutesValidation {
 
 export const ordersRoutesValidation: IOrdersRoutesValidation = {
   post: {
-    createdAt: Joi.date().required(),
-    price: Joi.number().min(0).required(),
+    games: Joi.array().items(Joi.number().min(0).required()).required(),
   },
   put: {
-    createdAt: Joi.date(),
-    price: Joi.number().min(0),
+    games: Joi.array().items(Joi.number().min(0).required()).required(),
   },
 };

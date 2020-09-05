@@ -2,6 +2,11 @@ import { Middleware } from "koa";
 import knex from "db/knex";
 import { Model } from "objection";
 import { Order } from "models/Order";
+import { OrderedGame } from "models/OrderedGame";
+import { IUser } from "models/User";
+import { processArrayAsync } from "v1/helpers";
+import { Game } from "models/Game";
+import { verifyJwtToken } from "v1/auth";
 
 Model.knex(knex);
 
@@ -15,70 +20,57 @@ interface IOrdersController {
 
 export const ordersController: IOrdersController = {
   get: async (ctx) => {
-    let response;
+    const user = verifyJwtToken(ctx);
 
-    try {
-      response = await Order.query().findById(ctx.params.id);
-    } catch (e) {
-      ctx.throw(400, "Bad request");
-    }
+    const doesOrderRelateToUser = await OrderedGame.doesOrderRelateToUser(
+      ctx.params.id,
+      user.id
+    );
 
-    if (!response)
-      ctx.throw(404, `Order with id '${ctx.params.id}' was not found`);
+    if (!doesOrderRelateToUser && !user.isAdmin)
+      ctx.throw(401, "Access denied");
+
+    const response = await Order.get(ctx);
 
     ctx.body = response;
   },
   getAll: async (ctx) => {
-    let response;
-
-    try {
-      response = await Order.query();
-    } catch (e) {
-      ctx.throw(500, "Server error", { ...e });
-    }
-
-    if (!response) ctx.throw(404, `No orders found`);
+    const response = await Order.getAll(ctx);
 
     ctx.body = response;
   },
   put: async (ctx) => {
-    let response;
+    const user = verifyJwtToken(ctx);
 
-    try {
-      response = await Order.query()
-        .findById(ctx.params.id)
-        .patchAndFetchById(ctx.params.id, ctx.request.body);
-    } catch (e) {
-      ctx.throw(400, "Bad request");
-    }
+    const doesOrderRelateToUser = await OrderedGame.doesOrderRelateToUser(
+      ctx.params.id,
+      user.id
+    );
 
-    if (!response)
-      ctx.throw(404, `Order with id '${ctx.params.id}' was not found`);
+    if (!doesOrderRelateToUser && !user.isAdmin)
+      ctx.throw(403, "Access denied");
+
+    const response = await Order.put(ctx);
 
     ctx.body = response;
   },
   post: async (ctx) => {
-    let response;
+    const orderedGames = await Order.create(ctx);
 
-    try {
-      response = await Order.query().insert(ctx.request.body);
-    } catch (e) {
-      ctx.throw(400, "Bad request");
-    }
-
-    ctx.body = response;
+    ctx.body = orderedGames;
   },
   delete: async (ctx) => {
-    let response;
+    const user = verifyJwtToken(ctx);
 
-    try {
-      response = await Order.query().deleteById(ctx.params.id);
-    } catch (e) {
-      ctx.throw(400, "Bad request");
-    }
+    const doesOrderRelateToUser = await OrderedGame.doesOrderRelateToUser(
+      ctx.params.id,
+      user.id
+    );
 
-    if (!response)
-      ctx.throw(404, `Order with id '${ctx.params.id}' was not found`);
+    if (!doesOrderRelateToUser && !user.isAdmin)
+      ctx.throw(403, "Access denied");
+
+    const response = await Order.delete(ctx);
 
     ctx.body = `${response} rows deleted`;
   },

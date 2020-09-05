@@ -1,10 +1,18 @@
 import { Model } from "objection";
 import bcrypt from "bcrypt";
 
+export interface IUser {
+  id: number;
+  login: string;
+  password: string;
+  isAdmin: boolean;
+}
+
 export class User extends Model {
   id!: number;
   login!: string;
   password!: string;
+  isAdmin!: boolean;
   static tableName = "users";
   static get jsonSchema() {
     return {
@@ -14,6 +22,7 @@ export class User extends Model {
         id: { type: "integer" },
         login: { type: "string" },
         password: { type: "string" },
+        isAdmin: { type: "boolean" },
       },
     };
   }

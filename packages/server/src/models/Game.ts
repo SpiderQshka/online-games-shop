@@ -1,5 +1,16 @@
 import { Model } from "objection";
 
+export interface IGame {
+  id: number;
+  name: string;
+  logo: string;
+  description: string;
+  ageRating: number;
+  price: number;
+  numberOfPhysicalCopies: number | null;
+  gameCreatorId: number;
+}
+
 export class Game extends Model {
   id!: number;
   name!: string;
@@ -8,7 +19,7 @@ export class Game extends Model {
   ageRating!: number;
   price!: number;
   numberOfPhysicalCopies!: number | null;
-  gameCreatorId!: string;
+  gameCreatorId!: number;
   static tableName = "games";
   static get jsonSchema() {
     return {

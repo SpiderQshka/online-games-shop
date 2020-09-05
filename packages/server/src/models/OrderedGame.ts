@@ -1,14 +1,19 @@
 import { Model } from "objection";
-// import { User } from "./User";
-// import { Game } from "./Game";
-// import { Order } from "./Order";
+
+export interface IOrderedGame {
+  id: number;
+  orderId: number;
+  userId: number;
+  gameId: number;
+  price: number;
+}
 
 export class OrderedGame extends Model {
   id!: number;
-  orderId!: string;
-  userId!: string;
-  gameId!: string;
-  price!: string;
+  orderId!: number;
+  userId!: number;
+  gameId!: number;
+  price!: number;
 
   static tableName = "ordered_games";
   static get jsonSchema() {
@@ -23,30 +28,10 @@ export class OrderedGame extends Model {
       },
     };
   }
-  // static relationMappings = {
-  //   orderId: {
-  //     relation: Model.HasManyRelation,
-  //     modelClass: Order,
-  //     join: {
-  //       from: "ordered_games.orderId",
-  //       to: "orders.id",
-  //     },
-  //   },
-  //   userId: {
-  //     relation: Model.HasManyRelation,
-  //     modelClass: User,
-  //     join: {
-  //       from: "ordered_games.userId",
-  //       to: "users.id",
-  //     },
-  //   },
-  //   gameId: {
-  //     relation: Model.HasManyRelation,
-  //     modelClass: Game,
-  //     join: {
-  //       from: "ordered_games.gameId",
-  //       to: "games.id",
-  //     },
-  //   },
-  // };
+  static doesOrderRelateToUser = async (orderId: number, userId: number) => {
+    const result = await OrderedGame.query()
+      .where("orderId", orderId)
+      .where("userId", userId);
+    return !!result.length;
+  };
 }

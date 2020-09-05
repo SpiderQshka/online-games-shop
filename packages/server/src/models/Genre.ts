@@ -1,5 +1,10 @@
 import { Model } from "objection";
 
+export interface IGenre {
+  id: number;
+  name: string;
+}
+
 export class Genre extends Model {
   id!: number;
   name!: string;

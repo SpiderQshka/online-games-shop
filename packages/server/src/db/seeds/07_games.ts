@@ -8,9 +8,9 @@ export async function seed(knex: Knex): Promise<void> {
       name: "Mount and blade Warband",
       logo: faker.system.filePath(),
       description: faker.lorem.text(1),
-      ageRating: faker.random.number({ min: 0, max: 18 }),
-      price: faker.random.number({ min: 0 }),
-      numberOfPhysicalCopies: faker.random.number({ min: 0 }),
+      ageRating: +faker.random.number({ min: 0, max: 18 }),
+      price: +faker.random.number({ min: 0 }),
+      numberOfPhysicalCopies: +faker.random.number({ min: 0 }),
       gameCreatorId: 1,
     },
   ]);
