@@ -5,7 +5,7 @@ import { Order } from "models/Order";
 import { OrderedGame } from "models/OrderedGame";
 import { verifyJwtToken } from "v1/auth";
 import { doesOrderRelateToUser } from "models/helpers";
-import { processArrayAsync } from "v1/helpers";
+import { processArrayAsync, deleteRepeatedValuesFromArray } from "v1/helpers";
 import { IOrder, IOrderedGame, IGame } from "models/types";
 import { Game } from "models/Game";
 
@@ -59,6 +59,10 @@ export const ordersController: IOrdersController = {
   },
   put: async (ctx) => {
     const user = verifyJwtToken(ctx);
+    const gamesIds = ctx.request.body.games as number[];
+    let games: IGame[];
+    let order: IOrder;
+    let orderedGames: IOrderedGame[] = [];
 
     const doesOrderRelateToCurrrentUser = await doesOrderRelateToUser(
       ctx.params.id,
@@ -71,15 +75,35 @@ export const ordersController: IOrdersController = {
     let response;
 
     try {
-      response = await Order.query()
-        .findById(ctx.params.id)
-        .patchAndFetchById(ctx.params.id, ctx.request.body);
+      games = await processArrayAsync(
+        gamesIds,
+        async (id) => await Game.query().findById(id)
+      );
+
+      games = deleteRepeatedValuesFromArray(games);
+
+      const price = games.reduce((prev, curr) => prev + +curr.price, 0);
+
+      order = await Order.query().updateAndFetchById(ctx.params.id, {
+        price,
+      });
+
+      orderedGames = await processArrayAsync(games, async (game: IGame) => {
+        const orderedGame = await OrderedGame.query()
+          .where("orderId", order.id)
+          .where("gameId", game.id)
+          .where("userId", user.id)[0];
+
+        return await OrderedGame.query().updateAndFetchById(orderedGame.id, {
+          gameId: game.id,
+          orderId: order.id,
+          userId: user.id,
+          price: game.price,
+        });
+      });
     } catch (e) {
       ctx.throw(400, "Bad request");
     }
-
-    if (!response)
-      ctx.throw(404, `Order with id '${ctx.params.id}' was not found`);
 
     ctx.body = response;
   },
@@ -96,6 +120,8 @@ export const ordersController: IOrdersController = {
         gamesIds,
         async (id) => await Game.query().findById(id)
       );
+
+      games = deleteRepeatedValuesFromArray(games);
 
       const price = games.reduce((prev, curr) => prev + +curr.price, 0);
 

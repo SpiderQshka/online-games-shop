@@ -5,3 +5,7 @@ export const processArrayAsync = async (
   const promises = array.map(handler);
   return await Promise.all(promises);
 };
+
+export const deleteRepeatedValuesFromArray = (array: any[]) => [
+  ...new Set(array),
+];

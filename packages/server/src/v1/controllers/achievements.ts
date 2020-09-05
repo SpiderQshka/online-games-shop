@@ -34,7 +34,7 @@ export const achievementsController: IAchievementsController = {
     try {
       response = await Achievement.query();
     } catch (e) {
-      ctx.throw(500, "Server error", { ...e });
+      ctx.throw(500, "Server error");
     }
 
     if (!response) ctx.throw(404, `No achievements found`);
