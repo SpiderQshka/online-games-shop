@@ -1,6 +1,7 @@
 import koaRouter from "koa-joi-router";
 import { discountsRoutesValidation } from "../routes-validation/discounts";
 import { discountsController } from "../controllers/discounts";
+import { checkAdmin } from "v1/auth";
 const router = koaRouter();
 
 router.route({
@@ -10,6 +11,7 @@ router.route({
     type: "json",
     body: discountsRoutesValidation.post,
   },
+  pre: checkAdmin,
   handler: discountsController.post,
 });
 
@@ -34,6 +36,7 @@ router.route({
     type: "json",
     body: discountsRoutesValidation.put,
   },
+  pre: checkAdmin,
   handler: discountsController.put,
 });
 
@@ -41,6 +44,7 @@ router.route({
   method: "delete",
   path: "/api/v1/discounts/:id",
   validate: {},
+  pre: checkAdmin,
   handler: discountsController.delete,
 });
 

@@ -1,6 +1,7 @@
 import koaRouter from "koa-joi-router";
 import { usedGenresRoutesValidation } from "../routes-validation/usedGenres";
 import { usedGenresController } from "../controllers/usedGenres";
+import { checkAdmin } from "v1/auth";
 const router = koaRouter();
 
 router.route({
@@ -10,6 +11,7 @@ router.route({
     type: "json",
     body: usedGenresRoutesValidation.post,
   },
+  pre: checkAdmin,
   handler: usedGenresController.post,
 });
 
@@ -34,6 +36,7 @@ router.route({
     type: "json",
     body: usedGenresRoutesValidation.put,
   },
+  pre: checkAdmin,
   handler: usedGenresController.put,
 });
 
@@ -41,6 +44,7 @@ router.route({
   method: "delete",
   path: "/api/v1/usedGenres/:id",
   validate: {},
+  pre: checkAdmin,
   handler: usedGenresController.delete,
 });
 

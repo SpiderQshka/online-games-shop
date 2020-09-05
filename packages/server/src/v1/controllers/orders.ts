@@ -4,6 +4,10 @@ import { Model } from "objection";
 import { Order } from "models/Order";
 import { OrderedGame } from "models/OrderedGame";
 import { verifyJwtToken } from "v1/auth";
+import { doesOrderRelateToUser } from "models/helpers";
+import { processArrayAsync } from "v1/helpers";
+import { IOrder, IOrderedGame, IGame } from "models/types";
+import { Game } from "models/Game";
 
 Model.knex(knex);
 
@@ -19,55 +23,125 @@ export const ordersController: IOrdersController = {
   get: async (ctx) => {
     const user = verifyJwtToken(ctx);
 
-    const doesOrderRelateToUser = await OrderedGame.doesOrderRelateToUser(
+    const doesOrderRelateToCurrrentUser = await doesOrderRelateToUser(
       ctx.params.id,
       user.id
     );
 
-    if (!doesOrderRelateToUser && !user.isAdmin)
+    if (!doesOrderRelateToCurrrentUser && !user.isAdmin)
       ctx.throw(401, "Access denied");
 
-    const response = await Order.get(ctx);
+    let response;
+
+    try {
+      response = await Order.query().findById(ctx.params.id);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
+
+    if (!response)
+      ctx.throw(404, `Order with id '${ctx.params.id}' was not found`);
 
     ctx.body = response;
   },
   getAll: async (ctx) => {
-    const response = await Order.getAll(ctx);
+    let response;
+
+    try {
+      response = await Order.query();
+    } catch (e) {
+      ctx.throw(500, "Server error");
+    }
+
+    if (!response) ctx.throw(404, `No orders found`);
 
     ctx.body = response;
   },
   put: async (ctx) => {
     const user = verifyJwtToken(ctx);
 
-    const doesOrderRelateToUser = await OrderedGame.doesOrderRelateToUser(
+    const doesOrderRelateToCurrrentUser = await doesOrderRelateToUser(
       ctx.params.id,
       user.id
     );
 
-    if (!doesOrderRelateToUser && !user.isAdmin)
+    if (!doesOrderRelateToCurrrentUser && !user.isAdmin)
       ctx.throw(403, "Access denied");
 
-    const response = await Order.put(ctx);
+    let response;
+
+    try {
+      response = await Order.query()
+        .findById(ctx.params.id)
+        .patchAndFetchById(ctx.params.id, ctx.request.body);
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
+
+    if (!response)
+      ctx.throw(404, `Order with id '${ctx.params.id}' was not found`);
 
     ctx.body = response;
   },
   post: async (ctx) => {
-    const orderedGames = await Order.create(ctx);
+    const gamesIds = ctx.request.body.games as number[];
+    let games: IGame[];
+    let order: IOrder;
+    let orderedGames: IOrderedGame[] = [];
+
+    const user = verifyJwtToken(ctx);
+
+    try {
+      games = await processArrayAsync(
+        gamesIds,
+        async (id) => await Game.query().findById(id)
+      );
+
+      const price = games.reduce((prev, curr) => prev + +curr.price, 0);
+
+      order = await Order.query().insert({
+        createdAt: new Date(),
+        price,
+      });
+
+      orderedGames = await processArrayAsync(
+        games,
+        async (game) =>
+          await OrderedGame.query().insert({
+            gameId: game.id,
+            orderId: order.id,
+            userId: user.id,
+            price: +game.price,
+          })
+      );
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
 
     ctx.body = orderedGames;
   },
   delete: async (ctx) => {
     const user = verifyJwtToken(ctx);
 
-    const doesOrderRelateToUser = await OrderedGame.doesOrderRelateToUser(
+    const doesOrderRelateToCurrentUser = doesOrderRelateToUser(
       ctx.params.id,
       user.id
     );
 
-    if (!doesOrderRelateToUser && !user.isAdmin)
+    if (!doesOrderRelateToCurrentUser && !user.isAdmin)
       ctx.throw(403, "Access denied");
 
-    const response = await Order.delete(ctx);
+    let response;
+
+    try {
+      await OrderedGame.query().where("orderId", ctx.params.id).delete();
+      response = await Order.query().deleteById(ctx.params.id);
+    } catch (error) {
+      ctx.throw(400, "Bad request");
+    }
+
+    if (!response)
+      ctx.throw(404, `Order with id '${ctx.params.id}' was not found`);
 
     ctx.body = `${response} rows deleted`;
   },

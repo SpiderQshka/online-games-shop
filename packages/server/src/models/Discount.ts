@@ -4,7 +4,8 @@ export class Discount extends Model {
   id!: number;
   startDate!: Date;
   duration!: number;
-  amount!: string;
+  amount!: number;
+  type!: string;
   static tableName = "discounts";
   static get jsonSchema() {
     return {
@@ -12,9 +13,10 @@ export class Discount extends Model {
       required: ["startDate", "duration", "amount"],
       properties: {
         id: { type: "integer" },
-        startDate: { type: "string", format: "date" },
+        startDate: { type: "date" },
         duration: { type: "number" },
-        amount: { type: "string" },
+        amount: { type: "number" },
+        type: { type: "string" },
       },
     };
   }

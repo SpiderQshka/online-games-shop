@@ -2,6 +2,7 @@ import { Middleware } from "koa";
 import knex from "db/knex";
 import { Model } from "objection";
 import { User } from "models/User";
+import { hashPassword } from "models/helpers";
 
 Model.knex(knex);
 
@@ -34,7 +35,7 @@ export const usersController: IUsersController = {
     try {
       response = await User.query();
     } catch (e) {
-      ctx.throw(500, "Server error", { ...e });
+      ctx.throw(500, "Server error");
     }
 
     if (!response) ctx.throw(404, `No users found`);
@@ -61,7 +62,10 @@ export const usersController: IUsersController = {
     let response;
 
     try {
-      response = await User.query().insert(ctx.request.body);
+      response = await User.query().insert({
+        ...ctx.request.body,
+        password: hashPassword(ctx.request.body.password),
+      });
     } catch (e) {
       ctx.throw(400, "Bad request");
     }

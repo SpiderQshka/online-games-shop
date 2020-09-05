@@ -1,6 +1,7 @@
 import koaRouter from "koa-joi-router";
 import { gamesController } from "../controllers/games";
 import { gamesRoutesValidation } from "../routes-validation/games";
+import { checkAdmin } from "v1/auth";
 const router = koaRouter();
 
 router.route({
@@ -10,6 +11,7 @@ router.route({
     type: "json",
     body: gamesRoutesValidation.post,
   },
+  pre: checkAdmin,
   handler: gamesController.post,
 });
 
@@ -34,6 +36,7 @@ router.route({
     type: "json",
     body: gamesRoutesValidation.put,
   },
+  pre: checkAdmin,
   handler: gamesController.put,
 });
 
@@ -41,6 +44,7 @@ router.route({
   method: "delete",
   path: "/api/v1/games/:id",
   validate: {},
+  pre: checkAdmin,
   handler: gamesController.delete,
 });
 
