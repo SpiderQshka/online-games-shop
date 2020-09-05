@@ -1,10 +1,5 @@
 import { Model } from "objection";
 
-export interface IAchievement {
-  id: number;
-  name: string;
-}
-
 export class Achievement extends Model {
   id!: number;
   name!: string;

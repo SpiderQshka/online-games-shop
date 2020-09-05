@@ -1,12 +1,5 @@
 import { Model } from "objection";
 
-export interface IGameCreator {
-  id: number;
-  name: string;
-  logo: string;
-  yearOfFoundation: number;
-}
-
 export class GameCreator extends Model {
   id!: string;
   name!: string;

@@ -1,16 +1,5 @@
 import { Model } from "objection";
 
-export interface IGame {
-  id: number;
-  name: string;
-  logo: string;
-  description: string;
-  ageRating: number;
-  price: number;
-  numberOfPhysicalCopies: number | null;
-  gameCreatorId: number;
-}
-
 export class Game extends Model {
   id!: number;
   name!: string;
@@ -37,14 +26,4 @@ export class Game extends Model {
       },
     };
   }
-  // static relationMappings = {
-  //   gameCreatorId: {
-  //     relation: Model.BelongsToOneRelation,
-  //     modelClass: GameCreator,
-  //     join: {
-  //       from: "games.gameCreatorId",
-  //       to: "game_creators.id",
-  //     },
-  //   },
-  // };
 }

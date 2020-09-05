@@ -1,7 +1,7 @@
 import { Context, Next, ParameterizedContext } from "koa";
 import passport from "koa-passport";
 import { FullHandler } from "koa-joi-router";
-import { IUser } from "models/User";
+import { IUser } from "models/types";
 import jwt from "jsonwebtoken";
 
 export const checkAuth: FullHandler = async (ctx: Context, next: Next) => {

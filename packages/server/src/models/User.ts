@@ -1,13 +1,6 @@
 import { Model } from "objection";
 import bcrypt from "bcrypt";
 
-export interface IUser {
-  id: number;
-  login: string;
-  password: string;
-  isAdmin: boolean;
-}
-
 export class User extends Model {
   id!: number;
   login!: string;

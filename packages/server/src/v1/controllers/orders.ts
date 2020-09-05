@@ -3,9 +3,6 @@ import knex from "db/knex";
 import { Model } from "objection";
 import { Order } from "models/Order";
 import { OrderedGame } from "models/OrderedGame";
-import { IUser } from "models/User";
-import { processArrayAsync } from "v1/helpers";
-import { Game } from "models/Game";
 import { verifyJwtToken } from "v1/auth";
 
 Model.knex(knex);

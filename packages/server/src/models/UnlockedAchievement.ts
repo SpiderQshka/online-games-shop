@@ -1,11 +1,5 @@
 import { Model } from "objection";
 
-export interface IUnlockedAchievement {
-  id: number;
-  achievementId: number;
-  userId: number;
-}
-
 export class UnlockedAchievement extends Model {
   id!: number;
   achievementId!: number;

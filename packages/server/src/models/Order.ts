@@ -1,15 +1,10 @@
 import { Model } from "objection";
-import { OrderedGame, IOrderedGame } from "./OrderedGame";
+import { OrderedGame } from "./OrderedGame";
 import { ParameterizedContext } from "koa";
 import { processArrayAsync } from "v1/helpers";
-import { Game, IGame } from "./Game";
+import { Game } from "./Game";
+import { IGame, IOrderedGame, IOrder } from "./types";
 import { verifyJwtToken } from "v1/auth";
-
-export interface IOrder {
-  id: number;
-  createdAt: Date;
-  price: number;
-}
 
 export class Order extends Model {
   id!: number;

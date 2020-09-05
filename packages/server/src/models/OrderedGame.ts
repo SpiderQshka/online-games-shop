@@ -1,13 +1,5 @@
 import { Model } from "objection";
 
-export interface IOrderedGame {
-  id: number;
-  orderId: number;
-  userId: number;
-  gameId: number;
-  price: number;
-}
-
 export class OrderedGame extends Model {
   id!: number;
   orderId!: number;

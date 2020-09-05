@@ -1,11 +1,5 @@
 import { Model } from "objection";
 
-export interface IUsedGenre {
-  id: number;
-  genreId: number;
-  gameId: number;
-}
-
 export class UsedGenre extends Model {
   id!: number;
   genreId!: number;
