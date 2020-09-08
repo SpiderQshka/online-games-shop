@@ -1,10 +1,11 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect, useHistory } from "react-router-dom";
 import styles from "./styles.module.scss";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { config } from "config";
+import { useAuth } from "context/auth";
 
 interface LoginFormValues {
   login: string;
@@ -12,6 +13,8 @@ interface LoginFormValues {
 }
 
 export const Login = () => {
+  const { setToken } = useAuth();
+  const history = useHistory();
   const formik = useFormik({
     initialValues: { login: "", password: "" } as LoginFormValues,
     validationSchema: Yup.object({
@@ -23,13 +26,22 @@ export const Login = () => {
         .required("Required"),
     }),
     onSubmit: (data) => {
-      console.log(data);
       axios.post(`${config.apiUrl}/login`, data).then(
-        (result) => console.log(result),
+        (response: any) => {
+          try {
+            const token = response.data.token;
+            token && setToken(token);
+            history.push("/profile");
+          } catch (e) {
+            console.log(e);
+          }
+        },
         (error) => console.log(error)
       );
     },
   });
+  const isSubmitBtnActive =
+    !!formik.touched.login && !formik.errors.login && !formik.errors.password;
   return (
     <div className={styles.formContainer}>
       <div className={styles.formContent}>
@@ -61,7 +73,9 @@ export const Login = () => {
           )}
           <button
             type="submit"
-            className={`${styles.button} ${styles.submitButton}`}
+            className={`${styles.button} ${styles.submitButton} ${
+              isSubmitBtnActive && styles.active
+            }`}
           >
             Continue
           </button>

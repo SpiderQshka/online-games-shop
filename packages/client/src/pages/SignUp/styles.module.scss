@@ -34,33 +34,33 @@
         &::placeholder {
           color: $primary-color;
         }
-        &:last-of-type {
-          margin-bottom: 0;
+        &:first-of-type {
+          margin-top: 0;
         }
       }
       .errorMsg {
         color: $error-color;
       }
       .button {
-        cursor: pointer;
-        padding: 10px 15px;
+        padding: 20px 25px;
         outline: none;
         border-radius: 4px;
         margin: 30px 0 0;
         color: white;
-        border: 1px solid;
+        border: none;
         text-transform: uppercase;
+        transition: 0.7s;
         &.submitButton {
           background-color: $secondary-color;
           border-color: $secondary-color;
           &.active {
-            background-color: $accent-color;
-            border-color: $accent-color;
+            cursor: pointer;
+            background-color: $accent-color-dark;
+            &:hover,
+            &:focus {
+              background-color: $accent-color-light;
+            }
           }
-        }
-        &.googleButton {
-          background-color: $error-color;
-          border-color: $error-color;
         }
       }
     }

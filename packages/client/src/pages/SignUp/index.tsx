@@ -1,27 +1,34 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import styles from "./styles.module.scss";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
+import { config } from "config";
+import { useAuth } from "context/auth";
 
 interface SignUpFormValues {
   name: string;
-  email: string;
+  login: string;
   password: string;
   passwordConfirmation: string;
 }
 
 export const SignUp = () => {
+  const { setToken } = useAuth();
+  const history = useHistory();
   const formik = useFormik({
     initialValues: {
       name: "",
-      email: "",
+      login: "",
       password: "",
       passwordConfirmation: "",
     } as SignUpFormValues,
     validationSchema: Yup.object({
       name: Yup.string().required("Required"),
-      email: Yup.string().email("Invalid email adress").required("Required"),
+      login: Yup.string()
+        .min(5, "Must be at least 5 characters")
+        .required("Required"),
       password: Yup.string()
         .min(5, "Must be at least 5 characters")
         .required("Required"),
@@ -29,10 +36,27 @@ export const SignUp = () => {
         .oneOf([Yup.ref("password")], "Passwords must match")
         .required("Required"),
     }),
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: (data) => {
+      axios.post(`${config.apiUrl}/login`, data).then(
+        (response: any) => {
+          try {
+            const token = response.data.token;
+            token && setToken(token);
+            history.push("/profile");
+          } catch (e) {
+            console.log(e);
+          }
+        },
+        (error) => console.log(error)
+      );
     },
   });
+  const isSubmitBtnActive =
+    !!formik.touched.login &&
+    !formik.errors.login &&
+    !formik.errors.password &&
+    !formik.errors.passwordConfirmation &&
+    !formik.errors.name;
   return (
     <div className={styles.formContainer}>
       <div className={styles.formContent}>
@@ -52,15 +76,15 @@ export const SignUp = () => {
           )}
           <input
             type="text"
-            name="email"
-            placeholder="Your email"
-            className={`${styles.input} ${styles.emailInput}`}
+            name="login"
+            placeholder="Your login"
+            className={`${styles.input} ${styles.loginInput}`}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            value={formik.values.email}
+            value={formik.values.login}
           />
-          {!!formik.touched.email && !!formik.errors.email && (
-            <p className={styles.errorMsg}>{formik.errors.email}</p>
+          {!!formik.touched.login && !!formik.errors.login && (
+            <p className={styles.errorMsg}>{formik.errors.login}</p>
           )}
           <input
             type="password"
@@ -93,7 +117,9 @@ export const SignUp = () => {
             )}
           <button
             type="submit"
-            className={`${styles.button} ${styles.submitButton}`}
+            className={`${styles.button} ${styles.submitButton} ${
+              isSubmitBtnActive && styles.active
+            }`}
           >
             Continue
           </button>
