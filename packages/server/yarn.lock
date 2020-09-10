@@ -46,6 +46,13 @@
     path-to-regexp "^1.1.1"
     urijs "^1.19.0"
 
+"@rauschma/stringio@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@rauschma/stringio/-/stringio-1.4.0.tgz#0b667bea726652a10a48dfc1dadc89e0ec51e269"
+  integrity sha512-3uor2f/MXZkmX5RJf8r+OC3WvZVzpSme0yyL0rQDPEnatE02qRcqwEwnsgpgriEck0S/n4vWtUd6tTtrJwk45Q==
+  dependencies:
+    "@types/node" "^10.0.3"
+
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
@@ -260,6 +267,16 @@
   version "14.6.1"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.6.1.tgz#fdf6f6c6c73d3d8eee9c98a9a0485bc524b048d7"
   integrity sha512-HnYlg/BRF8uC1FyKRFZwRaCPTPYKa+6I8QiUZFLredaGOou481cgFS4wKRFyKvQtX8xudqkSdBczJHIYSQYKrQ==
+
+"@types/node@^10.0.3":
+  version "10.17.30"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.17.30.tgz#20556a0d7f62b83e163973a6cd640af636d3dd3b"
+  integrity sha512-euU8QLX0ipj+5mOYa4ZqZoTv+53BY7yTg9I2ZIhDXgiI3M+0n4mdAt9TQCuvxVAgU179g8OsRLaBt0qEi0T6xA==
+
+"@types/node@^14.0.27":
+  version "14.6.4"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.6.4.tgz#a145cc0bb14ef9c4777361b7bbafa5cf8e3acb5a"
+  integrity sha512-Wk7nG1JSaMfMpoMJDKUsWYugliB2Vy55pdjLpmLixeyMi7HizW2I/9QoxsPCkXl3dO+ZOVqPumKaDUv5zJu2uQ==
 
 "@types/passport-jwt@^3.0.3":
   version "3.0.3"
@@ -2331,6 +2348,14 @@ node-pre-gyp@0.15.0:
     rimraf "^2.6.1"
     semver "^5.3.0"
     tar "^4.4.2"
+
+node-ts@^5.0.8:
+  version "5.0.8"
+  resolved "https://registry.yarnpkg.com/node-ts/-/node-ts-5.0.8.tgz#a23015c551a5febcb2ebc53ad8948605fb61dfa0"
+  integrity sha512-DC9OTETk5Apv1sfZX4r8T/MWAR579PKxRmkX+EyRBtsqiV35tzHZwIdTGRVA5AQKGireYo7Ahhy/xBhUacnSJg==
+  dependencies:
+    "@rauschma/stringio" "^1.4.0"
+    "@types/node" "^14.0.27"
 
 node@^14.8.0:
   version "14.8.0"

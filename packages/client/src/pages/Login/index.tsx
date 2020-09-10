@@ -1,13 +1,14 @@
 import React from "react";
-import { Link, Redirect, useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import styles from "./styles.module.scss";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { config } from "config";
 import { useAuth } from "context/auth";
+import { useApi } from "context/api";
 
-interface LoginFormValues {
+export interface LoginFormValues {
   login: string;
   password: string;
 }
@@ -15,6 +16,7 @@ interface LoginFormValues {
 export const Login = () => {
   const { setToken } = useAuth();
   const history = useHistory();
+  const { login } = useApi();
   const formik = useFormik({
     initialValues: { login: "", password: "" } as LoginFormValues,
     validationSchema: Yup.object({
@@ -26,18 +28,25 @@ export const Login = () => {
         .required("Required"),
     }),
     onSubmit: (data) => {
-      axios.post(`${config.apiUrl}/login`, data).then(
-        (response: any) => {
-          try {
-            const token = response.data.token;
-            token && setToken(token);
-            history.push("/profile");
-          } catch (e) {
-            console.log(e);
-          }
-        },
-        (error) => console.log(error)
-      );
+      login(data).then((response) => {
+        if (response.error) console.log(response.error);
+        else {
+          setToken(response.token as string);
+          history.push("/profile");
+        }
+      });
+      // axios.post(`${config.apiUrl}/login`, data).then(
+      //   (response: any) => {
+      //     try {
+      //       const token = response.data.token;
+      //       token && setToken(token);
+      //       history.push("/profile");
+      //     } catch (e) {
+      //       console.log(e);
+      //     }
+      //   },
+      //   (error) => console.log(error)
+      // );
     },
   });
   const isSubmitBtnActive =

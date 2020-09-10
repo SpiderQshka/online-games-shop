@@ -1,6 +1,8 @@
 import React from "react";
 
-export const Profile: React.FunctionComponent<any> = (props) => {
+interface IProfileProps {}
+
+export const Profile: React.FunctionComponent<IProfileProps> = (props) => {
   console.log(props);
 
   return <>Profile</>;

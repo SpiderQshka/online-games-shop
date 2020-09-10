@@ -6,6 +6,8 @@ import { AuthContext } from "./context/auth";
 import "./styles/reset.scss";
 import { PrivateRoute } from "components/PrivateRoute";
 import { Profile } from "pages/Profile";
+import { ApiContext } from "context/api";
+import { API } from "utils/api";
 
 function App() {
   const [token, setAuthToken] = useState(window.localStorage.getItem("token"));
@@ -16,14 +18,16 @@ function App() {
   };
   return (
     <AuthContext.Provider value={{ setToken, token }}>
-      <Router>
-        <Switch>
-          <Route path="/login" component={Login} />
-          <Route path="/signup" component={SignUp} />
-          <PrivateRoute path="/profile" component={Profile} />
-          {/* <Route component={() => <Redirect to="/profile" />} /> */}
-        </Switch>
-      </Router>
+      <ApiContext.Provider value={{ ...API }}>
+        <Router>
+          <Switch>
+            <Route path="/login" component={Login} />
+            <Route path="/signup" component={SignUp} />
+            <PrivateRoute path="/profile" component={Profile} />
+            {/* <Route component={() => <Redirect to="/profile" />} /> */}
+          </Switch>
+        </Router>
+      </ApiContext.Provider>
     </AuthContext.Provider>
   );
 }
