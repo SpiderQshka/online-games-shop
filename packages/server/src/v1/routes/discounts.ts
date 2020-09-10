@@ -40,12 +40,4 @@ router.route({
   handler: discountsController.put,
 });
 
-router.route({
-  method: "delete",
-  path: "/api/v1/discounts/:id",
-  validate: {},
-  pre: checkAdmin,
-  handler: discountsController.delete,
-});
-
 export default router.middleware();

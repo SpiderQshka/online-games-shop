@@ -41,12 +41,4 @@ router.route({
   handler: usersController.put,
 });
 
-router.route({
-  method: "delete",
-  path: "/api/v1/users/:id",
-  validate: {},
-  pre: checkAuth,
-  handler: usersController.delete,
-});
-
 export default router.middleware();

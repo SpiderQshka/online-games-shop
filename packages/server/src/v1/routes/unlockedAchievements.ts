@@ -42,12 +42,4 @@ router.route({
   handler: unlockedAchievementsController.put,
 });
 
-router.route({
-  method: "delete",
-  path: "/api/v1/unlockedAchievements/:id",
-  validate: {},
-  pre: checkAuth,
-  handler: unlockedAchievementsController.delete,
-});
-
 export default router.middleware();

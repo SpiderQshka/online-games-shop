@@ -40,12 +40,4 @@ router.route({
   handler: gamesController.put,
 });
 
-router.route({
-  method: "delete",
-  path: "/api/v1/games/:id",
-  validate: {},
-  pre: checkAdmin,
-  handler: gamesController.delete,
-});
-
 export default router.middleware();

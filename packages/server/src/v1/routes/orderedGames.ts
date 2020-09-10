@@ -42,12 +42,4 @@ router.route({
   handler: orderedGamesController.put,
 });
 
-router.route({
-  method: "delete",
-  path: "/api/v1/orderedGames/:id",
-  validate: {},
-  pre: checkAuth,
-  handler: orderedGamesController.delete,
-});
-
 export default router.middleware();

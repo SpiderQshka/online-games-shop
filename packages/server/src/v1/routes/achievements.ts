@@ -40,12 +40,4 @@ router.route({
   handler: achievementsController.put,
 });
 
-router.route({
-  method: "delete",
-  path: "/api/v1/achievements/:id",
-  validate: {},
-  pre: checkAdmin,
-  handler: achievementsController.delete,
-});
-
 export default router.middleware();

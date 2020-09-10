@@ -11,8 +11,8 @@ interface IAuthController {
 }
 
 export const authController: IAuthController = {
-  login: async (ctx, next) => {
-    await passport.authenticate("local", (err, user) => {
+  login: (ctx, next) =>
+    passport.authenticate("local", (err, user) => {
       if (err) ctx.throw(400, "Wrong credential provided");
 
       if (!process.env.JWT_SECRET_KEY)
@@ -24,6 +24,5 @@ export const authController: IAuthController = {
       );
 
       ctx.body = { user, token };
-    })(ctx, next);
-  },
+    })(ctx, next),
 };

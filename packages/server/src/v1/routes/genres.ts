@@ -40,12 +40,4 @@ router.route({
   handler: genresController.put,
 });
 
-router.route({
-  method: "delete",
-  path: "/api/v1/genres/:id",
-  validate: {},
-  pre: checkAdmin,
-  handler: genresController.delete,
-});
-
 export default router.middleware();

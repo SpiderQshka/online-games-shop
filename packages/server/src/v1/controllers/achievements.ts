@@ -10,76 +10,61 @@ interface IAchievementsController {
   getAll: Middleware;
   put: Middleware;
   post: Middleware;
-  delete: Middleware;
 }
 
 export const achievementsController: IAchievementsController = {
   get: async (ctx) => {
-    let response;
-
     try {
-      response = await Achievement.query().findById(ctx.params.id);
+      const response = await Achievement.query().findById(ctx.params.id);
+      if (!response) ctx.throw(404);
+      ctx.body = response;
     } catch (e) {
-      ctx.throw(400, "Bad request");
+      switch (e.status) {
+        case 404:
+          ctx.throw(
+            404,
+            `Achievement with id '${ctx.params.id}' was not found`
+          );
+        default:
+          ctx.throw(400, "Bad request");
+      }
     }
-
-    if (!response)
-      ctx.throw(404, `Achievement with id '${ctx.params.id}' was not found`);
-
-    ctx.body = response;
   },
   getAll: async (ctx) => {
-    let response;
-
-    try {
-      response = await Achievement.query();
-    } catch (e) {
-      ctx.throw(500, "Server error");
-    }
+    const response = await Achievement.query();
 
     if (!response) ctx.throw(404, `No achievements found`);
 
     ctx.body = response;
   },
   put: async (ctx) => {
-    let response;
-
     try {
-      response = await Achievement.query()
+      const response = await Achievement.query()
         .findById(ctx.params.id)
         .patchAndFetchById(ctx.params.id, ctx.request.body);
+
+      if (!response) ctx.throw(404);
+
+      ctx.body = response;
     } catch (e) {
-      ctx.throw(400, "Bad request");
+      switch (e.status) {
+        case 404:
+          ctx.throw(
+            404,
+            `Achievement with id '${ctx.params.id}' was not found`
+          );
+        default:
+          ctx.throw(400, "Bad request");
+      }
     }
-
-    if (!response)
-      ctx.throw(404, `Achievement with id '${ctx.params.id}' was not found`);
-
-    ctx.body = response;
   },
   post: async (ctx) => {
-    let response;
-
     try {
-      response = await Achievement.query().insert(ctx.request.body);
+      const response = await Achievement.query().insert(ctx.request.body);
+
+      ctx.body = response;
     } catch (e) {
       ctx.throw(400, "Bad request");
     }
-
-    ctx.body = response;
-  },
-  delete: async (ctx) => {
-    let response;
-
-    try {
-      response = await Achievement.query().deleteById(ctx.params.id);
-    } catch (e) {
-      ctx.throw(400, "Bad request");
-    }
-
-    if (!response)
-      ctx.throw(404, `Achievement with id '${ctx.params.id}' was not found`);
-
-    ctx.body = `${response} rows deleted`;
   },
 };

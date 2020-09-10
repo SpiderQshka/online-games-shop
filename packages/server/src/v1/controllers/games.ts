@@ -10,76 +10,59 @@ interface IGamesController {
   getAll: Middleware;
   put: Middleware;
   post: Middleware;
-  delete: Middleware;
 }
 
 export const gamesController: IGamesController = {
   get: async (ctx) => {
-    let response;
-
     try {
-      response = await Game.query().findById(ctx.params.id);
+      const response = await Game.query().findById(ctx.params.id);
+
+      if (!response) ctx.throw(404);
+
+      ctx.body = response;
     } catch (e) {
-      ctx.throw(400, "Bad request");
+      switch (e.status) {
+        case 404:
+          ctx.throw(404, `Game with id '${ctx.params.id}' was not found`);
+
+        default:
+          ctx.throw(400, "Bad request");
+      }
     }
-
-    if (!response)
-      ctx.throw(404, `Game with id '${ctx.params.id}' was not found`);
-
-    ctx.body = response;
   },
   getAll: async (ctx) => {
-    let response;
-
-    try {
-      response = await Game.query();
-    } catch (e) {
-      ctx.throw(500, "Server error", { ...e });
-    }
+    const response = await Game.query();
 
     if (!response) ctx.throw(404, `No games found`);
 
     ctx.body = response;
   },
   put: async (ctx) => {
-    let response;
-
     try {
-      response = await Game.query()
+      const response = await Game.query()
         .findById(ctx.params.id)
         .patchAndFetchById(ctx.params.id, ctx.request.body);
+
+      if (!response) ctx.throw(404);
+
+      ctx.body = response;
     } catch (e) {
-      ctx.throw(400, "Bad request");
+      switch (e.status) {
+        case 404:
+          ctx.throw(404, `Game with id '${ctx.params.id}' was not found`);
+
+        default:
+          ctx.throw(400, "Bad request");
+      }
     }
-
-    if (!response)
-      ctx.throw(404, `Game with id '${ctx.params.id}' was not found`);
-
-    ctx.body = response;
   },
   post: async (ctx) => {
-    let response;
-
     try {
-      response = await Game.query().insert(ctx.request.body);
+      const response = await Game.query().insert(ctx.request.body);
+
+      ctx.body = response;
     } catch (e) {
       ctx.throw(400, "Bad request");
     }
-
-    ctx.body = response;
-  },
-  delete: async (ctx) => {
-    let response;
-
-    try {
-      response = await Game.query().deleteById(ctx.params.id);
-    } catch (e) {
-      ctx.throw(400, "Bad request");
-    }
-
-    if (!response)
-      ctx.throw(404, `Game with id '${ctx.params.id}' was not found`);
-
-    ctx.body = `${response} rows deleted`;
   },
 };
