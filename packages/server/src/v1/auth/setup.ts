@@ -2,6 +2,7 @@ import passport from "koa-passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import { User } from "models/User";
+import { checkPassword } from "models/helpers";
 
 passport.use(
   new LocalStrategy(
@@ -14,8 +15,8 @@ passport.use(
       User.query()
         .findOne({ login })
         .then((user) => {
-          if (!user || !User.checkPassword(password, user.password))
-            return done(true, false, { message: "(" });
+          if (!user || !checkPassword(password, user.password))
+            return done(true, false);
           return done(null, user);
         });
     }
@@ -32,7 +33,7 @@ passport.use(
     User.query()
       .findById(payload.id)
       .then((user) => {
-        if (!user) return done(true, null, { message: "User not found" });
+        if (!user) return done(true, null);
         return done(null, user);
       });
   })

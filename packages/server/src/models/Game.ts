@@ -8,7 +8,7 @@ export class Game extends Model {
   ageRating!: number;
   price!: number;
   numberOfPhysicalCopies!: number | null;
-  gameCreatorId!: string;
+  gameCreatorId!: number;
   static tableName = "games";
   static get jsonSchema() {
     return {
@@ -26,14 +26,4 @@ export class Game extends Model {
       },
     };
   }
-  // static relationMappings = {
-  //   gameCreatorId: {
-  //     relation: Model.BelongsToOneRelation,
-  //     modelClass: GameCreator,
-  //     join: {
-  //       from: "games.gameCreatorId",
-  //       to: "game_creators.id",
-  //     },
-  //   },
-  // };
 }

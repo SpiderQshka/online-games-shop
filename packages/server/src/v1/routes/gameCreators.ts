@@ -1,6 +1,7 @@
 import koaRouter from "koa-joi-router";
 import { gameCreatorsController } from "../controllers/gameCreators";
 import { gameCreatorsRoutesValidation } from "../routes-validation/gameCreators";
+import { checkAdmin } from "v1/auth";
 const router = koaRouter();
 
 router.route({
@@ -10,6 +11,7 @@ router.route({
     type: "json",
     body: gameCreatorsRoutesValidation.post,
   },
+  pre: checkAdmin,
   handler: gameCreatorsController.post,
 });
 
@@ -34,14 +36,8 @@ router.route({
     type: "json",
     body: gameCreatorsRoutesValidation.put,
   },
+  pre: checkAdmin,
   handler: gameCreatorsController.put,
-});
-
-router.route({
-  method: "delete",
-  path: "/api/v1/gameCreators/:id",
-  validate: {},
-  handler: gameCreatorsController.delete,
 });
 
 export default router.middleware();

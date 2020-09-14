@@ -1,7 +1,7 @@
 import { Middleware } from "koa";
-import knex from "../../db/knex";
+import knex from "db/knex";
 import { Model } from "objection";
-import { Achievement } from "../../models/Achievement";
+import { Achievement } from "models/Achievement";
 
 Model.knex(knex);
 
@@ -10,40 +10,61 @@ interface IAchievementsController {
   getAll: Middleware;
   put: Middleware;
   post: Middleware;
-  delete: Middleware;
 }
 
 export const achievementsController: IAchievementsController = {
   get: async (ctx) => {
-    const result = await Achievement.query().findById(ctx.params.id);
-
-    ctx.body = result;
+    try {
+      const response = await Achievement.query().findById(ctx.params.id);
+      if (!response) ctx.throw(404);
+      ctx.body = response;
+    } catch (e) {
+      switch (e.status) {
+        case 404:
+          ctx.throw(
+            404,
+            `Achievement with id '${ctx.params.id}' was not found`
+          );
+        default:
+          ctx.throw(400, "Bad request");
+      }
+    }
   },
   getAll: async (ctx) => {
-    const result = await Achievement.query();
+    const response = await Achievement.query();
 
-    ctx.body = result;
+    if (!response) ctx.throw(404, `No achievements found`);
+
+    ctx.body = response;
   },
   put: async (ctx) => {
-    const body = ctx.request.body;
+    try {
+      const response = await Achievement.query()
+        .findById(ctx.params.id)
+        .patchAndFetchById(ctx.params.id, ctx.request.body);
 
-    const result = await Achievement.query()
-      .findById(ctx.params.id)
-      .patchAndFetchById(ctx.params.id, body);
+      if (!response) ctx.throw(404);
 
-    ctx.body = result;
+      ctx.body = response;
+    } catch (e) {
+      switch (e.status) {
+        case 404:
+          ctx.throw(
+            404,
+            `Achievement with id '${ctx.params.id}' was not found`
+          );
+        default:
+          ctx.throw(400, "Bad request");
+      }
+    }
   },
   post: async (ctx) => {
-    const body = ctx.request.body;
+    try {
+      const response = await Achievement.query().insert(ctx.request.body);
 
-    const result = await Achievement.query().insert({
-      ...body,
-    });
-
-    ctx.body = result;
-  },
-  delete: async (ctx) => {
-    const result = await Achievement.query().deleteById(ctx.params.id);
-    ctx.body = result;
+      ctx.body = response;
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
   },
 };

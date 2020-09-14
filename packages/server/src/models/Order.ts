@@ -11,7 +11,7 @@ export class Order extends Model {
       required: ["createdAt", "price"],
       properties: {
         id: { type: "integer" },
-        createdAt: { type: "string", format: "date" },
+        createdAt: { type: "date" },
         price: { type: "number" },
       },
     };
