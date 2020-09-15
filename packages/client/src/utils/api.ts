@@ -10,9 +10,11 @@ export const API: IApi = {
         console.log(response);
         return { response: {} as IOrderFromApi };
       })
-      .catch((error: IApiError) => {
-        console.log(error);
-        return { response: null, error: {} as IApiError };
+      .catch((error) => {
+        return {
+          response: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
       }),
   login: (data) =>
     axios
@@ -21,8 +23,27 @@ export const API: IApi = {
         console.log(response);
         return { token: response.data.token };
       })
-      .catch((error: IApiError) => {
-        console.log(error);
-        return { token: null, error: {} as IApiError };
+      .catch((error) => {
+        return {
+          token: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  register: (data) =>
+    axios
+      .post(`${config.apiUrl}/users`, {
+        login: data.login,
+        password: data.password,
+      })
+      .then((response) => {
+        return { token: response.data.token };
+      })
+      .catch((error) => {
+        console.log(error.request);
+
+        return {
+          token: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
       }),
 };

@@ -1,31 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import styles from "./styles.module.scss";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
-import { config } from "config";
 import { useAuth } from "context/auth";
+import { useApi } from "context/api";
 
-interface SignUpFormValues {
-  name: string;
+export interface SignUpFormValues {
   login: string;
   password: string;
   passwordConfirmation: string;
 }
 
 export const SignUp = () => {
+  const [serverError, setServerError] = useState<string | null>(null);
   const { setToken } = useAuth();
+  const { register } = useApi();
   const history = useHistory();
   const formik = useFormik({
     initialValues: {
-      name: "",
       login: "",
       password: "",
       passwordConfirmation: "",
     } as SignUpFormValues,
     validationSchema: Yup.object({
-      name: Yup.string().required("Required"),
       login: Yup.string()
         .min(5, "Must be at least 5 characters")
         .required("Required"),
@@ -37,43 +35,25 @@ export const SignUp = () => {
         .required("Required"),
     }),
     onSubmit: (data) => {
-      axios.post(`${config.apiUrl}/login`, data).then(
-        (response: any) => {
-          try {
-            const token = response.data.token;
-            token && setToken(token);
-            history.push("/profile");
-          } catch (e) {
-            console.log(e);
-          }
-        },
-        (error) => console.log(error)
-      );
+      register(data).then((response) => {
+        if (response.error) setServerError(response.error.msg);
+        else {
+          setToken(response.token as string);
+          history.push("/profile");
+        }
+      });
     },
   });
   const isSubmitBtnActive =
     !!formik.touched.login &&
     !formik.errors.login &&
     !formik.errors.password &&
-    !formik.errors.passwordConfirmation &&
-    !formik.errors.name;
+    !formik.errors.passwordConfirmation;
   return (
     <div className={styles.formContainer}>
       <div className={styles.formContent}>
         <h2 className={styles.header}>Sign Up</h2>
         <form onSubmit={formik.handleSubmit} className={styles.form}>
-          <input
-            type="text"
-            name="name"
-            placeholder="Your name"
-            className={`${styles.input} ${styles.nameInput}`}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.name}
-          />
-          {!!formik.touched.name && !!formik.errors.name && (
-            <p className={styles.errorMsg}>{formik.errors.name}</p>
-          )}
           <input
             type="text"
             name="login"
@@ -123,6 +103,7 @@ export const SignUp = () => {
           >
             Continue
           </button>
+          {!!serverError && <p className={styles.errorMsg}>{serverError}</p>}
         </form>
         <div className={styles.links}>
           <Link className={styles.link} to={"/login"}>

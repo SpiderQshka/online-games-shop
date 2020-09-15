@@ -7,6 +7,9 @@ export interface IApi {
   login: (
     data: LoginFormValues
   ) => Promise<{ token: string | null; error?: IApiError }>;
+  register: (
+    data: LoginFormValues
+  ) => Promise<{ token: string | null; error?: IApiError }>;
 }
 
 export interface IApiError {

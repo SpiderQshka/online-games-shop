@@ -1,10 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import styles from "./styles.module.scss";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
-import { config } from "config";
 import { useAuth } from "context/auth";
 import { useApi } from "context/api";
 
@@ -14,6 +12,7 @@ export interface LoginFormValues {
 }
 
 export const Login = () => {
+  const [serverError, setServerError] = useState<string | null>(null);
   const { setToken } = useAuth();
   const history = useHistory();
   const { login } = useApi();
@@ -29,24 +28,12 @@ export const Login = () => {
     }),
     onSubmit: (data) => {
       login(data).then((response) => {
-        if (response.error) console.log(response.error);
+        if (response.error) setServerError(response.error.msg);
         else {
           setToken(response.token as string);
           history.push("/profile");
         }
       });
-      // axios.post(`${config.apiUrl}/login`, data).then(
-      //   (response: any) => {
-      //     try {
-      //       const token = response.data.token;
-      //       token && setToken(token);
-      //       history.push("/profile");
-      //     } catch (e) {
-      //       console.log(e);
-      //     }
-      //   },
-      //   (error) => console.log(error)
-      // );
     },
   });
   const isSubmitBtnActive =
@@ -88,6 +75,7 @@ export const Login = () => {
           >
             Continue
           </button>
+          {!!serverError && <p className={styles.errorMsg}>{serverError}</p>}
         </form>
         <div className={styles.links}>
           <Link className={styles.link} to={"#"}>

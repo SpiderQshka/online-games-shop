@@ -1,8 +1,9 @@
 import { Middleware } from "koa";
 import knex from "db/knex";
-import { Model } from "objection";
+import { Model, UniqueViolationError } from "objection";
 import { User } from "models/User";
 import { hashPassword } from "models/helpers";
+import jwt from "jsonwebtoken";
 
 Model.knex(knex);
 
@@ -61,11 +62,19 @@ export const usersController: IUsersController = {
     try {
       const response = await User.query().insert({
         ...ctx.request.body,
-        password: hashPassword(ctx.request.body.password),
+        password: await hashPassword(ctx.request.body.password),
       });
 
-      ctx.body = response;
+      const token = jwt.sign(
+        response.toJSON(),
+        process.env.JWT_SECRET_KEY as string
+      );
+
+      ctx.body = { user: response, token };
     } catch (e) {
+      if (e instanceof UniqueViolationError)
+        ctx.throw(400, "Login is already taken");
+
       ctx.throw(400, "Bad request");
     }
   },
