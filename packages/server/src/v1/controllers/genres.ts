@@ -10,40 +10,59 @@ interface IGenresController {
   getAll: Middleware;
   put: Middleware;
   post: Middleware;
-  delete: Middleware;
 }
 
 export const genresController: IGenresController = {
   get: async (ctx) => {
-    const result = await Genre.query().findById(ctx.params.id);
+    try {
+      const response = await Genre.query().findById(ctx.params.id);
 
-    ctx.body = result;
+      if (!response) ctx.throw(404);
+
+      ctx.body = response;
+    } catch (e) {
+      switch (e.status) {
+        case 404:
+          ctx.throw(404, `Genre with id '${ctx.params.id}' was not found`);
+
+        default:
+          ctx.throw(400, "Bad request");
+      }
+    }
   },
   getAll: async (ctx) => {
-    const result = await Genre.query();
+    const response = await Genre.query();
 
-    ctx.body = result;
+    if (!response) ctx.throw(404, `No genres found`);
+
+    ctx.body = response;
   },
   put: async (ctx) => {
-    const body = ctx.request.body;
+    try {
+      const response = await Genre.query()
+        .findById(ctx.params.id)
+        .patchAndFetchById(ctx.params.id, ctx.request.body);
 
-    const result = await Genre.query()
-      .findById(ctx.params.id)
-      .patchAndFetchById(ctx.params.id, body);
+      if (!response) ctx.throw(404);
 
-    ctx.body = result;
+      ctx.body = response;
+    } catch (e) {
+      switch (e.status) {
+        case 404:
+          ctx.throw(404, `Genre with id '${ctx.params.id}' was not found`);
+
+        default:
+          ctx.throw(400, "Bad request");
+      }
+    }
   },
   post: async (ctx) => {
-    const body = ctx.request.body;
+    try {
+      const response = await Genre.query().insert(ctx.request.body);
 
-    const result = await Genre.query().insert({
-      ...body,
-    });
-
-    ctx.body = result;
-  },
-  delete: async (ctx) => {
-    const result = await Genre.query().deleteById(ctx.params.id);
-    ctx.body = result;
+      ctx.body = response;
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
   },
 };

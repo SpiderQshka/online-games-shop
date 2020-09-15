@@ -1,7 +1,7 @@
 import { Middleware } from "koa";
-import knex from "../../db/knex";
+import knex from "db/knex";
 import { Model } from "objection";
-import { UsedDiscount } from "../../models/UsedDiscount";
+import { UsedDiscount } from "models/UsedDiscount";
 
 Model.knex(knex);
 
@@ -10,40 +10,65 @@ interface IUsedDiscountsController {
   getAll: Middleware;
   put: Middleware;
   post: Middleware;
-  delete: Middleware;
 }
 
 export const usedDiscountsController: IUsedDiscountsController = {
   get: async (ctx) => {
-    const result = await UsedDiscount.query().findById(ctx.params.id);
+    try {
+      const response = await UsedDiscount.query().findById(ctx.params.id);
 
-    ctx.body = result;
+      if (!response) ctx.throw(404);
+
+      ctx.body = response;
+    } catch (e) {
+      switch (e.status) {
+        case 404:
+          ctx.throw(
+            404,
+            `Used discount with id '${ctx.params.id}' was not found`
+          );
+
+        default:
+          ctx.throw(400, "Bad request");
+      }
+    }
   },
   getAll: async (ctx) => {
-    const result = await UsedDiscount.query();
+    const response = await UsedDiscount.query();
 
-    ctx.body = result;
+    if (!response) ctx.throw(404, `No used discounts found`);
+
+    ctx.body = response;
   },
   put: async (ctx) => {
-    const body = ctx.request.body;
+    try {
+      const response = await UsedDiscount.query()
+        .findById(ctx.params.id)
+        .patchAndFetchById(ctx.params.id, ctx.request.body);
 
-    const result = await UsedDiscount.query()
-      .findById(ctx.params.id)
-      .patchAndFetchById(ctx.params.id, body);
+      if (!response) ctx.throw(404);
 
-    ctx.body = result;
+      ctx.body = response;
+    } catch (e) {
+      switch (e.status) {
+        case 404:
+          ctx.throw(
+            404,
+            `Used discount with id '${ctx.params.id}' was not found`
+          );
+
+        default:
+          ctx.throw(400, "Bad request");
+      }
+    }
   },
   post: async (ctx) => {
-    const body = ctx.request.body;
+    try {
+      const response = await UsedDiscount.query().insert(ctx.request.body);
 
-    const result = await UsedDiscount.query().insert({
-      ...body,
-    });
-
-    ctx.body = result;
-  },
-  delete: async (ctx) => {
-    const result = await UsedDiscount.query().deleteById(ctx.params.id);
-    ctx.body = result;
+      ctx.body = response;
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
   },
 };

@@ -1,7 +1,7 @@
 import { Middleware } from "koa";
-import knex from "../../db/knex";
+import knex from "db/knex";
 import { Model } from "objection";
-import { UnlockedAchievement } from "../../models/UnlockedAchievement";
+import { UnlockedAchievement } from "models/UnlockedAchievement";
 
 Model.knex(knex);
 
@@ -10,40 +10,68 @@ interface IUnlockedAchievementsController {
   getAll: Middleware;
   put: Middleware;
   post: Middleware;
-  delete: Middleware;
 }
 
 export const unlockedAchievementsController: IUnlockedAchievementsController = {
   get: async (ctx) => {
-    const result = await UnlockedAchievement.query().findById(ctx.params.id);
+    try {
+      const response = await UnlockedAchievement.query().findById(
+        ctx.params.id
+      );
 
-    ctx.body = result;
+      if (!response) ctx.throw(404);
+
+      ctx.body = response;
+    } catch (e) {
+      switch (e.status) {
+        case 404:
+          ctx.throw(
+            404,
+            `Unlocked achievement with id '${ctx.params.id}' was not found`
+          );
+
+        default:
+          ctx.throw(400, "Bad request");
+      }
+    }
   },
   getAll: async (ctx) => {
-    const result = await UnlockedAchievement.query();
+    const response = await UnlockedAchievement.query();
 
-    ctx.body = result;
+    if (!response) ctx.throw(404, `No unlocked achievements found`);
+
+    ctx.body = response;
   },
   put: async (ctx) => {
-    const body = ctx.request.body;
+    try {
+      const response = await UnlockedAchievement.query()
+        .findById(ctx.params.id)
+        .patchAndFetchById(ctx.params.id, ctx.request.body);
 
-    const result = await UnlockedAchievement.query()
-      .findById(ctx.params.id)
-      .patchAndFetchById(ctx.params.id, body);
+      if (!response) ctx.throw(404);
 
-    ctx.body = result;
+      ctx.body = response;
+    } catch (e) {
+      switch (e.status) {
+        case 404:
+          ctx.throw(
+            404,
+            `Unlocked achievement with id '${ctx.params.id}' was not found`
+          );
+
+        default:
+          ctx.throw(400, "Bad request");
+      }
+    }
   },
   post: async (ctx) => {
-    const body = ctx.request.body;
-
-    const result = await UnlockedAchievement.query().insert({
-      ...body,
-    });
-
-    ctx.body = result;
-  },
-  delete: async (ctx) => {
-    const result = await UnlockedAchievement.query().deleteById(ctx.params.id);
-    ctx.body = result;
+    try {
+      const response = await UnlockedAchievement.query().insert(
+        ctx.request.body
+      );
+      ctx.body = response;
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
   },
 };

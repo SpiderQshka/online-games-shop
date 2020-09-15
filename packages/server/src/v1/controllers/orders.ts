@@ -1,7 +1,16 @@
 import { Middleware } from "koa";
-import knex from "../../db/knex";
+import knex from "db/knex";
 import { Model } from "objection";
-import { Order } from "../../models/Order";
+import { Order } from "models/Order";
+import { OrderedGame } from "models/OrderedGame";
+import { verifyJwtToken } from "v1/auth";
+import { doesOrderRelateToUser } from "models/helpers";
+import { IOrder, IOrderedGame, IGame } from "models/types";
+import { Game } from "models/Game";
+import _ from "lodash";
+import Aigle from "aigle";
+
+Aigle.mixin(_, {});
 
 Model.knex(knex);
 
@@ -10,40 +19,153 @@ interface IOrdersController {
   getAll: Middleware;
   put: Middleware;
   post: Middleware;
-  delete: Middleware;
 }
 
 export const ordersController: IOrdersController = {
   get: async (ctx) => {
-    const result = await Order.query().findById(ctx.params.id);
+    const user = verifyJwtToken(ctx);
+    try {
+      const doesOrderRelateToCurrrentUser = await doesOrderRelateToUser(
+        ctx.params.id,
+        user.id
+      );
 
-    ctx.body = result;
+      if (!doesOrderRelateToCurrrentUser && !user.isAdmin) ctx.throw(403);
+
+      const response = await Order.query().findById(ctx.params.id);
+
+      if (!response) ctx.throw(404);
+
+      ctx.body = response;
+    } catch (e) {
+      switch (e.status) {
+        case 404:
+          ctx.throw(404, `Order with id '${ctx.params.id}' was not found`);
+
+        case 401:
+          ctx.throw(403, "Access denied");
+
+        default:
+          ctx.throw(400, "Bad request");
+      }
+    }
   },
   getAll: async (ctx) => {
-    const result = await Order.query();
+    const response = await Order.query();
 
-    ctx.body = result;
+    if (!response) ctx.throw(404, `No orders found`);
+
+    ctx.body = response;
   },
   put: async (ctx) => {
-    const body = ctx.request.body;
+    const user = verifyJwtToken(ctx);
+    try {
+      const gamesIds = ctx.request.body.games as number[];
 
-    const result = await Order.query()
-      .findById(ctx.params.id)
-      .patchAndFetchById(ctx.params.id, body);
+      const doesOrderRelateToCurrrentUser = await doesOrderRelateToUser(
+        ctx.params.id,
+        user.id
+      );
 
-    ctx.body = result;
+      if (!doesOrderRelateToCurrrentUser && !user.isAdmin) ctx.throw(403);
+
+      const games: IGame[] = _.uniqBy(
+        await Aigle.map(gamesIds, (id) => Game.query().findById(id)),
+        (game: IGame) => game.id
+      );
+
+      const price = games.reduce((prev, curr) => prev + +curr.price, 0);
+
+      const order = await Order.query().updateAndFetchById(ctx.params.id, {
+        price,
+      });
+
+      const orderedGames: IOrderedGame[] = await Aigle.map(
+        games,
+        async (game: IGame) => {
+          const orderedGame = await OrderedGame.query()
+            .where("orderId", order.id)
+            .where("gameId", game.id)
+            .where("userId", user.id)[0];
+
+          return OrderedGame.query().updateAndFetchById(orderedGame.id, {
+            gameId: game.id,
+            orderId: order.id,
+            userId: user.id,
+            price: game.price,
+          });
+        }
+      );
+      ctx.body = orderedGames;
+    } catch (e) {
+      switch (e.status) {
+        case 404:
+          ctx.throw(404, `Order with id '${ctx.params.id}' was not found`);
+
+        case 401:
+          ctx.throw(403, "Access denied");
+
+        default:
+          ctx.throw(400, "Bad request");
+      }
+    }
   },
   post: async (ctx) => {
-    const body = ctx.request.body;
+    const user = verifyJwtToken(ctx);
 
-    const result = await Order.query().insert({
-      ...body,
-    });
+    try {
+      const gamesIds: number[] = ctx.request.body.games;
 
-    ctx.body = result;
+      const games: IGame[] = _.uniqBy(
+        await Aigle.map(gamesIds, (id) => Game.query().findById(id)),
+        (game: IGame) => game.id
+      );
+
+      const price = games.reduce((prev, curr) => prev + +curr.price, 0);
+
+      const order = await Order.query().insert({
+        createdAt: new Date(),
+        price,
+      });
+
+      const orderedGames: IOrderedGame[] = await Aigle.map(
+        games,
+        async (game) =>
+          await OrderedGame.query().insert({
+            gameId: game.id,
+            orderId: order.id,
+            userId: user.id,
+            price: +game.price,
+          })
+      );
+      ctx.body = orderedGames;
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
   },
-  delete: async (ctx) => {
-    const result = await Order.query().deleteById(ctx.params.id);
-    ctx.body = result;
-  },
+  // delete: async (ctx) => {
+  //   const user = verifyJwtToken(ctx);
+
+  //   const doesOrderRelateToCurrentUser = doesOrderRelateToUser(
+  //     ctx.params.id,
+  //     user.id
+  //   );
+
+  //   if (!doesOrderRelateToCurrentUser && !user.isAdmin)
+  //     ctx.throw(403, "Access denied");
+
+  //   let response;
+
+  //   try {
+  //     await OrderedGame.query().where("orderId", ctx.params.id).delete();
+  //     response = await Order.query().deleteById(ctx.params.id);
+  //   } catch (error) {
+  //     ctx.throw(400, "Bad request");
+  //   }
+
+  //   if (!response)
+  //     ctx.throw(404, `Order with id '${ctx.params.id}' was not found`);
+
+  //   ctx.body = `${response} rows deleted`;
+  // },
 };

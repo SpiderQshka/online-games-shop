@@ -12,8 +12,8 @@ export async function seed(knex: Knex): Promise<void> {
     },
     {
       id: 2,
-      login: faker.name.findName(),
-      password: faker.internet.password(),
+      login: "login1",
+      password: await User.hashPassword("password1"),
       isAdmin: false,
     },
     {
