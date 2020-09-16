@@ -1,6 +1,6 @@
 import axios from "axios";
 import { config } from "config";
-import { IOrder, IApiError, IApi, IOrderFromApi } from "interfaces/api";
+import { IOrder, IApi, IOrderFromApi } from "interfaces/api";
 
 export const API: IApi = {
   postOrder: (order: IOrder) =>
@@ -39,8 +39,6 @@ export const API: IApi = {
         return { token: response.data.token };
       })
       .catch((error) => {
-        console.log(error.request);
-
         return {
           token: null,
           error: { msg: error.request.response, status: error.request.status },

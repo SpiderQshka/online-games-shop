@@ -1,0 +1,70 @@
+@import "../../styles/config.scss";
+
+.headerContainer {
+  background-color: $secondary-color-light;
+  height: $header-height;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .navContainer {
+    display: flex;
+    margin-left: $default-gap;
+    .logoContainer {
+      max-width: 40px;
+      margin-right: 10px;
+    }
+    .navList {
+      .navItem {
+        display: inline-block;
+        a {
+          @include primaryFont;
+          color: $primary-color-light;
+          display: flex;
+          height: $header-height;
+          align-items: center;
+          padding: 0 10px;
+          text-decoration: none;
+          text-transform: uppercase;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+  .profileContainer {
+    display: flex;
+    align-items: center;
+    .profile {
+      display: flex;
+      align-items: center;
+      margin: 0 $default-gap;
+      .iconContainer {
+        max-width: 20px;
+        margin-right: 10px;
+      }
+      .username {
+        @include primaryFont;
+        color: $primary-color-light;
+        text-transform: uppercase;
+        font-size: 14px;
+      }
+    }
+    .unauthProfile {
+      margin-left: 20px;
+      .actionBtn {
+        border: none;
+        outline: none;
+        height: $header-height;
+        padding: 0 20px;
+        color: $primary-color-light;
+        cursor: pointer;
+        text-transform: uppercase;
+        &.signUpBtn {
+          background-color: $accent-color-dark;
+        }
+        &.logInBtn {
+          background-color: inherit;
+        }
+      }
+    }
+  }
+}
