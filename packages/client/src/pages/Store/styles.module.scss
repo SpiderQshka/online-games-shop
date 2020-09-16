@@ -1,0 +1,94 @@
+@import "../../styles/config.scss";
+
+.storeContainer {
+  background-color: $secondary-color-dark;
+  padding-top: $header-height;
+  min-height: 100vh;
+  .storeContent {
+    margin: 0 auto;
+    max-width: 1200px;
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    grid-column-gap: 20px;
+    .gamesContainer {
+      .infoContainer {
+        padding: $default-gap 0;
+        .text {
+          @include primaryFont;
+          color: $primary-color;
+          margin-right: 7px;
+        }
+        .sortBySelect {
+          border: none;
+          background-color: inherit;
+          color: $primary-color-light;
+          .sortByItem {
+            @include primaryFont;
+            background-color: $secondary-color-light;
+          }
+        }
+      }
+      .gamesList {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-row-gap: 20px;
+        grid-column-gap: 10px;
+        .gameItem {
+          border-radius: 5px;
+          box-sizing: border-box;
+          .logoContainer {
+            border-radius: 5px;
+            min-height: 300px;
+            background-color: #fff;
+          }
+          .name {
+            @include primaryFont;
+            margin-top: 20px;
+            color: $primary-color-light;
+          }
+          .gameCreator {
+            @include primaryFont;
+            margin-top: 7px;
+            color: $primary-color;
+          }
+          .saleBlock {
+            margin: 20px 0;
+
+            @include primaryFont;
+            .saleSize {
+              display: inline-block;
+              color: $primary-color-light;
+              background-color: $success-color;
+              border-radius: 5px;
+              padding: 5px;
+              font-size: 12px;
+            }
+            .previousPrice {
+              color: $primary-color;
+              text-decoration: line-through;
+              margin: 0 7px;
+            }
+            .currentPrice {
+              color: $primary-color-light;
+            }
+          }
+        }
+      }
+    }
+    .filtersContainer {
+      .header {
+        @include primaryFont;
+        color: $primary-color-light;
+        padding: $default-gap 0;
+      }
+      .filterItem {
+        display: block;
+        width: 100%;
+        background-color: inherit;
+        border: none;
+        padding: 20px 0;
+        color: $primary-color-light;
+      }
+    }
+  }
+}
