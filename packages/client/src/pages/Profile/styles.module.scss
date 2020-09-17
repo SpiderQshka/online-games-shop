@@ -1,0 +1,34 @@
+@import "../../styles/config.scss";
+
+.profileContainer {
+  padding-top: $header-height;
+  background-color: $secondary-color-dark;
+  min-height: calc(100vh - #{$header-height});
+  .profileContent {
+    display: grid;
+    margin: 60px auto 0;
+    max-width: 1200px;
+    grid-template-columns: 300px 1fr;
+    grid-column-gap: 20px;
+    .menuList {
+      .menuItem {
+        background-color: $secondary-color-light;
+        border-bottom: 2px solid $secondary-color;
+        a {
+          @include primaryFont;
+          display: block;
+          padding: 20px;
+          text-decoration: none;
+          color: $primary-color-light;
+          .icon {
+            margin-right: 10px;
+          }
+        }
+      }
+    }
+    .dataContainer {
+      background-color: $secondary-color-light;
+      padding: 30px;
+    }
+  }
+}

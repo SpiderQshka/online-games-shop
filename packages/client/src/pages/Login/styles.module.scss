@@ -55,10 +55,10 @@
           border-color: $secondary-color;
           &.active {
             cursor: pointer;
-            background-color: $accent-color-dark;
+            background-color: $accent-color;
             &:hover,
             &:focus {
-              background-color: $accent-color-light;
+              background-color: $accent-color;
             }
           }
         }

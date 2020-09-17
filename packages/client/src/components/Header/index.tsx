@@ -3,9 +3,12 @@ import React from "react";
 import styles from "./styles.module.scss";
 import { SearchBar } from "../SearchBar";
 import { FaUser, FaGamepad } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
-export const Header: React.FunctionComponent = () => {
+interface HeaderProps {}
+
+export const Header: React.FunctionComponent<HeaderProps> = () => {
+  const history = useHistory();
   const { token } = useAuth();
   return (
     <div className={styles.headerContainer}>
@@ -14,14 +17,14 @@ export const Header: React.FunctionComponent = () => {
           <FaGamepad size="100%" />
         </div>
         <ul className={styles.navList}>
-          <li className={styles.navItem}>
-            <Link to="games">Games</Link>
+          <li className={`${styles.navItem}`}>
+            <Link to="/store">Store</Link>
           </li>
-          <li className={styles.navItem}>
-            <Link to="contacts">Contacts</Link>
+          <li className={`${styles.navItem}`}>
+            <Link to="/contacts">Contacts</Link>
           </li>
-          <li className={styles.navItem}>
-            <Link to="delivery">Delivery</Link>
+          <li className={`${styles.navItem}`}>
+            <Link to="/delivery">Delivery</Link>
           </li>
         </ul>
       </nav>
@@ -34,24 +37,23 @@ export const Header: React.FunctionComponent = () => {
           ]}
         />
         {token ? (
-          // <div className={styles.authProfileContent}>
-          <div className={styles.profile}>
+          <div
+            className={styles.profile}
+            onClick={() => history.push("/profile")}
+          >
             <div className={styles.iconContainer}>
               <FaUser size="100%" />
             </div>
             <span className={styles.username}>Username</span>
           </div>
         ) : (
-          // </div>
           <div className={styles.unauthProfile}>
-            {/* <div className={styles.authActions}> */}
             <button className={`${styles.actionBtn} ${styles.logInBtn}`}>
               Log In
             </button>
             <button className={`${styles.actionBtn} ${styles.signUpBtn}`}>
               Sign Up
             </button>
-            {/* </div> */}
           </div>
         )}
       </div>

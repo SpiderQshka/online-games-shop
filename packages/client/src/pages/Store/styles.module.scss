@@ -3,7 +3,7 @@
 .storeContainer {
   background-color: $secondary-color-dark;
   padding-top: $header-height;
-  min-height: 100vh;
+  min-height: calc(100vh - #{$header-height});
   .storeContent {
     margin: 0 auto;
     max-width: 1200px;

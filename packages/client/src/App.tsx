@@ -10,6 +10,7 @@ import { ApiContext } from "context/api";
 import { API } from "utils/api";
 import { Store } from "pages/Store";
 import { IconContext } from "react-icons";
+import { NotFound } from "pages/NotFound";
 
 function App() {
   const [token, setAuthToken] = useState(window.localStorage.getItem("token"));
@@ -28,6 +29,7 @@ function App() {
               <Route path="/signup" component={SignUp} />
               <PrivateRoute path="/profile" component={Profile} />
               <Route path="/store" component={Store} />
+              <Route component={NotFound} />
             </Switch>
           </Router>
         </ApiContext.Provider>

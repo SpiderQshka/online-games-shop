@@ -20,6 +20,20 @@
     .navList {
       .navItem {
         display: inline-block;
+        position: relative;
+        &::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 0;
+          height: 0;
+          transition: 0.3s;
+          top: calc(100% - 5px);
+          background-color: $accent-color;
+        }
+        &:hover::after {
+          height: 5px;
+        }
         a {
           @include primaryFont;
           color: $primary-color-light;
@@ -40,6 +54,7 @@
     .profile {
       display: flex;
       align-items: center;
+      cursor: pointer;
       margin: 0 $default-gap;
       .iconContainer {
         max-width: 20px;
@@ -63,7 +78,7 @@
         cursor: pointer;
         text-transform: uppercase;
         &.signUpBtn {
-          background-color: $accent-color-dark;
+          background-color: $accent-color;
         }
         &.logInBtn {
           background-color: inherit;
