@@ -1,19 +1,19 @@
 import Knex from "knex";
 import faker from "faker";
-import { User } from "models/User";
+import { hashPassword } from "models/helpers";
 
 export async function seed(knex: Knex): Promise<void> {
   await knex("users").insert([
     {
       id: 1,
       login: "login",
-      password: await User.hashPassword("password"),
+      password: await hashPassword("password"),
       isAdmin: true,
     },
     {
       id: 2,
       login: "login1",
-      password: await User.hashPassword("password1"),
+      password: await hashPassword("password1"),
       isAdmin: false,
     },
     {

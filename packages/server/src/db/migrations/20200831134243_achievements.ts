@@ -6,6 +6,7 @@ export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable(Models.achievements.tableName, (table) => {
     table.increments();
     table.string("name").notNullable().unique();
+    table.integer("discount").notNullable();
   });
 }
 

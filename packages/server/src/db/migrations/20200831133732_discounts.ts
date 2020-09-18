@@ -8,7 +8,7 @@ export async function up(knex: Knex): Promise<void> {
     table.date("startDate").notNullable();
     table.string("amount").notNullable();
     table.string("type").notNullable();
-    table.bigInteger("duration").notNullable();
+    table.date("endDate").notNullable();
   });
 }
 

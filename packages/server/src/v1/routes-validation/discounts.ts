@@ -9,13 +9,13 @@ interface IDiscountsRoutesValidation {
 
 export const discountsRoutesValidation: IDiscountsRoutesValidation = {
   post: {
-    startDate: Joi.date().required(),
-    duration: Joi.number().min(0).required(),
+    startDate: Joi.date().iso().required(),
+    endDate: Joi.date().iso().greater(Joi.ref("startDate")).required(),
     amount: Joi.string().required(),
   },
   put: {
-    startDate: Joi.date(),
-    duration: Joi.number(),
+    startDate: Joi.date().iso(),
+    endDate: Joi.date().iso().greater(Joi.ref("startDate")),
     amount: Joi.string(),
   },
 };

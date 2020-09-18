@@ -3,7 +3,7 @@ import { Model } from "objection";
 export class Discount extends Model {
   id!: number;
   startDate!: Date;
-  duration!: number;
+  endDate!: Date;
   amount!: number;
   type!: string;
   static tableName = "discounts";
@@ -14,7 +14,7 @@ export class Discount extends Model {
       properties: {
         id: { type: "integer" },
         startDate: { type: "date" },
-        duration: { type: "number" },
+        endDate: { type: "date" },
         amount: { type: "number" },
         type: { type: "string" },
       },

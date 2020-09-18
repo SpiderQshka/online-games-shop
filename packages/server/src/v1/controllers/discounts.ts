@@ -38,8 +38,6 @@ export const discountsController: IDiscountsController = {
     ctx.body = response;
   },
   put: async (ctx) => {
-    let response;
-
     try {
       const response = await Discount.query()
         .findById(ctx.params.id)

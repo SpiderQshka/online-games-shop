@@ -1,7 +1,7 @@
 import { Model } from "objection";
 
 export class GameCreator extends Model {
-  id!: string;
+  id!: number;
   name!: string;
   logo!: string;
   yearOfFoundation!: number;

@@ -5,6 +5,7 @@ export async function seed(knex: Knex): Promise<void> {
     {
       id: 1,
       name: "Seed db",
+      discount: 1,
     },
   ]);
 }

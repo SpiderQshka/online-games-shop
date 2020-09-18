@@ -44,4 +44,40 @@ export const API: IApi = {
           error: { msg: error.request.response, status: error.request.status },
         };
       }),
+  getGames: () =>
+    axios
+      .get(`${config.apiUrl}/games`)
+      .then((response) => {
+        return { games: response.data };
+      })
+      .catch((error) => {
+        return {
+          games: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  getGameCreators: () =>
+    axios
+      .get(`${config.apiUrl}/gameCreators`)
+      .then((response) => {
+        return { gameCreators: response.data };
+      })
+      .catch((error) => {
+        return {
+          gameCreators: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  getDiscounts: () =>
+    axios
+      .get(`${config.apiUrl}/discounts`)
+      .then((response) => {
+        return { discounts: response.data };
+      })
+      .catch((error) => {
+        return {
+          discounts: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
 };
