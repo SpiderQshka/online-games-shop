@@ -51,7 +51,7 @@
             margin-top: 7px;
             color: $primary-color;
           }
-          .saleBlock {
+          .priceBlock {
             margin: 20px 0;
 
             @include primaryFont;
@@ -80,14 +80,56 @@
         @include primaryFont;
         color: $primary-color-light;
         padding: $default-gap 0;
+        position: relative;
+        &.active {
+          .closeIcon {
+            display: inline-block;
+          }
+        }
+        .filtersAmount {
+          @include primaryFont;
+          color: $primary-color;
+          margin: 0 10px;
+        }
+        .closeIcon {
+          cursor: pointer;
+          position: absolute;
+          display: none;
+          right: 0;
+        }
       }
-      .filterItem {
+      .filtersForm {
         display: block;
         width: 100%;
         background-color: inherit;
         border: none;
         padding: 20px 0;
         color: $primary-color-light;
+        .inputGroupHeader {
+          @include primaryFont;
+          padding: 20px 0;
+          font-size: 1.2em;
+        }
+        .inputGroup {
+          @include primaryFont;
+          padding: 15px 0;
+          .inputGroupItem {
+            .label {
+              display: block;
+              cursor: pointer;
+              padding: 15px 0;
+              position: relative;
+              .input {
+                position: absolute;
+                right: 5px;
+                display: none;
+                &:checked {
+                  display: block;
+                }
+              }
+            }
+          }
+        }
       }
     }
   }

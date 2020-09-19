@@ -16,6 +16,7 @@ export const gamesRoutesValidation: IGamesRoutesValidation = {
     price: Joi.number().min(0).required(),
     numberOfPhysicalCopies: Joi.number().min(0).default(0),
     gameCreatorId: Joi.string().guid().required(),
+    createdAt: Joi.date().iso().required(),
   },
   put: {
     name: Joi.string().min(5),
@@ -25,5 +26,6 @@ export const gamesRoutesValidation: IGamesRoutesValidation = {
     price: Joi.number().min(0),
     numberOfPhysicalCopies: Joi.number().min(0).default(0),
     gameCreatorId: Joi.string().guid(),
+    createdAt: Joi.date().iso(),
   },
 };

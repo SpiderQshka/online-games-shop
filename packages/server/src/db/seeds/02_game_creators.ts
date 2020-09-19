@@ -9,5 +9,11 @@ export async function seed(knex: Knex): Promise<void> {
       logo: faker.system.filePath(),
       yearOfFoundation: faker.random.number(),
     },
+    {
+      id: 2,
+      name: faker.internet.userName(),
+      logo: faker.system.filePath(),
+      yearOfFoundation: faker.random.number(),
+    },
   ]);
 }

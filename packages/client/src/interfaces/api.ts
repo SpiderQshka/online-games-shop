@@ -10,13 +10,25 @@ export interface IApi {
   register: (
     data: LoginFormValues
   ) => Promise<{ token: string | null; error?: IApiError }>;
-  getGames: () => Promise<{ games: IGame[] | null; error?: IApiError }>;
+  getGames: () => Promise<{ games: IGame[]; error?: IApiError }>;
   getGameCreators: () => Promise<{
-    gameCreators: IGameCreator[] | null;
+    gameCreators: IGameCreator[];
     error?: IApiError;
   }>;
   getDiscounts: () => Promise<{
-    discounts: IDiscount[] | null;
+    discounts: IDiscount[];
+    error?: IApiError;
+  }>;
+  getUsedDiscounts: () => Promise<{
+    usedDiscounts: IUsedDiscount[];
+    error?: IApiError;
+  }>;
+  getGenres: () => Promise<{
+    genres: IGenre[];
+    error?: IApiError;
+  }>;
+  getUsedGenres: () => Promise<{
+    usedGenres: IUsedGenre[];
     error?: IApiError;
   }>;
 }
@@ -41,8 +53,9 @@ export interface IGame {
   description: string;
   ageRating: number;
   price: number;
-  numberOfPhysicalCopies: number | null;
+  numberOfPhysicalCopies: number;
   gameCreatorId: number;
+  creationDate: Date;
 }
 
 export interface IGameCreator {
@@ -55,7 +68,24 @@ export interface IGameCreator {
 export interface IDiscount {
   id: number;
   startDate: Date;
-  duration: number;
+  endDate: Date;
   amount: number;
   type: string;
+}
+
+export interface IUsedDiscount {
+  id: number;
+  discountId: number;
+  gameId: number;
+}
+
+export interface IGenre {
+  id: number;
+  name: string;
+}
+
+export interface IUsedGenre {
+  id: number;
+  genreId: number;
+  gameId: number;
 }

@@ -7,5 +7,25 @@ export async function seed(knex: Knex): Promise<void> {
       genreId: 1,
       gameId: 1,
     },
+    {
+      id: 2,
+      genreId: 2,
+      gameId: 2,
+    },
+    {
+      id: 3,
+      genreId: 1,
+      gameId: 2,
+    },
+    {
+      id: 4,
+      genreId: 2,
+      gameId: 3,
+    },
+    {
+      id: 5,
+      genreId: 1,
+      gameId: 4,
+    },
   ]);
 }

@@ -6,5 +6,9 @@ export async function seed(knex: Knex): Promise<void> {
       id: 1,
       name: "RPG",
     },
+    {
+      id: 2,
+      name: "Action",
+    },
   ]);
 }

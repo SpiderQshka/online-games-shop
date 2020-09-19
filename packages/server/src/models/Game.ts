@@ -9,6 +9,7 @@ export class Game extends Model {
   price!: number;
   numberOfPhysicalCopies!: number | null;
   gameCreatorId!: number;
+  creationDate!: Date;
   static tableName = "games";
   static get jsonSchema() {
     return {
@@ -23,6 +24,7 @@ export class Game extends Model {
         price: { type: "number" },
         numberOfPhysicalCopies: { type: "integer" },
         gameCreatorId: { type: "integer" },
+        creationDate: { type: "date" },
       },
     };
   }
