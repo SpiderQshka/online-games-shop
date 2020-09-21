@@ -17,6 +17,7 @@ const Profile = lazy(() => import("pages/Profile"));
 const NotFound = lazy(() => import("pages/NotFound"));
 const Store = lazy(() => import("pages/Store"));
 const Login = lazy(() => import("pages/Login"));
+const GameItem = lazy(() => import("pages/GameItem"));
 function App() {
   const [token, setAuthToken] = useState<string | null>(
     window.localStorage.getItem("token")
@@ -40,10 +41,11 @@ function App() {
                   path="/"
                   component={() => <Redirect to="/store" />}
                 />
-                <Route path="/login" component={Login} />
-                <Route path="/signup" component={SignUp} />
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/signup" component={SignUp} />
                 <PrivateRoute path="/profile" component={Profile} />
-                <Route path="/store" component={Store} />
+                <Route exact path="/store" component={Store} />
+                <Route path="/store/item/:id" component={GameItem} />
                 <Route component={NotFound} />
               </Switch>
             </Suspense>

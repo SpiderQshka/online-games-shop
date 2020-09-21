@@ -64,6 +64,19 @@ export const API: IApi = {
           error: { msg: error.request.response, status: error.request.status },
         };
       }),
+  getGame: (id: number) =>
+    axios
+      .get(`${config.apiUrl}/games/${id}`)
+      .then((response) => {
+        return { game: response.data };
+      })
+      .catch((error) => {
+        return {
+          game: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+
   getGameCreators: () =>
     axios
       .get(`${config.apiUrl}/gameCreators`)
@@ -73,6 +86,18 @@ export const API: IApi = {
       .catch((error) => {
         return {
           gameCreators: [],
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  getGameCreator: (id: number) =>
+    axios
+      .get(`${config.apiUrl}/gameCreators/${id}`)
+      .then((response) => {
+        return { gameCreator: response.data };
+      })
+      .catch((error) => {
+        return {
+          gameCreator: null,
           error: { msg: error.request.response, status: error.request.status },
         };
       }),

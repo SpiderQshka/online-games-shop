@@ -11,10 +11,14 @@ export interface IApi {
     data: LoginFormValues
   ) => Promise<{ token: string | null; error?: IApiError }>;
   getGames: () => Promise<{ games: IGame[]; error?: IApiError }>;
+  getGame: (id: number) => Promise<{ game: IGame | null; error?: IApiError }>;
   getGameCreators: () => Promise<{
     gameCreators: IGameCreator[];
     error?: IApiError;
   }>;
+  getGameCreator: (
+    id: number
+  ) => Promise<{ gameCreator: IGameCreator | null; error?: IApiError }>;
   getDiscounts: () => Promise<{
     discounts: IDiscount[];
     error?: IApiError;
@@ -69,7 +73,7 @@ export interface IGame {
   price: number;
   numberOfPhysicalCopies: number;
   gameCreatorId: number;
-  creationDate: Date;
+  creationDate: string;
 }
 
 export interface IGameCreator {
