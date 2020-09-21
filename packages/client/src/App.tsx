@@ -1,5 +1,10 @@
 import React, { useState, lazy, Suspense, ComponentType } from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
 import { AuthContext } from "./context/auth";
 import "./styles/reset.scss";
 import { PrivateRoute } from "components/PrivateRoute";
@@ -30,6 +35,11 @@ function App() {
           <Router>
             <Suspense fallback={<PageLoader />}>
               <Switch>
+                <Route
+                  exact
+                  path="/"
+                  component={() => <Redirect to="/store" />}
+                />
                 <Route path="/login" component={Login} />
                 <Route path="/signup" component={SignUp} />
                 <PrivateRoute path="/profile" component={Profile} />

@@ -1,8 +1,9 @@
 import React from "react";
 import styles from "./styles.module.scss";
+import { IAchievement } from "interfaces/api";
 
 interface AchievementsProps {
-  achievements: { name: string; discountSize: number }[];
+  achievements: IAchievement[];
 }
 
 export const Achievements: React.FunctionComponent<AchievementsProps> = ({
@@ -25,17 +26,13 @@ export const Achievements: React.FunctionComponent<AchievementsProps> = ({
                 <span className={styles.achievementName}>{el.name}</span>
                 <span
                   className={styles.achievementDiscount}
-                >{`${el.discountSize}%`}</span>
+                >{`${el.discount}%`}</span>
               </li>
             ))}
             <li className={`${styles.achievementItem} ${styles.footerItem}`}>
               <span className={styles.achievementName}>Total discount</span>
               <span className={styles.achievementDiscount}>
-                {achievements.reduce(
-                  (prev, curr) => prev + curr.discountSize,
-                  0
-                )}
-                %
+                {achievements.reduce((prev, curr) => prev + curr.discount, 0)}%
               </span>
             </li>{" "}
           </>

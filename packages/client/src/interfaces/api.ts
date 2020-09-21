@@ -39,6 +39,10 @@ export interface IApi {
     orderedGames: IOrderedGame[];
     error?: IApiError;
   }>;
+  getUserAchievements: () => Promise<{
+    achievements: IAchievement[];
+    error?: IApiError;
+  }>;
 }
 
 export interface IApiError {
@@ -52,7 +56,7 @@ export interface IOrder {
 
 export interface IOrderFromApi {
   id: number;
-  createdAt: Date;
+  createdAt: string;
   price: number;
 }
 
@@ -106,4 +110,10 @@ export interface IOrderedGame {
   userId: number;
   gameId: number;
   price: number;
+}
+
+export interface IAchievement {
+  id: number;
+  name: string;
+  discount: number;
 }

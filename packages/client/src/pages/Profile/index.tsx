@@ -5,24 +5,56 @@ import styles from "./styles.module.scss";
 import { FaStar, FaShoppingCart } from "react-icons/fa";
 import { Achievements } from "./Achievements";
 import { Orders } from "./Orders";
-import { IApiError, IOrderFromApi } from "interfaces/api";
+import { IApiError, IOrderFromApi, IGame, IAchievement } from "interfaces/api";
 import { useApi } from "context/api";
 
 interface IProfileProps {}
 
+interface IProfileOrders {
+  id: number;
+  games: IGame[];
+  createdAt: string;
+  price: number;
+}
+
 export const Profile: React.FunctionComponent<IProfileProps> = () => {
   const [error, setError] = useState<IApiError | null>(null);
-  const [orders, setOrders] = useState<IOrderFromApi[]>([]);
-  const { getUserOrderedGames } = useApi();
+  const [orders, setOrders] = useState<IProfileOrders[]>([]);
+  const [achievements, setAchievements] = useState<IAchievement[]>([]);
+  const {
+    getUserOrders,
+    getUserOrderedGames,
+    getGames,
+    getUserAchievements,
+  } = useApi();
+
   useEffect(() => {
-    getUserOrderedGames().then(({ orderedGames, error }) => {
+    const processOrders = async () => {
+      const { orders, error: ordersError } = await getUserOrders();
+      if (ordersError) setError(ordersError);
+
+      const {
+        orderedGames,
+        error: orderedGamesError,
+      } = await getUserOrderedGames();
+      if (orderedGamesError) setError(orderedGamesError);
+
+      const { games, error: gamesError } = await getGames();
+      if (gamesError) setError(gamesError);
+
+      const gamesIds = orderedGames.map((orderedGame) => orderedGame.gameId);
+      const userGames = games.filter((el) => gamesIds.includes(el.id));
+
+      setOrders(orders.map((order) => ({ ...order, games: userGames })));
+    };
+    const processAchievements = async () => {
+      const { achievements, error } = await getUserAchievements();
       if (error) setError(error);
-      else {
-        setOrders(sortGames(games, sortType));
-        setFilteredGames(sortGames(games, sortType));
-      }
-    });
-  });
+      else setAchievements(achievements);
+    };
+    processOrders();
+    processAchievements();
+  }, []);
   return (
     <>
       <Header />
@@ -46,43 +78,11 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
             <Switch>
               <Route
                 path="/profile/orders"
-                component={() => (
-                  <Orders
-                    orders={
-                      [
-                        // {
-                        //   date: "11/10/2002",
-                        //   games: [
-                        //     { name: "Game", id: 1 },
-                        //     { name: "Game 2", id: 2 },
-                        //   ],
-                        //   price: 20,
-                        // },
-                        // {
-                        //   date: "11/10/2002",
-                        //   games: [
-                        //     { name: "Game", id: 1 },
-                        //     { name: "Game 2", id: 2 },
-                        //   ],
-                        //   price: 20,
-                        // },
-                      ]
-                    }
-                  />
-                )}
+                component={() => <Orders orders={orders} />}
               />
               <Route
                 path="/profile/achievements"
-                component={() => (
-                  <Achievements
-                    achievements={
-                      [
-                        // { discountSize: 15, name: "Hey" },
-                        // { discountSize: 25, name: "Hoy" },
-                      ]
-                    }
-                  />
-                )}
+                component={() => <Achievements achievements={achievements} />}
               />
               <Route component={() => <Redirect to="/profile/orders" />} />
             </Switch>

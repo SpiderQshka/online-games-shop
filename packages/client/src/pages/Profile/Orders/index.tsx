@@ -1,11 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styles from "./styles.module.scss";
+import { IGame } from "interfaces/api";
 
 interface OredersProps {
   orders: {
-    games: { name: string; id: number }[];
-    date: string;
+    id: number;
+    games: IGame[];
+    createdAt: string;
     price: number;
   }[];
 }
@@ -24,7 +26,7 @@ export const Orders: React.FunctionComponent<OredersProps> = ({ orders }) => {
             </li>
             {orders.map((el) => (
               <li className={styles.orderItem}>
-                <span className={styles.date}>{el.date}</span>
+                <span className={styles.date}>{el.createdAt}</span>
                 <span className={styles.games}>
                   {el.games.map((el) => (
                     <Link to={`store/${el.id}`} className={styles.gameName}>

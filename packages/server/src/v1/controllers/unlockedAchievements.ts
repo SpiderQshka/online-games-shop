@@ -42,6 +42,7 @@ export const unlockedAchievementsController: IUnlockedAchievementsController = {
 
     ctx.body = response;
   },
+
   put: async (ctx) => {
     try {
       const response = await UnlockedAchievement.query()

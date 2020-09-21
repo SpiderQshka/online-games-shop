@@ -32,6 +32,14 @@ router.route({
 });
 
 router.route({
+  method: "get",
+  path: "/api/v1/unlockedAchievements",
+  validate: {},
+  pre: checkAdmin,
+  handler: unlockedAchievementsController.getAll,
+});
+
+router.route({
   method: "put",
   path: "/api/v1/unlockedAchievements/:id",
   validate: {

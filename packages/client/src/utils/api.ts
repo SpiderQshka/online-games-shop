@@ -156,6 +156,22 @@ export const API: IApi = {
           error: { msg: error.request.response, status: error.request.status },
         };
       }),
+  getUserAchievements: () =>
+    axios
+      .get(`${config.apiUrl}/my/achievements`, {
+        headers: {
+          token: window.localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        return { achievements: response.data };
+      })
+      .catch((error) => {
+        return {
+          achievements: [],
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
 };
 
 export const getHightestDiscountForGame = (
