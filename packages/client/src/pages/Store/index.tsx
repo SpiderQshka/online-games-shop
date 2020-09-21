@@ -11,7 +11,7 @@ import {
 } from "interfaces/api";
 import React, { useEffect, useRef, useState } from "react";
 import { filterGames, getHightestDiscountForGame, sortGames } from "utils/api";
-import { FaWindowClose } from "react-icons/fa";
+import { FaWindowClose, FaSadTear } from "react-icons/fa";
 import styles from "./styles.module.scss";
 
 export const Store = () => {
@@ -136,63 +136,74 @@ export const Store = () => {
                 </option>
               </select>
             </div>
-            <ul className={styles.gamesList}>
-              {filteredGames.map((game) => (
-                <li className={styles.gameItem} key={game.id}>
-                  <div className={styles.logoContainer}></div>
-                  <p className={styles.name}>{game.name}</p>
-                  <p className={styles.gameCreator}>
-                    {!!gameCreators.length
-                      ? gameCreators.filter(
-                          (el) => el.id === game.gameCreatorId
-                        )[0].name
-                      : "Loading.."}
-                  </p>
-                  <div className={styles.priceBlock}>
-                    {getHightestDiscountForGame(
-                      game.id,
-                      discounts,
-                      usedDiscounts
-                    ) && (
-                      <>
-                        <span className={styles.saleSize}>
-                          {`-${
-                            getHightestDiscountForGame(
+            {!!filteredGames.length ? (
+              <ul className={styles.gamesList}>
+                {filteredGames.map((game) => (
+                  <li className={styles.gameItem} key={game.id}>
+                    <div className={styles.logoContainer}></div>
+                    <p className={styles.name}>{game.name}</p>
+                    <p className={styles.gameCreator}>
+                      {!!gameCreators.length
+                        ? gameCreators.filter(
+                            (el) => el.id === game.gameCreatorId
+                          )[0].name
+                        : "Loading.."}
+                    </p>
+                    <div className={styles.priceBlock}>
+                      {getHightestDiscountForGame(
+                        game.id,
+                        discounts,
+                        usedDiscounts
+                      ) && (
+                        <>
+                          <span className={styles.saleSize}>
+                            {`-${
+                              getHightestDiscountForGame(
+                                game.id,
+                                discounts,
+                                usedDiscounts
+                              )?.amount
+                            }%`}
+                          </span>
+                          <span className={styles.previousPrice}>
+                            {game.price} $
+                          </span>
+                        </>
+                      )}
+
+                      <span className={styles.currentPrice}>
+                        {Math.trunc(
+                          game.price *
+                            (getHightestDiscountForGame(
                               game.id,
                               discounts,
                               usedDiscounts
-                            )?.amount
-                          }%`}
-                        </span>
-                        <span className={styles.previousPrice}>
-                          {game.price} $
-                        </span>
-                      </>
-                    )}
-
-                    <span className={styles.currentPrice}>
-                      {Math.trunc(
-                        game.price *
-                          (getHightestDiscountForGame(
-                            game.id,
-                            discounts,
-                            usedDiscounts
-                          )
-                            ? (100 -
-                                (getHightestDiscountForGame(
-                                  game.id,
-                                  discounts,
-                                  usedDiscounts
-                                )?.amount as number)) /
-                              100
-                            : 1)
-                      )}
-                      $
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                            )
+                              ? (100 -
+                                  (getHightestDiscountForGame(
+                                    game.id,
+                                    discounts,
+                                    usedDiscounts
+                                  )?.amount as number)) /
+                                100
+                              : 1)
+                        )}
+                        $
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div className={styles.notFoundBlock}>
+                <h2 className={styles.header}>
+                  Can't find any games that fit your request
+                </h2>
+                <div className={styles.iconContainer}>
+                  <FaSadTear size="100%" />
+                </div>
+              </div>
+            )}
           </div>
           <aside className={styles.filtersContainer}>
             <h5
@@ -256,4 +267,4 @@ export const Store = () => {
   );
 };
 
-//
+export default Store;

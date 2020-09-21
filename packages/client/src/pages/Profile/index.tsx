@@ -78,3 +78,5 @@ export const Profile: React.FunctionComponent<IProfileProps> = (props) => {
     </>
   );
 };
+
+export default Profile;

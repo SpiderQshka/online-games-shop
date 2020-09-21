@@ -28,6 +28,18 @@
           }
         }
       }
+      .notFoundBlock {
+        .header {
+          @include primaryFont;
+          color: $primary-color;
+          text-align: center;
+          margin: 20px 0;
+        }
+        .iconContainer {
+          max-width: 100px;
+          margin: 0 auto;
+        }
+      }
       .gamesList {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
