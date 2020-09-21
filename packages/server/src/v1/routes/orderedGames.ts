@@ -32,6 +32,14 @@ router.route({
 });
 
 router.route({
+  method: "get",
+  path: "/api/v1/my/orderedGames",
+  validate: {},
+  pre: checkAdmin,
+  handler: orderedGamesController.getMy,
+});
+
+router.route({
   method: "put",
   path: "/api/v1/orderedGames/:id",
   validate: {

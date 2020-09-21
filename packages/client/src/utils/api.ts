@@ -17,7 +17,6 @@ export const API: IApi = {
     axios
       .post(`${config.apiUrl}/orders`, order)
       .then((response) => {
-        console.log(response);
         return { response: {} as IOrderFromApi };
       })
       .catch((error) => {
@@ -30,7 +29,6 @@ export const API: IApi = {
     axios
       .post(`${config.apiUrl}/login`, data)
       .then((response) => {
-        console.log(response);
         return { token: response.data.token };
       })
       .catch((error) => {
@@ -123,6 +121,38 @@ export const API: IApi = {
       .catch((error) => {
         return {
           usedGenres: [],
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  getUserOrders: () =>
+    axios
+      .get(`${config.apiUrl}/my/orders`, {
+        headers: {
+          token: window.localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        return { orders: response.data };
+      })
+      .catch((error) => {
+        return {
+          orders: [],
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  getUserOrderedGames: () =>
+    axios
+      .get(`${config.apiUrl}/my/orderedGames`, {
+        headers: {
+          token: window.localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        return { orderedGames: response.data };
+      })
+      .catch((error) => {
+        return {
+          orderedGames: [],
           error: { msg: error.request.response, status: error.request.status },
         };
       }),

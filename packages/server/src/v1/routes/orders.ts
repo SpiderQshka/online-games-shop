@@ -32,6 +32,14 @@ router.route({
 });
 
 router.route({
+  method: "get",
+  path: "/api/v1/my/orders",
+  validate: {},
+  pre: checkAdmin,
+  handler: ordersController.getMy,
+});
+
+router.route({
   method: "put",
   path: "/api/v1/orders/:id",
   validate: {

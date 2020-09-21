@@ -31,6 +31,14 @@ export interface IApi {
     usedGenres: IUsedGenre[];
     error?: IApiError;
   }>;
+  getUserOrders: () => Promise<{
+    orders: IOrderFromApi[];
+    error?: IApiError;
+  }>;
+  getUserOrderedGames: () => Promise<{
+    orderedGames: IOrderedGame[];
+    error?: IApiError;
+  }>;
 }
 
 export interface IApiError {
@@ -43,7 +51,9 @@ export interface IOrder {
 }
 
 export interface IOrderFromApi {
-  games: number[];
+  id: number;
+  createdAt: Date;
+  price: number;
 }
 
 export interface IGame {
@@ -88,4 +98,12 @@ export interface IUsedGenre {
   id: number;
   genreId: number;
   gameId: number;
+}
+
+export interface IOrderedGame {
+  id: number;
+  orderId: number;
+  userId: number;
+  gameId: number;
+  price: number;
 }

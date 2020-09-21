@@ -79,9 +79,9 @@ export const Store = () => {
     } else removeFilters();
   };
 
-  useEffect(() => {
-    setFilteredGames(sortGames(filteredGames, sortType));
-  }, [sortType]);
+  useEffect(() => setFilteredGames(sortGames(filteredGames, sortType)), [
+    sortType,
+  ]);
 
   useEffect(() => {
     getGames().then(({ games, error }) => {

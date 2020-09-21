@@ -1,14 +1,28 @@
 import { Header } from "components/Header";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Switch, Route, Link, Redirect } from "react-router-dom";
 import styles from "./styles.module.scss";
 import { FaStar, FaShoppingCart } from "react-icons/fa";
 import { Achievements } from "./Achievements";
 import { Orders } from "./Orders";
+import { IApiError, IOrderFromApi } from "interfaces/api";
+import { useApi } from "context/api";
 
 interface IProfileProps {}
 
-export const Profile: React.FunctionComponent<IProfileProps> = (props) => {
+export const Profile: React.FunctionComponent<IProfileProps> = () => {
+  const [error, setError] = useState<IApiError | null>(null);
+  const [orders, setOrders] = useState<IOrderFromApi[]>([]);
+  const { getUserOrderedGames } = useApi();
+  useEffect(() => {
+    getUserOrderedGames().then(({ orderedGames, error }) => {
+      if (error) setError(error);
+      else {
+        setOrders(sortGames(games, sortType));
+        setFilteredGames(sortGames(games, sortType));
+      }
+    });
+  });
   return (
     <>
       <Header />

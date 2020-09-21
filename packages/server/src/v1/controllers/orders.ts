@@ -5,7 +5,7 @@ import { Order } from "models/Order";
 import { OrderedGame } from "models/OrderedGame";
 import { verifyJwtToken } from "v1/auth";
 import { doesOrderRelateToUser } from "models/helpers";
-import { IOrder, IOrderedGame, IGame } from "models/types";
+import { IOrderedGame, IGame, IOrder } from "models/types";
 import { Game } from "models/Game";
 import _ from "lodash";
 import Aigle from "aigle";
@@ -17,6 +17,7 @@ Model.knex(knex);
 interface IOrdersController {
   get: Middleware;
   getAll: Middleware;
+  getMy: Middleware;
   put: Middleware;
   post: Middleware;
 }
@@ -56,6 +57,30 @@ export const ordersController: IOrdersController = {
     if (!response) ctx.throw(404, `No orders found`);
 
     ctx.body = response;
+  },
+  getMy: async (ctx) => {
+    const user = verifyJwtToken(ctx);
+
+    try {
+      const orderedGames = await OrderedGame.query().where("userId", user.id);
+      const ordersIds = [...new Set(orderedGames.map((el) => el.orderId))];
+
+      const orders = await Aigle.map(ordersIds, (gameId: number) =>
+        Order.query().findById(gameId)
+      );
+
+      if (!orders) ctx.throw(404);
+
+      ctx.body = orders;
+    } catch (e) {
+      switch (e.status) {
+        case 404:
+          ctx.throw(404, `Orders for user with id '${user.id}' were not found`);
+
+        default:
+          ctx.throw(400, "Bad request");
+      }
+    }
   },
   put: async (ctx) => {
     const user = verifyJwtToken(ctx);

@@ -48,10 +48,16 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
           </div>
         ) : (
           <div className={styles.unauthProfile}>
-            <button className={`${styles.actionBtn} ${styles.logInBtn}`}>
+            <button
+              className={`${styles.actionBtn} ${styles.logInBtn}`}
+              onClick={() => history.push("/login")}
+            >
               Log In
             </button>
-            <button className={`${styles.actionBtn} ${styles.signUpBtn}`}>
+            <button
+              className={`${styles.actionBtn} ${styles.signUpBtn}`}
+              onClick={() => history.push("/signup")}
+            >
               Sign Up
             </button>
           </div>
