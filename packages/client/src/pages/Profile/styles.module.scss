@@ -6,7 +6,7 @@
   min-height: calc(100vh - #{$header-height});
   .profileContent {
     display: grid;
-    margin: 60px auto 0;
+    margin: 40px auto 0;
     max-width: 1200px;
     grid-template-columns: 300px 1fr;
     grid-column-gap: 20px;

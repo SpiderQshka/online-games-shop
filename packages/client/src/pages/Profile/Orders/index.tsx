@@ -25,11 +25,14 @@ export const Orders: React.FunctionComponent<OredersProps> = ({ orders }) => {
               <span className={styles.price}>Price</span>
             </li>
             {orders.map((el) => (
-              <li className={styles.orderItem}>
+              <li className={styles.orderItem} key={el.id}>
                 <span className={styles.date}>{el.createdAt}</span>
                 <span className={styles.games}>
                   {el.games.map((el) => (
-                    <Link to={`store/${el.id}`} className={styles.gameName}>
+                    <Link
+                      to={`/store/item/${el.id}`}
+                      className={styles.gameName}
+                    >
                       {el.name}
                     </Link>
                   ))}

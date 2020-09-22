@@ -22,7 +22,7 @@ export const Achievements: React.FunctionComponent<AchievementsProps> = ({
               </span>
             </li>
             {achievements.map((el) => (
-              <li className={styles.achievementItem}>
+              <li className={styles.achievementItem} key={el.id}>
                 <span className={styles.achievementName}>{el.name}</span>
                 <span
                   className={styles.achievementDiscount}

@@ -28,6 +28,10 @@
       background-color: $primary-color-dark;
       padding: 15px;
       color: $primary-color-light;
+      cursor: pointer;
+    }
+    .searchResultItem {
+      cursor: pointer;
     }
   }
 }

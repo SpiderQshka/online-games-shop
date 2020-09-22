@@ -1,4 +1,4 @@
-import React, { useState, lazy, Suspense, ComponentType } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import {
   BrowserRouter as Router,
   Switch,

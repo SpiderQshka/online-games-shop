@@ -3,31 +3,31 @@ import { Header } from "components/Header";
 import styles from "./styles.module.scss";
 import { useParams, useHistory } from "react-router-dom";
 import { useApi } from "context/api";
-import { IApiError, IGame, IGameCreator, IGenre } from "interfaces/api";
+import { IApiError, IDiscount, IGame, IGameCreator } from "interfaces/api";
+import moment from "moment";
+import { IStoreGame } from "interfaces/app";
+import { Loader } from "components/Loader";
 
 interface GameItemProps {}
-
-interface IGameForGameItem {
-  id: number;
-  name: string;
-  logo: string;
-  description: string;
-  ageRating: number;
-  price: number;
-  numberOfPhysicalCopies: number;
-  gameCreator: IGameCreator;
-  creationDate: string;
-  genres: IGenre[];
-}
 
 export const GameItem: React.FunctionComponent<GameItemProps> = () => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
-  const { getGame, getUsedGenres, getGenres, getGameCreator } = useApi();
+  const {
+    getGame,
+    getUsedGenres,
+    getGenres,
+    getGameCreator,
+    getDiscounts,
+    getUsedDiscounts,
+  } = useApi();
   const [error, setError] = useState<IApiError | null>(null);
-  const [game, setGame] = useState<IGameForGameItem | null>(null);
-  console.log(game);
+  const [game, setGame] = useState<IStoreGame | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  console.log(isLoading);
+
   useEffect(() => {
+    setIsLoading(true);
     if (isNaN(id as any)) history.push("/store");
     const processGame = async () => {
       const { game, error: gameError } = await getGame(id as any);
@@ -44,6 +44,15 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
       );
       if (gameCreatorError) setError(gameCreatorError);
 
+      const { discounts, error: discountsError } = await getDiscounts();
+      if (discountsError) setError(discountsError);
+
+      const {
+        usedDiscounts,
+        error: usedDiscountsError,
+      } = await getUsedDiscounts();
+      if (usedDiscountsError) setError(usedDiscountsError);
+
       const usedGenresIds = [
         ...new Set(
           usedGenres
@@ -56,59 +65,98 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
         usedGenresIds.includes(genre.id)
       );
 
+      const gameDiscountsIds = usedDiscounts
+        .filter((el) => el.gameId === game?.id)
+        .map((el) => el.discountId);
+
+      const gameHightestDiscount = discounts
+        .filter((el) => gameDiscountsIds.includes(el.id))
+        .reduce(
+          (prev, curr) => (prev.amount > curr.amount ? prev : curr),
+          {} as IDiscount
+        );
       setGame({
         ...(game as IGame),
         gameCreator: gameCreator as IGameCreator,
         genres: gameGenres,
-      });
+        discount: gameHightestDiscount.amount ? gameHightestDiscount : null,
+      } as IStoreGame);
+      setIsLoading(false);
     };
     processGame();
-  });
+  }, [id]);
+
   return (
     <>
       <Header />
-      <div className={styles.gameItemContainer}>
-        <div className={styles.gameItemContent}>
-          <div className={styles.gameInfoBlock}>
-            <div className={styles.gameLogo}></div>
-            <div className={styles.gameInfoContent}>
-              <h2 className={styles.name}>{game?.name}</h2>
-              <ul className={styles.gameInfoList}>
-                <li className={styles.gameInfoItem}>
-                  <span className={styles.fieldName}>Developer</span>
-                  <span className={styles.fieldValue}>
-                    {game?.gameCreator.name}
-                  </span>
-                </li>
-                <li className={styles.gameInfoItem}>
-                  <span className={styles.fieldName}>Release date</span>
-                  <span className={styles.fieldValue}>
-                    {game?.creationDate}
-                  </span>
-                </li>
-                <li className={styles.gameInfoItem}>
-                  <span className={styles.fieldName}>Genres</span>
-                  <span className={styles.fieldValue}>
-                    {game?.genres[0].name}
-                  </span>
-                </li>
-                <li className={styles.gameInfoItem}>
-                  <span className={styles.fieldName}>Age rating</span>
-                  <span className={styles.fieldValue}>{game?.ageRating}</span>
-                </li>
-              </ul>
+      {isLoading ? (
+        <div className={styles.loaderContainer}>
+          <Loader />
+        </div>
+      ) : (
+        <div className={styles.gameItemContainer}>
+          <div className={styles.gameItemContent}>
+            <div className={styles.gameInfoBlock}>
+              <div className={styles.gameLogo}></div>
+              <div className={styles.gameInfoContent}>
+                <h2 className={styles.name}>{game?.name}</h2>
+                <ul className={styles.gameInfoList}>
+                  <li className={styles.gameInfoItem}>
+                    <span className={styles.fieldName}>Developer</span>
+                    <span className={styles.fieldValue}>
+                      {game?.gameCreator.name}
+                    </span>
+                  </li>
+                  <li className={styles.gameInfoItem}>
+                    <span className={styles.fieldName}>Release date</span>
+                    <span className={styles.fieldValue}>
+                      {moment(game?.creationDate).format("DD-MM-YYYY")}
+                    </span>
+                  </li>
+                  <li className={styles.gameInfoItem}>
+                    <span className={styles.fieldName}>Genres</span>
+                    <span className={styles.fieldValue}>
+                      {game?.genres.map((genre, i) =>
+                        i ? `, ${genre.name}` : genre.name
+                      )}
+                    </span>
+                  </li>
+                  <li className={styles.gameInfoItem}>
+                    <span className={styles.fieldName}>Age rating</span>
+                    <span className={styles.fieldValue}>{game?.ageRating}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className={styles.gameDescriptionBlock}>
+              <h2 className={styles.header}>About a game</h2>
+              <p className={styles.description}>{game?.description}</p>
+            </div>
+            <div className={styles.actionsBlock}>
+              <div className={styles.priceBlock}>
+                {game?.discount && (
+                  <>
+                    <span className={styles.saleSize}>
+                      {`-${game.discount.amount}%`}
+                    </span>
+                    <span className={styles.previousPrice}>{game.price} $</span>
+                  </>
+                )}
+
+                <span className={styles.currentPrice}>
+                  {Math.trunc(
+                    (game?.price as number) *
+                      (game?.discount ? (100 - game.discount.amount) / 100 : 1)
+                  )}
+                  $
+                </span>
+              </div>
+              <button className={styles.actionBtn}>Buy now</button>
             </div>
           </div>
-
-          <div className={styles.gameDescriptionBlock}>
-            <h2 className={styles.header}>About a game</h2>
-            <p className={styles.description}>{game?.description}</p>
-          </div>
-          <div className={styles.actionsBlock}>
-            <button className={styles.actionBtn}>Buy now</button>
-          </div>
         </div>
-      </div>
+      )}
     </>
   );
 };

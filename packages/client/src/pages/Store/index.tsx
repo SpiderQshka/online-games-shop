@@ -1,18 +1,12 @@
 import { Header } from "components/Header";
 import { useApi } from "context/api";
-import {
-  IApiError,
-  IDiscount,
-  IGame,
-  IGameCreator,
-  IGenre,
-  IUsedDiscount,
-  IUsedGenre,
-} from "interfaces/api";
+import { IApiError, IDiscount, IGameCreator, IGenre } from "interfaces/api";
+import { IStoreGame } from "interfaces/app";
 import React, { useEffect, useRef, useState } from "react";
-import { filterGames, getHightestDiscountForGame, sortGames } from "utils/api";
+import { filterGames, getFilterOptions, sortGames } from "utils/api";
 import { FaWindowClose, FaSadTear } from "react-icons/fa";
 import styles from "./styles.module.scss";
+import { useHistory } from "react-router-dom";
 
 export const Store = () => {
   const {
@@ -23,27 +17,26 @@ export const Store = () => {
     getGenres,
     getUsedGenres,
   } = useApi();
-  const [games, setGames] = useState<IGame[]>([]);
+
+  const history = useHistory();
+  const formRef = useRef(null);
+
+  const [games, setGames] = useState<IStoreGame[]>([]);
   const [gameCreators, setGameCreators] = useState<IGameCreator[]>([]);
-  const [discounts, setDiscounts] = useState<IDiscount[]>([]);
-  const [usedDiscounts, setUsedDiscounts] = useState<IUsedDiscount[]>([]);
   const [genres, setGenres] = useState<IGenre[]>([]);
-  const [usedGenres, setUsedGenres] = useState<IUsedGenre[]>([]);
+
   const [error, setError] = useState<IApiError | null>(null);
   const [sortType, setSortType] = useState<"creationDate" | "alphabet">(
     "alphabet"
   );
   const [filtersAmount, setFiltersAmount] = useState<number>(0);
-  const [filteredGames, setFilteredGames] = useState<IGame[]>([]);
-
-  const formRef = useRef(null);
+  const [filteredGames, setFilteredGames] = useState<IStoreGame[]>([]);
 
   const removeFilters = () => {
     if (formRef.current) {
       const form = (formRef.current as any) as HTMLFormElement;
       const formInputs = [...form.elements] as HTMLInputElement[];
-      const checkedFormInputs = formInputs.filter((input) => input.checked);
-      checkedFormInputs.forEach((input) => (input.checked = false));
+      formInputs.forEach((input) => input.checked && (input.checked = false));
     }
     setFilteredGames(sortGames(games, sortType));
     setFiltersAmount(0);
@@ -55,26 +48,8 @@ export const Store = () => {
     const checkedFormInputs = formInputs.filter((input) => input.checked);
 
     if (checkedFormInputs.length) {
-      const filterOptions = checkedFormInputs.reduce((prev, curr) => {
-        switch (curr.type) {
-          case "radio":
-            return {
-              ...prev,
-              [curr.name]: +curr.value,
-            };
-          case "checkbox":
-            return {
-              ...prev,
-              [curr.name]: prev[curr.name]
-                ? [...prev[curr.name], +curr.value]
-                : [+curr.value],
-            };
-        }
-        return {};
-      }, {} as any);
-      setFilteredGames(
-        sortGames(filterGames(games, filterOptions, usedGenres), sortType)
-      );
+      const filterOptions = getFilterOptions(checkedFormInputs);
+      setFilteredGames(sortGames(filterGames(games, filterOptions), sortType));
       setFiltersAmount(checkedFormInputs.length);
     } else removeFilters();
   };
@@ -84,34 +59,69 @@ export const Store = () => {
   ]);
 
   useEffect(() => {
-    getGames().then(({ games, error }) => {
-      if (error) setError(error);
-      else {
-        setGames(sortGames(games, sortType));
-        setFilteredGames(sortGames(games, sortType));
-      }
-    });
-    getGameCreators().then(({ gameCreators, error }) => {
-      if (error) setError(error);
-      else setGameCreators(gameCreators);
-    });
-    getDiscounts().then(({ discounts, error }) => {
-      if (error) setError(error);
-      else setDiscounts(discounts);
-    });
-    getUsedDiscounts().then(({ usedDiscounts, error }) => {
-      if (error) setError(error);
-      else setUsedDiscounts(usedDiscounts);
-    });
-    getGenres().then(({ genres, error }) => {
-      if (error) setError(error);
-      else setGenres(genres);
-    });
-    getUsedGenres().then(({ usedGenres, error }) => {
-      if (error) setError(error);
-      else setUsedGenres(usedGenres);
-    });
+    const processAsync = async () => {
+      const { games, error: gamesError } = await getGames();
+      if (gamesError) setError(gamesError);
+
+      const {
+        gameCreators,
+        error: gameCreatorsError,
+      } = await getGameCreators();
+      if (gameCreatorsError) setError(gameCreatorsError);
+
+      const { discounts, error: discountsError } = await getDiscounts();
+      if (discountsError) setError(discountsError);
+
+      const {
+        usedDiscounts,
+        error: usedDiscountsError,
+      } = await getUsedDiscounts();
+      if (usedDiscountsError) setError(usedDiscountsError);
+
+      const { genres, error: genresError } = await getGenres();
+      if (genresError) setError(genresError);
+
+      const { usedGenres, error: useGenresError } = await getUsedGenres();
+      if (useGenresError) setError(useGenresError);
+
+      const storeGames: IStoreGame[] = games.map((game) => {
+        const gameCreator = gameCreators.filter(
+          (el) => el.id === game.gameCreatorId
+        )[0];
+        const gameGenresIds = [
+          ...new Set(
+            usedGenres
+              .filter((el) => el.gameId === game.id)
+              .map((el) => el.genreId)
+          ),
+        ];
+        const gameGenres = genres.filter((genre) =>
+          gameGenresIds.includes(genre.id)
+        );
+        const gameDiscountsIds = usedDiscounts
+          .filter((el) => el.gameId === game.id)
+          .map((el) => el.discountId);
+        const gameHightestDiscount = discounts
+          .filter((el) => gameDiscountsIds.includes(el.id))
+          .reduce(
+            (prev, curr) => (prev.amount > curr.amount ? prev : curr),
+            {} as IDiscount
+          );
+        return {
+          ...game,
+          gameCreator,
+          genres: gameGenres,
+          discount: gameHightestDiscount.amount ? gameHightestDiscount : null,
+        };
+      });
+      setGames(sortGames(storeGames, sortType));
+      setFilteredGames(sortGames(storeGames, sortType));
+      setGenres(genres);
+      setGameCreators(gameCreators);
+    };
+    processAsync();
   }, []);
+
   return (
     <>
       <Header />
@@ -139,31 +149,21 @@ export const Store = () => {
             {!!filteredGames.length ? (
               <ul className={styles.gamesList}>
                 {filteredGames.map((game) => (
-                  <li className={styles.gameItem} key={game.id}>
+                  <li
+                    className={styles.gameItem}
+                    key={game.id}
+                    onClick={() => history.push(`/store/item/${game.id}`)}
+                  >
                     <div className={styles.logoContainer}></div>
                     <p className={styles.name}>{game.name}</p>
                     <p className={styles.gameCreator}>
-                      {!!gameCreators.length
-                        ? gameCreators.filter(
-                            (el) => el.id === game.gameCreatorId
-                          )[0].name
-                        : "Loading.."}
+                      {game.gameCreator.name}
                     </p>
                     <div className={styles.priceBlock}>
-                      {getHightestDiscountForGame(
-                        game.id,
-                        discounts,
-                        usedDiscounts
-                      ) && (
+                      {game.discount && (
                         <>
                           <span className={styles.saleSize}>
-                            {`-${
-                              getHightestDiscountForGame(
-                                game.id,
-                                discounts,
-                                usedDiscounts
-                              )?.amount
-                            }%`}
+                            {`-${game.discount.amount}%`}
                           </span>
                           <span className={styles.previousPrice}>
                             {game.price} $
@@ -174,18 +174,8 @@ export const Store = () => {
                       <span className={styles.currentPrice}>
                         {Math.trunc(
                           game.price *
-                            (getHightestDiscountForGame(
-                              game.id,
-                              discounts,
-                              usedDiscounts
-                            )
-                              ? (100 -
-                                  (getHightestDiscountForGame(
-                                    game.id,
-                                    discounts,
-                                    usedDiscounts
-                                  )?.amount as number)) /
-                                100
+                            (game.discount
+                              ? (100 - game.discount.amount) / 100
                               : 1)
                         )}
                         $

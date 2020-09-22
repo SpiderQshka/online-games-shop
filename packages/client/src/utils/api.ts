@@ -1,14 +1,7 @@
 import axios from "axios";
 import { config } from "config";
-import {
-  IOrder,
-  IApi,
-  IOrderFromApi,
-  IDiscount,
-  IUsedDiscount,
-  IGame,
-  IUsedGenre,
-} from "interfaces/api";
+import { IOrder, IApi, IOrderFromApi, IGameCreator } from "interfaces/api";
+import { IStoreGame } from "interfaces/app";
 
 import _ from "lodash";
 
@@ -199,48 +192,42 @@ export const API: IApi = {
       }),
 };
 
-export const getHightestDiscountForGame = (
-  gameId: number,
-  discounts: IDiscount[],
-  usedDiscounts: IUsedDiscount[]
-) => {
-  const filteredDiscounts = discounts
-    .filter(
-      (discount) =>
-        (discount.id = usedDiscounts.filter(
-          (usedDiscount) => usedDiscount.gameId === gameId
-        )[0]?.discountId)
-    )
-    .filter((discount) => new Date(discount.endDate) > new Date());
-
-  return filteredDiscounts.length
-    ? filteredDiscounts.reduce((prev, curr) =>
-        prev.amount > curr.amount ? prev : curr
-      )
-    : null;
-};
+export const getFilterOptions = (checkedFormInputs: HTMLInputElement[]) =>
+  checkedFormInputs.reduce((prev, curr) => {
+    switch (curr.type) {
+      case "radio":
+        return {
+          ...prev,
+          [curr.name]: +curr.value,
+        };
+      case "checkbox":
+        return {
+          ...prev,
+          [curr.name]: prev[curr.name]
+            ? [...prev[curr.name], +curr.value]
+            : [+curr.value],
+        };
+    }
+    return {};
+  }, {} as any);
 
 export const filterGames = (
-  games: IGame[],
+  games: IStoreGame[],
   filterBy: {
     name?: string;
     ageRating?: number;
     price?: number;
-    gameCreatorId?: number;
+    gameCreator?: IGameCreator;
     creationDate?: Date;
     genresIds?: number[];
-  },
-  usedGenres: IUsedGenre[]
+  }
 ) =>
   games.filter((game: any) => {
     const anyFilteredBy = filterBy as any;
 
     for (let key in filterBy) {
       if (key === "genresIds") {
-        const gameGenresIds = usedGenres
-          .filter((usedGenre) => usedGenre.gameId === game.id)
-          .map((el) => el.genreId)
-          .sort();
+        const gameGenresIds = game.genres?.map((el: any) => el.id);
         if (
           !_.isEqual(
             _.intersection(gameGenresIds, filterBy.genresIds),
@@ -255,7 +242,7 @@ export const filterGames = (
   });
 
 export const sortGames = (
-  games: IGame[],
+  games: IStoreGame[],
   sortBy: "creationDate" | "alphabet"
 ) => {
   switch (sortBy) {

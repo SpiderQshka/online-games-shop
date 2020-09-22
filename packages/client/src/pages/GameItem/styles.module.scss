@@ -6,11 +6,13 @@
   min-height: calc(100vh - #{$header-height});
   .gameItemContent {
     max-width: 1200px;
-    margin: 50px auto 0;
+    margin: 0 auto;
+    padding: 40px 0;
     .gameInfoBlock {
       display: grid;
       grid-template-columns: 300px 1fr;
       grid-column-gap: 50px;
+      margin-bottom: 50px;
       .gameLogo {
         height: 400px;
         background-color: #fff;
@@ -45,5 +47,66 @@
         }
       }
     }
+    .gameDescriptionBlock {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      grid-column-gap: 50px;
+      margin-bottom: 50px;
+      .header {
+        @include primaryFont;
+        color: $primary-color-light;
+        font-size: 30px;
+      }
+      .description {
+        @include primaryFont;
+        color: $primary-color;
+        line-height: 1.6;
+        font-size: 1.1rem;
+      }
+    }
+    .actionsBlock {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      .priceBlock {
+        margin: 15px 0;
+        @include primaryFont;
+        .saleSize {
+          display: inline-block;
+          color: $primary-color-light;
+          background-color: $success-color;
+          border-radius: 5px;
+          padding: 5px;
+          font-size: 12px;
+        }
+        .previousPrice {
+          color: $primary-color;
+          text-decoration: line-through;
+          margin: 0 7px;
+        }
+        .currentPrice {
+          color: $primary-color-light;
+        }
+      }
+      .actionBtn {
+        background-color: $primary-color-light;
+        color: $secondary-color-dark;
+        border: none;
+        padding: 20px 40px;
+        border-radius: 5px;
+        @include primaryFont;
+        text-transform: uppercase;
+        outline: none;
+        cursor: pointer;
+      }
+    }
   }
+}
+.loaderContainer {
+  padding-top: $header-height;
+  background-color: $secondary-color-dark;
+  min-height: calc(100vh - #{$header-height});
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

@@ -9,7 +9,7 @@
     max-width: 1200px;
     display: grid;
     grid-template-columns: 1fr 200px;
-    grid-column-gap: 20px;
+    grid-column-gap: 40px;
     .gamesContainer {
       .infoContainer {
         padding: $default-gap 0;
@@ -48,6 +48,7 @@
         .gameItem {
           border-radius: 5px;
           box-sizing: border-box;
+          cursor: pointer;
           .logoContainer {
             border-radius: 5px;
             min-height: 300px;
@@ -65,7 +66,6 @@
           }
           .priceBlock {
             margin: 20px 0;
-
             @include primaryFont;
             .saleSize {
               display: inline-block;

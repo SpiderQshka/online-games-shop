@@ -1,15 +1,29 @@
 import { useAuth } from "context/auth";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./styles.module.scss";
 import { SearchBar } from "../SearchBar";
 import { FaUser, FaGamepad } from "react-icons/fa";
 import { Link, useHistory } from "react-router-dom";
+import { useApi } from "context/api";
+import { IApiError, IGame } from "interfaces/api";
 
 interface HeaderProps {}
 
 export const Header: React.FunctionComponent<HeaderProps> = () => {
   const history = useHistory();
   const { token } = useAuth();
+  const { getGames } = useApi();
+  const [error, setError] = useState<IApiError | null>(null);
+  const [games, setGames] = useState<IGame[]>([]);
+  useEffect(() => {
+    const processGames = async () => {
+      const { games, error } = await getGames();
+      if (error) setError(error);
+
+      setGames(games);
+    };
+    processGames();
+  });
   return (
     <div className={styles.headerContainer}>
       <nav className={styles.navContainer}>
@@ -29,13 +43,7 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
         </ul>
       </nav>
       <div className={styles.profileContainer}>
-        <SearchBar
-          games={[
-            { name: "1", id: 1 },
-            { name: "2", id: 2 },
-            { name: "12", id: 12 },
-          ]}
-        />
+        <SearchBar games={games} />
         {token ? (
           <div
             className={styles.profile}

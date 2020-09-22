@@ -10,7 +10,7 @@ import { useApi } from "context/api";
 
 interface IProfileProps {}
 
-interface IProfileOrders {
+interface IProfileOrder {
   id: number;
   games: IGame[];
   createdAt: string;
@@ -19,7 +19,7 @@ interface IProfileOrders {
 
 export const Profile: React.FunctionComponent<IProfileProps> = () => {
   const [error, setError] = useState<IApiError | null>(null);
-  const [orders, setOrders] = useState<IProfileOrders[]>([]);
+  const [orders, setOrders] = useState<IProfileOrder[]>([]);
   const [achievements, setAchievements] = useState<IAchievement[]>([]);
   const {
     getUserOrders,
