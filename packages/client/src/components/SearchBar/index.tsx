@@ -27,17 +27,17 @@ export const SearchBar: React.FunctionComponent<SearchBarProps> = ({
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search"
         onFocus={() => setIsInputActive(true)}
-        onBlur={() => setIsInputActive(false)}
+        onBlur={(e) => !e.relatedTarget && setIsInputActive(false)}
       />
       {isInputActive && !!query && (
-        <ul className={styles.searchResultsList}>
+        <ul className={styles.searchResultsList} tabIndex={0}>
           {!!filteredGames.length ? (
             filteredGames.map((game) => (
               <li
                 className={styles.searchResultItem}
                 onClick={() => {
-                  setIsInputActive(false);
                   history.push(`/store/item/${game.id}`);
+                  setIsInputActive(false);
                 }}
                 key={game.id}
               >

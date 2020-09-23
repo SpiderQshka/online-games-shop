@@ -2,7 +2,7 @@ import { useAuth } from "context/auth";
 import React, { useEffect, useState } from "react";
 import styles from "./styles.module.scss";
 import { SearchBar } from "../SearchBar";
-import { FaUser, FaGamepad } from "react-icons/fa";
+import { FaUser, FaGamepad, FaShoppingCart } from "react-icons/fa";
 import { Link, useHistory } from "react-router-dom";
 import { useApi } from "context/api";
 import { IApiError, IGame } from "interfaces/api";
@@ -23,7 +23,7 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
       setGames(games);
     };
     processGames();
-  });
+  }, []);
   return (
     <div className={styles.headerContainer}>
       <nav className={styles.navContainer}>
@@ -45,15 +45,22 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
       <div className={styles.profileContainer}>
         <SearchBar games={games} />
         {token ? (
-          <div
-            className={styles.profile}
-            onClick={() => history.push("/profile")}
-          >
-            <div className={styles.iconContainer}>
-              <FaUser size="100%" />
+          <>
+            <div
+              className={styles.profile}
+              onClick={() => history.push("/profile")}
+            >
+              <div className={styles.iconContainer}>
+                <FaUser size="100%" />
+              </div>
+              <span className={styles.username}>Username</span>
             </div>
-            <span className={styles.username}>Username</span>
-          </div>
+            <button className={styles.cartBtn}>
+              <div className={styles.iconContainer}>
+                <FaShoppingCart size="100%" />
+              </div>
+            </button>
+          </>
         ) : (
           <div className={styles.unauthProfile}>
             <button

@@ -9,9 +9,9 @@ interface IOrdersRoutesValidation {
 
 export const ordersRoutesValidation: IOrdersRoutesValidation = {
   post: {
-    games: Joi.array().items(Joi.number().min(0).required()).required(),
+    gamesIds: Joi.array().items(Joi.number().min(0).required()).required(),
   },
   put: {
-    games: Joi.array().items(Joi.number().min(0).required()).required(),
+    gamesIds: Joi.array().items(Joi.number().min(0).required()).required(),
   },
 };

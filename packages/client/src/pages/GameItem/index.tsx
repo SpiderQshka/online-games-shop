@@ -20,11 +20,23 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
     getGameCreator,
     getDiscounts,
     getUsedDiscounts,
+    postOrder,
   } = useApi();
   const [error, setError] = useState<IApiError | null>(null);
   const [game, setGame] = useState<IStoreGame | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  console.log(isLoading);
+
+  const postOrderHandler = () => {
+    console.log("handler");
+
+    game &&
+      postOrder({ gamesIds: [game.id] }).then(({ order, error }) => {
+        console.log(order);
+
+        if (error) setError(error);
+        else history.push("/profile/orders");
+      });
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -152,7 +164,12 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
                   $
                 </span>
               </div>
-              <button className={styles.actionBtn}>Buy now</button>
+              <button
+                className={styles.actionBtn}
+                onClick={() => postOrderHandler()}
+              >
+                Buy now
+              </button>
             </div>
           </div>
         </div>

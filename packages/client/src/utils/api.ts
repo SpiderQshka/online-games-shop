@@ -1,6 +1,6 @@
 import axios from "axios";
 import { config } from "config";
-import { IOrder, IApi, IOrderFromApi, IGameCreator } from "interfaces/api";
+import { IOrder, IApi, IGameCreator } from "interfaces/api";
 import { IStoreGame } from "interfaces/app";
 
 import _ from "lodash";
@@ -8,13 +8,17 @@ import _ from "lodash";
 export const API: IApi = {
   postOrder: (order: IOrder) =>
     axios
-      .post(`${config.apiUrl}/orders`, order)
+      .post(`${config.apiUrl}/orders`, order, {
+        headers: {
+          token: window.localStorage.getItem("token"),
+        },
+      })
       .then((response) => {
-        return { response: {} as IOrderFromApi };
+        return { order: response.data };
       })
       .catch((error) => {
         return {
-          response: null,
+          order: null,
           error: { msg: error.request.response, status: error.request.status },
         };
       }),

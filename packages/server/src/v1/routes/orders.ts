@@ -35,7 +35,7 @@ router.route({
   method: "get",
   path: "/api/v1/my/orders",
   validate: {},
-  pre: checkAdmin,
+  pre: checkAuth,
   handler: ordersController.getMy,
 });
 

@@ -139,7 +139,7 @@ export const ordersController: IOrdersController = {
     const user = verifyJwtToken(ctx);
 
     try {
-      const gamesIds: number[] = ctx.request.body.games;
+      const gamesIds: number[] = ctx.request.body.gamesIds;
 
       const games: IGame[] = _.uniqBy(
         await Aigle.map(gamesIds, (id) => Game.query().findById(id)),
@@ -163,8 +163,10 @@ export const ordersController: IOrdersController = {
             price: +game.price,
           })
       );
-      ctx.body = orderedGames;
+      ctx.body = { ...order, orderedGames };
     } catch (e) {
+      console.log(e);
+
       ctx.throw(400, "Bad request");
     }
   },

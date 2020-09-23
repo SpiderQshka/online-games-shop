@@ -3,7 +3,7 @@ import { LoginFormValues } from "pages/Login";
 export interface IApi {
   postOrder: (
     order: IOrder
-  ) => Promise<{ response: IOrderFromApi | null; error?: IApiError }>;
+  ) => Promise<{ order: IOrderFromApi | null; error?: IApiError }>;
   login: (
     data: LoginFormValues
   ) => Promise<{ token: string | null; error?: IApiError }>;
@@ -55,13 +55,14 @@ export interface IApiError {
 }
 
 export interface IOrder {
-  games: number[];
+  gamesIds: number[];
 }
 
 export interface IOrderFromApi {
   id: number;
   createdAt: string;
   price: number;
+  orderedGames: IGame[];
 }
 
 export interface IGame {
