@@ -88,16 +88,27 @@
           color: $primary-color-light;
         }
       }
-      .actionBtn {
-        background-color: $primary-color-light;
-        color: $secondary-color-dark;
-        border: none;
-        padding: 20px 40px;
-        border-radius: 5px;
-        @include primaryFont;
-        text-transform: uppercase;
-        outline: none;
-        cursor: pointer;
+      .buttonsBlock {
+        display: flex;
+        width: 100%;
+        justify-content: end;
+        .actionBtn {
+          background-color: $primary-color-light;
+          color: $secondary-color-dark;
+          border: none;
+          padding: 20px 40px;
+          border-radius: 5px;
+          @include primaryFont;
+          text-transform: uppercase;
+          outline: none;
+          cursor: pointer;
+          &:first-of-type {
+            margin-right: 10px;
+          }
+          &.active {
+            background-color: $accent-color;
+          }
+        }
       }
     }
   }

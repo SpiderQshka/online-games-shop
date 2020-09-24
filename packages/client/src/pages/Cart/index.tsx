@@ -6,16 +6,22 @@ import styles from "./styles.module.scss";
 import _ from "lodash";
 import Aigle from "aigle";
 import { Header } from "components/Header";
+import { useHistory } from "react-router-dom";
 
 Aigle.mixin(_, {});
 
 export const Cart = () => {
-  const { getGame, getDiscounts, getUsedDiscounts } = useApi();
+  const history = useHistory();
+  const { getGame, getDiscounts, getUsedDiscounts, postOrder } = useApi();
   const [games, setGames] = useState<IGame[]>([]);
   const [error, setError] = useState<IApiError | null>(null);
+  console.log(games);
+
   useEffect(() => {
     const processGames = async () => {
-      const gamesIds = [1, 2];
+      const gamesIds = getUserSessionData();
+      console.log(gamesIds);
+
       const games = await Aigle.map(gamesIds, (gameId) =>
         getGame(gameId).then(({ game, error }) => {
           if (error) setError(error);
@@ -32,6 +38,18 @@ export const Cart = () => {
     };
     processGames();
   }, []);
+
+  const submitHandler = () => {
+    postOrder({ gamesIds: games.map((game) => +game.id) }).then(
+      ({ order, error }) => {
+        if (error) setError(error);
+        else {
+          setGames([]);
+          history.push("/profile");
+        }
+      }
+    );
+  };
   return (
     <>
       <Header />
@@ -62,7 +80,12 @@ export const Cart = () => {
               </span>
             </p>
             <div className={styles.actionsBlock}>
-              <button className={styles.submitBtn}>That's it!</button>
+              <button
+                className={styles.submitBtn}
+                onClick={() => submitHandler()}
+              >
+                That's it!
+              </button>
             </div>
           </div>
         </div>

@@ -57,7 +57,10 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
             </div>
             <button className={styles.cartBtn}>
               <div className={styles.iconContainer}>
-                <FaShoppingCart size="100%" />
+                <FaShoppingCart
+                  size="100%"
+                  onClick={() => history.push("/cart")}
+                />
               </div>
             </button>
           </>

@@ -7,11 +7,13 @@ import { IApiError, IDiscount, IGame, IGameCreator } from "interfaces/api";
 import moment from "moment";
 import { IStoreGame } from "interfaces/app";
 import { Loader } from "components/Loader";
+import { getUserSessionData, setUserSessionData } from "utils/helpers";
 
 interface GameItemProps {}
 
 export const GameItem: React.FunctionComponent<GameItemProps> = () => {
   const { id } = useParams<{ id: string }>();
+
   const history = useHistory();
   const {
     getGame,
@@ -25,10 +27,9 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
   const [error, setError] = useState<IApiError | null>(null);
   const [game, setGame] = useState<IStoreGame | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [sessionData, setSessionData] = useState<number[]>([]);
 
   const postOrderHandler = () => {
-    console.log("handler");
-
     game &&
       postOrder({ gamesIds: [game.id] }).then(({ order, error }) => {
         console.log(order);
@@ -96,7 +97,7 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
       setIsLoading(false);
     };
     processGame();
-  }, [id]);
+  }, [id, sessionData.length]);
 
   return (
     <>
@@ -164,12 +165,32 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
                   $
                 </span>
               </div>
-              <button
-                className={styles.actionBtn}
-                onClick={() => postOrderHandler()}
-              >
-                Buy now
-              </button>
+              <div className={styles.buttonsBlock}>
+                <button
+                  className={styles.actionBtn}
+                  onClick={() => postOrderHandler()}
+                >
+                  Buy now
+                </button>
+                <button
+                  className={`${styles.actionBtn} ${
+                    game &&
+                    getUserSessionData().includes(game.id) &&
+                    styles.active
+                  }`}
+                  onClick={() => {
+                    if (game) {
+                      const sessionData = [
+                        ...new Set([...getUserSessionData(), game.id]),
+                      ];
+                      setUserSessionData(sessionData);
+                      setSessionData(sessionData);
+                    }
+                  }}
+                >
+                  Add to cart
+                </button>
+              </div>
             </div>
           </div>
         </div>

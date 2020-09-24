@@ -45,7 +45,17 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
       const gamesIds = orderedGames.map((orderedGame) => orderedGame.gameId);
       const userGames = games.filter((el) => gamesIds.includes(el.id));
 
-      setOrders(orders.map((order) => ({ ...order, games: userGames })));
+      setOrders(
+        orders.map((order) => {
+          const orderGamesIds = orderedGames
+            .filter((el) => el.orderId === order.id)
+            .map((el) => el.gameId);
+          const orderGames = userGames.filter((el) =>
+            orderGamesIds.includes(el.id)
+          );
+          return { ...order, games: orderGames };
+        })
+      );
     };
     const processAchievements = async () => {
       const { achievements, error } = await getUserAchievements();
