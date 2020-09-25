@@ -37,7 +37,7 @@ export const Orders: React.FunctionComponent<OredersProps> = ({ orders }) => {
                     </Link>
                   ))}
                 </span>
-                <span className={styles.price}>{el.price}</span>
+                <span className={styles.price}>{el.price}$</span>
               </li>
             ))}
           </>

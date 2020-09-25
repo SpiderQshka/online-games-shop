@@ -1,7 +1,7 @@
 import { useApi } from "context/api";
-import { IApiError, IGame, IOrderFromApi } from "interfaces/api";
+import { IApiError, IGame } from "interfaces/api";
 import React, { useEffect, useState } from "react";
-import { getUserSessionData } from "utils/helpers";
+import { getUserSessionData, setUserSessionData } from "utils/helpers";
 import styles from "./styles.module.scss";
 import _ from "lodash";
 import Aigle from "aigle";
@@ -13,7 +13,7 @@ Aigle.mixin(_, {});
 
 export const Cart = () => {
   const history = useHistory();
-  const { getGame, getDiscounts, getUsedDiscounts, postOrder } = useApi();
+  const { getGame, postOrder } = useApi();
   const [games, setGames] = useState<IGame[]>([]);
   const [error, setError] = useState<IApiError | null>(null);
 
@@ -27,11 +27,6 @@ export const Cart = () => {
           else return game;
         })
       );
-      //   const {usedDiscounts,error: usedDiscountsError} = await getUsedDiscounts()
-      //   if (usedDiscountsError) setError(usedDiscountsError);
-
-      //   const {discounts,error: discountsError} = await getDiscounts()
-      //   if (discountsError) setError(discountsError);
 
       setGames(games.filter((game) => !!game) as IGame[]);
     };
@@ -44,6 +39,7 @@ export const Cart = () => {
         if (error) setError(error);
         else {
           setGames([]);
+          setUserSessionData([]);
           history.push("/profile");
         }
       }
