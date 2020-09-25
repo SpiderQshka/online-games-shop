@@ -4,28 +4,36 @@ import { Model, UniqueViolationError } from "objection";
 import { User } from "models/User";
 import { hashPassword } from "models/helpers";
 import jwt from "jsonwebtoken";
+import { verifyJwtToken } from "v1/auth";
 
 Model.knex(knex);
 
 interface IUsersController {
   get: Middleware;
   getAll: Middleware;
+  getMy: Middleware;
   put: Middleware;
   post: Middleware;
 }
 
 export const usersController: IUsersController = {
   get: async (ctx) => {
+    const user = verifyJwtToken(ctx);
     try {
       const response = await User.query().findById(ctx.params.id);
 
       if (!response) ctx.throw(404);
+
+      if (user.id !== ctx.params.id && !user.isAdmin) ctx.throw(403);
 
       ctx.body = response;
     } catch (e) {
       switch (e.status) {
         case 404:
           ctx.throw(404, `User with id '${ctx.params.id}' was not found`);
+
+        case 403:
+          ctx.throw(403, `Forbidden`);
 
         default:
           ctx.throw(400, "Bad request");
@@ -38,6 +46,11 @@ export const usersController: IUsersController = {
     if (!response) ctx.throw(404, `No users found`);
 
     ctx.body = response;
+  },
+  getMy: async (ctx) => {
+    const user = verifyJwtToken(ctx);
+
+    ctx.body = user;
   },
   put: async (ctx) => {
     try {

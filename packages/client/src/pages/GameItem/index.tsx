@@ -5,7 +5,7 @@ import { useParams, useHistory } from "react-router-dom";
 import { useApi } from "context/api";
 import { IApiError, IDiscount, IGame, IGameCreator } from "interfaces/api";
 import moment from "moment";
-import { IStoreGame } from "interfaces/app";
+import { IGameForUI } from "interfaces/app";
 import { Loader } from "components/Loader";
 import { getUserSessionData, setUserSessionData } from "utils/helpers";
 import { FaShoppingCart } from "react-icons/fa";
@@ -26,7 +26,7 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
     getUsedDiscounts,
   } = useApi();
   const [error, setError] = useState<IApiError | null>(null);
-  const [game, setGame] = useState<IStoreGame | null>(null);
+  const [game, setGame] = useState<IGameForUI | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [sessionData, setSessionData] = useState<number[]>([]);
 
@@ -92,7 +92,7 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
         gameCreator: gameCreator as IGameCreator,
         genres: gameGenres,
         discount: gameHightestDiscount.amount ? gameHightestDiscount : null,
-      } as IStoreGame);
+      } as IGameForUI);
       setIsLoading(false);
     };
     processGame();

@@ -1,6 +1,6 @@
 import { IDiscount, IGameCreator, IGenre } from "./api";
 
-export interface IStoreGame {
+export interface IGameForUI {
   id: number;
   name: string;
   logo: string;

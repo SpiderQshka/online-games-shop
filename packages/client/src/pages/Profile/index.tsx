@@ -5,7 +5,7 @@ import styles from "./styles.module.scss";
 import { FaStar, FaShoppingCart } from "react-icons/fa";
 import { Achievements } from "./Achievements";
 import { Orders } from "./Orders";
-import { IApiError, IOrderFromApi, IGame, IAchievement } from "interfaces/api";
+import { IApiError, IGame, IAchievement } from "interfaces/api";
 import { useApi } from "context/api";
 
 interface IProfileProps {}

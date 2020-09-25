@@ -5,22 +5,29 @@ import { SearchBar } from "../SearchBar";
 import { FaUser, FaGamepad, FaShoppingCart } from "react-icons/fa";
 import { Link, useHistory } from "react-router-dom";
 import { useApi } from "context/api";
-import { IApiError, IGame } from "interfaces/api";
+import { IApiError, IGame, IUser } from "interfaces/api";
 
 interface HeaderProps {}
 
 export const Header: React.FunctionComponent<HeaderProps> = () => {
   const history = useHistory();
   const { token } = useAuth();
-  const { getGames } = useApi();
+  const { getGames, getUser } = useApi();
   const [error, setError] = useState<IApiError | null>(null);
   const [games, setGames] = useState<IGame[]>([]);
+  const [user, setUser] = useState<IUser | null>();
+  console.log(user, error);
+
   useEffect(() => {
     const processGames = async () => {
       const { games, error } = await getGames();
       if (error) setError(error);
 
+      const { user, error: userError } = await getUser();
+      if (userError) setError(userError);
+
       setGames(games);
+      setUser(user);
     };
     processGames();
   }, []);
@@ -44,7 +51,7 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
       </nav>
       <div className={styles.profileContainer}>
         <SearchBar games={games} />
-        {token ? (
+        {user ? (
           <>
             <div
               className={styles.profile}
@@ -53,7 +60,7 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
               <div className={styles.iconContainer}>
                 <FaUser size="100%" />
               </div>
-              <span className={styles.username}>Username</span>
+              <span className={styles.username}>{user.login}</span>
             </div>
             <button
               className={styles.cartBtn}

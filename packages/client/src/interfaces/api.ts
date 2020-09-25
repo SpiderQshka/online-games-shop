@@ -47,11 +47,30 @@ export interface IApi {
     achievements: IAchievement[];
     error?: IApiError;
   }>;
+  getUser: () => Promise<{
+    user: IUser | null;
+    error?: IApiError;
+  }>;
+  getOrders: () => Promise<{
+    orders: IOrder[];
+    error?: IApiError;
+  }>;
+  getOrderedGames: () => Promise<{
+    orderedGames: IOrderedGame[];
+    error?: IApiError;
+  }>;
 }
 
 export interface IApiError {
   status: number;
   msg: string;
+}
+
+export interface IUser {
+  id: number;
+  login: string;
+  password: string;
+  isAdmin: boolean;
 }
 
 export interface IOrder {

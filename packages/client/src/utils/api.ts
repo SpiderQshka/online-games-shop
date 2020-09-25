@@ -1,7 +1,7 @@
 import axios from "axios";
 import { config } from "config";
 import { IOrder, IApi, IGameCreator } from "interfaces/api";
-import { IStoreGame } from "interfaces/app";
+import { IGameForUI } from "interfaces/app";
 
 import _ from "lodash";
 
@@ -194,6 +194,54 @@ export const API: IApi = {
           error: { msg: error.request.response, status: error.request.status },
         };
       }),
+  getUser: () =>
+    axios
+      .get(`${config.apiUrl}/my/users`, {
+        headers: {
+          token: window.localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        return { user: response.data };
+      })
+      .catch((error) => {
+        return {
+          user: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  getOrders: () =>
+    axios
+      .get(`${config.apiUrl}/orders`, {
+        headers: {
+          token: window.localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        return { orders: response.data };
+      })
+      .catch((error) => {
+        return {
+          orders: [],
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  getOrderedGames: () =>
+    axios
+      .get(`${config.apiUrl}/orderedGames`, {
+        headers: {
+          token: window.localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        return { orderedGames: response.data };
+      })
+      .catch((error) => {
+        return {
+          orderedGames: [],
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
 };
 
 export const getFilterOptions = (checkedFormInputs: HTMLInputElement[]) =>
@@ -216,7 +264,7 @@ export const getFilterOptions = (checkedFormInputs: HTMLInputElement[]) =>
   }, {} as any);
 
 export const filterGames = (
-  games: IStoreGame[],
+  games: IGameForUI[],
   filterBy: {
     name?: string;
     ageRating?: number;
@@ -246,7 +294,7 @@ export const filterGames = (
   });
 
 export const sortGames = (
-  games: IStoreGame[],
+  games: IGameForUI[],
   sortBy: "creationDate" | "alphabet"
 ) => {
   switch (sortBy) {
