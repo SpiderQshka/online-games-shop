@@ -55,12 +55,12 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
               </div>
               <span className={styles.username}>Username</span>
             </div>
-            <button className={styles.cartBtn}>
+            <button
+              className={styles.cartBtn}
+              onClick={() => history.push("/cart")}
+            >
               <div className={styles.iconContainer}>
-                <FaShoppingCart
-                  size="100%"
-                  onClick={() => history.push("/cart")}
-                />
+                <FaShoppingCart size="100%" />
               </div>
             </button>
           </>

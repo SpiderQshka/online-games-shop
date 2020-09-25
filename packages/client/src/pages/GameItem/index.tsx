@@ -8,12 +8,14 @@ import moment from "moment";
 import { IStoreGame } from "interfaces/app";
 import { Loader } from "components/Loader";
 import { getUserSessionData, setUserSessionData } from "utils/helpers";
+import { FaShoppingCart } from "react-icons/fa";
+import { useAuth } from "context/auth";
 
 interface GameItemProps {}
 
 export const GameItem: React.FunctionComponent<GameItemProps> = () => {
   const { id } = useParams<{ id: string }>();
-
+  const { token } = useAuth();
   const history = useHistory();
   const {
     getGame,
@@ -22,21 +24,18 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
     getGameCreator,
     getDiscounts,
     getUsedDiscounts,
-    postOrder,
   } = useApi();
   const [error, setError] = useState<IApiError | null>(null);
   const [game, setGame] = useState<IStoreGame | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [sessionData, setSessionData] = useState<number[]>([]);
 
-  const postOrderHandler = () => {
-    game &&
-      postOrder({ gamesIds: [game.id] }).then(({ order, error }) => {
-        console.log(order);
-
-        if (error) setError(error);
-        else history.push("/profile/orders");
-      });
+  const addToCartHandler = () => {
+    if (game && token) {
+      const sessionData = [...new Set([...getUserSessionData(), game.id])];
+      setUserSessionData(sessionData);
+      setSessionData(sessionData);
+    } else history.push("/login");
   };
 
   useEffect(() => {
@@ -167,28 +166,19 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
               </div>
               <div className={styles.buttonsBlock}>
                 <button
-                  className={styles.actionBtn}
-                  onClick={() => postOrderHandler()}
-                >
-                  Buy now
-                </button>
-                <button
                   className={`${styles.actionBtn} ${
                     game &&
                     getUserSessionData().includes(game.id) &&
                     styles.active
                   }`}
-                  onClick={() => {
-                    if (game) {
-                      const sessionData = [
-                        ...new Set([...getUserSessionData(), game.id]),
-                      ];
-                      setUserSessionData(sessionData);
-                      setSessionData(sessionData);
-                    }
-                  }}
+                  onClick={() => addToCartHandler()}
                 >
-                  Add to cart
+                  {game && getUserSessionData().includes(game.id)
+                    ? "Already in cart"
+                    : "Add to cart"}
+                  <span className={styles.msg}>
+                    <FaShoppingCart size="15px" />
+                  </span>
                 </button>
               </div>
             </div>

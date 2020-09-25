@@ -31,7 +31,7 @@ export const Login = () => {
         if (response.error) setServerError(response.error.msg);
         else {
           setToken(response.token as string);
-          history.push("/profile");
+          history.push("/store");
         }
       });
     },

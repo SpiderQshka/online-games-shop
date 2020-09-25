@@ -93,20 +93,36 @@
         width: 100%;
         justify-content: end;
         .actionBtn {
-          background-color: $primary-color-light;
-          color: $secondary-color-dark;
+          position: relative;
+          color: $primary-color-light;
           border: none;
           padding: 20px 40px;
           border-radius: 5px;
+          font-size: 17px;
           @include primaryFont;
           text-transform: uppercase;
           outline: none;
           cursor: pointer;
-          &:first-of-type {
-            margin-right: 10px;
-          }
+          background-color: $accent-color;
           &.active {
+            background-color: $primary-color-light;
+            color: $secondary-color-dark;
+            cursor: not-allowed;
+            .msg {
+              display: flex;
+            }
+          }
+          .msg {
+            position: absolute;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
             background-color: $accent-color;
+            top: -15px;
+            left: -15px;
           }
         }
       }

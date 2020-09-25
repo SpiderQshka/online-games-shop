@@ -4,6 +4,41 @@
   padding-top: $header-height;
   background-color: $secondary-color-dark;
   min-height: calc(100vh - #{$header-height});
+  .emptyCartContent {
+    margin: 40px auto 0;
+    padding: 20px;
+    background-color: $secondary-color-light;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .iconContainer {
+      max-width: 200px;
+      margin-bottom: 30px;
+    }
+    .header {
+      @include primaryFont;
+      color: $primary-color-light;
+      text-transform: uppercase;
+      font-size: 35px;
+      margin-bottom: 20px;
+    }
+    .text {
+      @include primaryFont;
+      color: $primary-color;
+      margin-bottom: 20px;
+    }
+    .btn {
+      @include primaryFont;
+      padding: 15px 20px;
+      border-radius: 5px;
+      font-size: 17px;
+      border: none;
+      color: $primary-color-light;
+      background-color: $accent-color;
+      cursor: pointer;
+    }
+  }
   .cartContent {
     display: grid;
     margin: 40px auto 0;
