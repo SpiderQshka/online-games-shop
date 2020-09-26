@@ -1,0 +1,27 @@
+@import "../../../styles/config.scss";
+
+.ordersContent {
+  .header {
+    @include primaryFont;
+    color: $primary-color-light;
+    text-transform: uppercase;
+    font-size: 25px;
+    margin-bottom: 30px;
+  }
+  .ordersList {
+    background-color: $secondary-color-light;
+    .orderItem {
+      @include primaryFont;
+      display: grid;
+      grid-template-columns: 30px repeat(4, 1fr);
+      padding: 20px;
+      color: $primary-color-light;
+      cursor: pointer;
+    }
+    .headerItem {
+      cursor: default;
+      font-weight: bold;
+      border-bottom: 2px solid $accent-color;
+    }
+  }
+}

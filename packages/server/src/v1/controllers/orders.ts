@@ -101,9 +101,16 @@ export const ordersController: IOrdersController = {
 
       const price = games.reduce((prev, curr) => prev + +curr.price, 0);
 
-      const order = await Order.query().updateAndFetchById(ctx.params.id, {
+      const updatedOrder: any = {
         price,
-      });
+        status: ctx.request.body.status,
+      };
+      if (!price) delete updatedOrder.price;
+
+      const order = await Order.query().patchAndFetchById(
+        ctx.params.id,
+        updatedOrder
+      );
 
       const orderedGames: IOrderedGame[] = await Aigle.map(
         games,
@@ -112,17 +119,22 @@ export const ordersController: IOrdersController = {
             .where("orderId", order.id)
             .where("gameId", game.id)
             .where("userId", user.id)[0];
-
-          return OrderedGame.query().updateAndFetchById(orderedGame.id, {
+          const updatedOrderedGame = {
             gameId: game.id,
             orderId: order.id,
             userId: user.id,
             price: game.price,
-          });
+          };
+          return OrderedGame.query().patchAndFetchById(
+            orderedGame.id,
+            updatedOrderedGame
+          );
         }
       );
       ctx.body = orderedGames;
     } catch (e) {
+      console.log(e);
+
       switch (e.status) {
         case 404:
           ctx.throw(404, `Order with id '${ctx.params.id}' was not found`);
@@ -151,6 +163,7 @@ export const ordersController: IOrdersController = {
       const order = await Order.query().insert({
         createdAt: new Date(),
         price,
+        status: ctx.request.body.status,
       });
 
       const orderedGames: IOrderedGame[] = await Aigle.map(

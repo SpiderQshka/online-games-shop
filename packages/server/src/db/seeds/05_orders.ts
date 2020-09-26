@@ -7,6 +7,7 @@ export async function seed(knex: Knex): Promise<void> {
       id: 1,
       createdAt: faker.date.past(),
       price: faker.random.number(),
+      status: "pending",
     },
   ]);
 }

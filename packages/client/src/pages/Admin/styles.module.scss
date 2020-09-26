@@ -25,7 +25,8 @@
           display: flex;
           align-items: center;
           padding: 10px $default-gap;
-          &:hover {
+          &:hover,
+          &.active {
             color: $primary-color-light;
           }
           .icon {
@@ -37,5 +38,20 @@
   }
   .dataContainer {
     padding: 30px;
+    position: relative;
+    .loaderContainer {
+      padding: 30px;
+      display: flex;
+      justify-content: center;
+    }
+    .updateBtn {
+      position: absolute;
+      right: 30px;
+      top: 30px;
+      background-color: inherit;
+      border: none;
+      width: 50px;
+      cursor: pointer;
+    }
   }
 }

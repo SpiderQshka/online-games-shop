@@ -34,16 +34,17 @@ export const Cart = () => {
   }, []);
 
   const submitHandler = () => {
-    postOrder({ gamesIds: games.map((game) => +game.id) }).then(
-      ({ order, error }) => {
-        if (error) setError(error);
-        else {
-          setGames([]);
-          setUserSessionData([]);
-          history.push("/profile");
-        }
+    postOrder({
+      gamesIds: games.map((game) => +game.id),
+      status: "pending",
+    }).then(({ order, error }) => {
+      if (error) setError(error);
+      else {
+        setGames([]);
+        setUserSessionData([]);
+        history.push("/profile");
       }
-    );
+    });
   };
   return (
     <>

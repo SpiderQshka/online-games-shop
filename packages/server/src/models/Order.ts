@@ -4,6 +4,7 @@ export class Order extends Model {
   id!: number;
   createdAt!: Date;
   price!: number;
+  status!: "pending" | "cancelled" | "received";
   static tableName = "orders";
   static get jsonSchema() {
     return {

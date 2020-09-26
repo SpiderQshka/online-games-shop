@@ -242,6 +242,26 @@ export const API: IApi = {
           error: { msg: error.request.response, status: error.request.status },
         };
       }),
+  putOrder: (order) =>
+    axios
+      .put(
+        `${config.apiUrl}/orders/${order.id}`,
+        { gamesIds: order.gamesIds, status: order.status },
+        {
+          headers: {
+            token: window.localStorage.getItem("token"),
+          },
+        }
+      )
+      .then((response) => {
+        return { order: response.data };
+      })
+      .catch((error) => {
+        return {
+          order: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
 };
 
 export const getFilterOptions = (checkedFormInputs: HTMLInputElement[]) =>

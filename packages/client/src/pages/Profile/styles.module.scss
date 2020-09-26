@@ -9,17 +9,20 @@
     margin: 40px auto 0;
     max-width: 1200px;
     grid-template-columns: 300px 1fr;
+    grid-template-areas: "menu data" "menu .";
     grid-column-gap: 20px;
     .menuList {
+      grid-area: menu;
       .menuItem {
         background-color: $secondary-color-light;
         border-bottom: 2px solid $secondary-color;
-        a {
+        .menuText {
           @include primaryFont;
           display: block;
           padding: 20px;
           text-decoration: none;
           color: $primary-color-light;
+          cursor: pointer;
           .icon {
             margin-right: 10px;
           }
@@ -27,6 +30,7 @@
       }
     }
     .dataContainer {
+      grid-area: data;
       background-color: $secondary-color-light;
       padding: 30px;
     }

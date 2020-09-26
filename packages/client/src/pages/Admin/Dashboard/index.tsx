@@ -1,98 +1,25 @@
-import { useApi } from "context/api";
-import { IApiError, IDiscount, IGenre } from "interfaces/api";
+import { IGameCreator, IGenre } from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { PieChart } from "react-minimal-pie-chart";
 import styles from "./styles.module.scss";
 import { config } from "config";
 
-export const Dashboard = () => {
-  const {
-    getGames,
-    getGameCreators,
-    getUsedGenres,
-    getDiscounts,
-    getUsedDiscounts,
-    getGenres,
-    getOrders,
-    getOrderedGames,
-  } = useApi();
-  const [error, setError] = useState<IApiError | null>(null);
-  const [games, setGames] = useState<IGameForUI[]>([]);
-  const [genres, setGenres] = useState<IGenre[]>([]);
-  const [gameCreators, setGameCreators] = useState<IGenre[]>([]);
+interface DashboardProps {
+  genres: IGenre[];
+  games: IGameForUI[];
+  gameCreators: IGameCreator[];
+}
 
-  useEffect(() => {
-    const processAsync = async () => {
-      const { games, error: gamesError } = await getGames();
-      if (gamesError) setError(gamesError);
-
-      const {
-        gameCreators,
-        error: gameCreatorsError,
-      } = await getGameCreators();
-      if (gameCreatorsError) setError(gameCreatorsError);
-
-      const { discounts, error: discountsError } = await getDiscounts();
-      if (discountsError) setError(discountsError);
-
-      const {
-        usedDiscounts,
-        error: usedDiscountsError,
-      } = await getUsedDiscounts();
-      if (usedDiscountsError) setError(usedDiscountsError);
-
-      const { genres, error: genresError } = await getGenres();
-      if (genresError) setError(genresError);
-
-      const { usedGenres, error: useGenresError } = await getUsedGenres();
-      if (useGenresError) setError(useGenresError);
-
-      const { orders, error: ordersError } = await getOrders();
-      if (ordersError) setError(ordersError);
-
-      const {
-        orderedGames,
-        error: orderedGamesError,
-      } = await getOrderedGames();
-      if (orderedGamesError) setError(orderedGamesError);
-
-      const gamesForUI = games.map((game) => {
-        const gameCreator = gameCreators.filter(
-          (el) => el.id === game.gameCreatorId
-        )[0];
-        const gameGenresIds = [
-          ...new Set(
-            usedGenres
-              .filter((el) => el.gameId === game.id)
-              .map((el) => el.genreId)
-          ),
-        ];
-        const gameGenres = genres.filter((genre) =>
-          gameGenresIds.includes(genre.id)
-        );
-        const gameDiscountsIds = usedDiscounts
-          .filter((el) => el.gameId === game.id)
-          .map((el) => el.discountId);
-        const gameHightestDiscount = discounts
-          .filter((el) => gameDiscountsIds.includes(el.id))
-          .reduce(
-            (prev, curr) => (prev.amount > curr.amount ? prev : curr),
-            {} as IDiscount
-          );
-        return {
-          ...game,
-          gameCreator,
-          genres: gameGenres,
-          discount: gameHightestDiscount.amount ? gameHightestDiscount : null,
-        };
-      });
-      setGames(gamesForUI);
-      setGenres(genres);
-      setGameCreators(gameCreators);
-    };
-    processAsync();
-  }, []);
+export const Dashboard: React.FunctionComponent<DashboardProps> = ({
+  games,
+  genres,
+  gameCreators,
+}) => {
+  const labelConfig = {
+    fontSize: "9px",
+    fontFamily: "sans-serif",
+  };
   return (
     <div className={styles.dashboardContent}>
       <h2 className={styles.header}>Dashboard</h2>
@@ -107,8 +34,8 @@ export const Dashboard = () => {
               paddingAngle={18}
               rounded
               labelStyle={{
+                ...labelConfig,
                 fontSize: "3px",
-                fontFamily: "sans-serif",
                 fill: "#fff",
               }}
               data={games.map((game, i) => ({
@@ -125,10 +52,7 @@ export const Dashboard = () => {
             <PieChart
               className={`${styles.diagram}`}
               label={({ dataEntry }) => dataEntry.title}
-              labelStyle={{
-                fontSize: "9px",
-                fontFamily: "sans-serif",
-              }}
+              labelStyle={labelConfig}
               data={genres.map((genre, i) => {
                 const value = games.reduce(
                   (prev, curr) =>
@@ -153,10 +77,7 @@ export const Dashboard = () => {
             <PieChart
               className={`${styles.diagram}`}
               label={({ dataEntry }) => dataEntry.title}
-              labelStyle={{
-                fontSize: "7px",
-                fontFamily: "sans-serif",
-              }}
+              labelStyle={labelConfig}
               data={gameCreators.map((gameCreator, i) => {
                 const value = games.reduce(
                   (prev, curr) =>
