@@ -109,7 +109,10 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
         <div className={styles.gameItemContainer}>
           <div className={styles.gameItemContent}>
             <div className={styles.gameInfoBlock}>
-              <div className={styles.gameLogo}></div>
+              <div
+                className={styles.gameLogo}
+                style={{ backgroundImage: `url(${game?.logo})` }}
+              ></div>
               <div className={styles.gameInfoContent}>
                 <h2 className={styles.name}>{game?.name}</h2>
                 <ul className={styles.gameInfoList}>

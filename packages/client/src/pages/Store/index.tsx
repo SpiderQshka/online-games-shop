@@ -154,7 +154,10 @@ export const Store = () => {
                     key={game.id}
                     onClick={() => history.push(`/store/item/${game.id}`)}
                   >
-                    <div className={styles.logoContainer}></div>
+                    <div
+                      className={styles.logoContainer}
+                      style={{ backgroundImage: `url(${game.logo})` }}
+                    ></div>
                     <p className={styles.name}>{game.name}</p>
                     <p className={styles.gameCreator}>
                       {game.gameCreator.name}

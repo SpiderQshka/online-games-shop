@@ -6,7 +6,7 @@ export async function seed(knex: Knex): Promise<void> {
     {
       id: 1,
       name: "Mount and blade Warband",
-      logo: faker.system.filePath(),
+      logo: "https://www.linkpicture.com/q/mnb-warband.jpg",
       description: faker.lorem.text(1),
       ageRating: +faker.random.number({ min: 0, max: 18 }),
       price: +faker.random.number({ min: 0 }),
@@ -17,7 +17,7 @@ export async function seed(knex: Knex): Promise<void> {
     {
       id: 2,
       name: "Mount and blade Bannerlord",
-      logo: faker.system.filePath(),
+      logo: "https://www.linkpicture.com/q/5ae658ecb8c06024_1200xH.jpg",
       description: faker.lorem.text(1),
       ageRating: +faker.random.number({ min: 0, max: 18 }),
       price: +faker.random.number({ min: 0 }),
@@ -28,7 +28,8 @@ export async function seed(knex: Knex): Promise<void> {
     {
       id: 3,
       name: "Battle Brothers",
-      logo: faker.system.filePath(),
+      logo:
+        "https://www.linkpicture.com/q/battle-brothers-poluchit-krupnejshie-dlc-blazing-deserts.jpg",
       description: faker.lorem.text(1),
       ageRating: +faker.random.number({ min: 0, max: 18 }),
       price: +faker.random.number({ min: 0 }),
@@ -39,7 +40,7 @@ export async function seed(knex: Knex): Promise<void> {
     {
       id: 4,
       name: "Total War Rome ||",
-      logo: faker.system.filePath(),
+      logo: "https://www.linkpicture.com/q/Total_War_Rome_2.jpg",
       description: faker.lorem.text(1),
       ageRating: +faker.random.number({ min: 0, max: 18 }),
       price: +faker.random.number({ min: 0 }),
