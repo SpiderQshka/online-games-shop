@@ -1,0 +1,39 @@
+@import "../../../styles/config.scss";
+
+.dashboardContent {
+  .header {
+    @include primaryFont;
+    color: $primary-color-light;
+    text-transform: uppercase;
+    font-size: 25px;
+    margin-bottom: 30px;
+  }
+  .diagramsBlock {
+    display: grid;
+    width: 100%;
+    grid-template-areas: "first second third" "first . .";
+    grid-template-columns: 2fr 1fr 1fr;
+    grid-gap: 30px;
+    .diagramContainer {
+      background-color: $secondary-color-light;
+      padding: 20px 0;
+      .header {
+        text-align: center;
+      }
+      .diagramContent {
+        padding: 20px;
+        max-width: 100%;
+        max-height: 100%;
+      }
+      &.first {
+        grid-area: first;
+      }
+      &.second {
+        grid-area: second;
+      }
+      &.third {
+        grid-area: third;
+      }
+    }
+  }
+}

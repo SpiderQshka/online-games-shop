@@ -1,6 +1,6 @@
-import { IDiscount, IGameCreator, IGenre } from "./api";
+import { IDiscount, IGame, IGameCreator, IGenre, IOrderFromApi } from "./api";
 
-export interface IStoreGame {
+export interface IGameForUI {
   id: number;
   name: string;
   logo: string;
@@ -12,4 +12,8 @@ export interface IStoreGame {
   creationDate: string;
   genres: IGenre[];
   discount: IDiscount | null;
+}
+
+export interface IOrderForUI extends IOrderFromApi {
+  orderedGames: IGame[];
 }

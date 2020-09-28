@@ -10,8 +10,10 @@ interface IOrdersRoutesValidation {
 export const ordersRoutesValidation: IOrdersRoutesValidation = {
   post: {
     gamesIds: Joi.array().items(Joi.number().min(0).required()).required(),
+    status: Joi.string().valid("pending", "cancelled", "received").required(),
   },
   put: {
     gamesIds: Joi.array().items(Joi.number().min(0).required()).required(),
+    status: Joi.string().valid("pending", "cancelled", "received").required(),
   },
 };

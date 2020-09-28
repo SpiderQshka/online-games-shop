@@ -1,7 +1,7 @@
 import { Header } from "components/Header";
 import { useApi } from "context/api";
 import { IApiError, IDiscount, IGameCreator, IGenre } from "interfaces/api";
-import { IStoreGame } from "interfaces/app";
+import { IGameForUI } from "interfaces/app";
 import React, { useEffect, useRef, useState } from "react";
 import { filterGames, getFilterOptions, sortGames } from "utils/api";
 import { FaWindowClose, FaSadTear } from "react-icons/fa";
@@ -21,7 +21,7 @@ export const Store = () => {
   const history = useHistory();
   const formRef = useRef(null);
 
-  const [games, setGames] = useState<IStoreGame[]>([]);
+  const [games, setGames] = useState<IGameForUI[]>([]);
   const [gameCreators, setGameCreators] = useState<IGameCreator[]>([]);
   const [genres, setGenres] = useState<IGenre[]>([]);
 
@@ -30,7 +30,7 @@ export const Store = () => {
     "alphabet"
   );
   const [filtersAmount, setFiltersAmount] = useState<number>(0);
-  const [filteredGames, setFilteredGames] = useState<IStoreGame[]>([]);
+  const [filteredGames, setFilteredGames] = useState<IGameForUI[]>([]);
 
   const removeFilters = () => {
     if (formRef.current) {
@@ -84,7 +84,7 @@ export const Store = () => {
       const { usedGenres, error: useGenresError } = await getUsedGenres();
       if (useGenresError) setError(useGenresError);
 
-      const storeGames: IStoreGame[] = games.map((game) => {
+      const storeGames = games.map((game) => {
         const gameCreator = gameCreators.filter(
           (el) => el.id === game.gameCreatorId
         )[0];

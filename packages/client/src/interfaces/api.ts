@@ -47,6 +47,21 @@ export interface IApi {
     achievements: IAchievement[];
     error?: IApiError;
   }>;
+  getUser: () => Promise<{
+    user: IUser | null;
+    error?: IApiError;
+  }>;
+  getOrders: () => Promise<{
+    orders: IOrderFromApi[];
+    error?: IApiError;
+  }>;
+  getOrderedGames: () => Promise<{
+    orderedGames: IOrderedGame[];
+    error?: IApiError;
+  }>;
+  putOrder: (
+    order: IOrderPut
+  ) => Promise<{ order: IOrderFromApi | null; error?: IApiError }>;
 }
 
 export interface IApiError {
@@ -54,15 +69,28 @@ export interface IApiError {
   msg: string;
 }
 
-export interface IOrder {
-  gamesIds: number[];
+export interface IUser {
+  id: number;
+  login: string;
+  password: string;
+  isAdmin: boolean;
 }
 
+export interface IOrder {
+  gamesIds: number[];
+  status: OrderStatus;
+}
+
+export interface IOrderPut extends IOrder {
+  id: number;
+}
+
+export type OrderStatus = "pending" | "cancelled" | "received";
 export interface IOrderFromApi {
   id: number;
   createdAt: string;
   price: number;
-  orderedGames: IGame[];
+  status: OrderStatus;
 }
 
 export interface IGame {
