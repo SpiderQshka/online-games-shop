@@ -10,29 +10,19 @@
   }
   .diagramsBlock {
     display: grid;
-    width: 100%;
-    grid-template-areas: "first second third" "first . .";
-    grid-template-columns: 2fr 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     grid-gap: 30px;
     .diagramContainer {
       background-color: $secondary-color-light;
-      padding: 20px 0;
+      padding: 20px;
       .header {
         text-align: center;
+        line-height: 1.4;
       }
       .diagramContent {
         padding: 20px;
         max-width: 100%;
         max-height: 100%;
-      }
-      &.first {
-        grid-area: first;
-      }
-      &.second {
-        grid-area: second;
-      }
-      &.third {
-        grid-area: third;
       }
     }
   }

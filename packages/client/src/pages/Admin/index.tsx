@@ -10,6 +10,7 @@ import { IGameForUI, IOrderForUI } from "interfaces/app";
 import { Orders } from "./Orders";
 import { OrderItem } from "./Orders/OrderItem";
 import { Loader } from "components/Loader";
+import { FaBars } from "react-icons/fa";
 
 export const Admin = () => {
   const history = useHistory();
@@ -31,6 +32,7 @@ export const Admin = () => {
   const [gameCreators, setGameCreators] = useState<IGameCreator[]>([]);
   const [updateTrigger, setUpdateTrigger] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -119,13 +121,16 @@ export const Admin = () => {
     processAsync();
   }, [updateTrigger, history.location.pathname]);
   return (
-    <div className={styles.adminContainer}>
-      <div className={styles.menuContainer}>
+    <div className={`${styles.adminContainer} ${isMenuOpen && styles.overlay}`}>
+      <div
+        className={`${styles.menuContainer} ${isMenuOpen && styles.openedMenu}`}
+      >
         <h2 className={styles.header}>Menu</h2>
         <ul className={styles.menuList}>
           <li className={styles.menuItem}>
             <Link
               to="/admin/dashboard"
+              onClick={() => setIsMenuOpen(false)}
               className={`${styles.menuLink} ${
                 history.location.pathname.includes("/admin/dashboard") &&
                 styles.active
@@ -137,6 +142,7 @@ export const Admin = () => {
           <li className={styles.menuItem}>
             <Link
               to="/admin/orders"
+              onClick={() => setIsMenuOpen(false)}
               className={`${styles.menuLink} ${
                 history.location.pathname.includes("/admin/orders") &&
                 styles.active
@@ -150,12 +156,23 @@ export const Admin = () => {
       </div>
 
       <div className={styles.dataContainer}>
-        <button
-          className={styles.updateBtn}
-          onClick={() => setUpdateTrigger(!updateTrigger)}
-        >
-          <MdUpdate size="100%" />
-        </button>
+        <div className={styles.actionsBlock}>
+          <button
+            className={styles.btn}
+            onClick={() => {
+              setUpdateTrigger(!updateTrigger);
+              setIsMenuOpen(false);
+            }}
+          >
+            <MdUpdate size="100%" />
+          </button>
+          <button
+            className={styles.btn}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+          >
+            <FaBars size="100%" />
+          </button>
+        </div>
         {isLoading ? (
           <div className={styles.loaderContainer}>
             <Loader />

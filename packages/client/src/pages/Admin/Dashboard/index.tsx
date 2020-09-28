@@ -19,7 +19,9 @@ export const Dashboard: React.FunctionComponent<DashboardProps> = ({
   const labelConfig = {
     fontSize: "9px",
     fontFamily: "sans-serif",
+    fill: "#fff",
   };
+  const shiftSize = 0.5;
   return (
     <div className={styles.dashboardContent}>
       <h2 className={styles.header}>Dashboard</h2>
@@ -28,20 +30,23 @@ export const Dashboard: React.FunctionComponent<DashboardProps> = ({
           <h3 className={styles.header}>The most expensive games</h3>
           <div className={styles.diagramContent}>
             <PieChart
+              radius={PieChart.defaultProps.radius - shiftSize}
+              segmentsShift={() => shiftSize}
               className={`${styles.diagram}`}
               label={({ dataEntry }) => dataEntry.value}
-              lineWidth={20}
-              paddingAngle={18}
-              rounded
               labelStyle={{
                 ...labelConfig,
-                fontSize: "3px",
-                fill: "#fff",
+                fontSize: "5px",
               }}
               data={games.map((game, i) => ({
                 title: game.name,
                 value: +game.price,
-                color: config.colors[i],
+                color:
+                  games.reduce((prev, curr) =>
+                    +prev.price < +curr.price ? curr : prev
+                  ).id === game.id
+                    ? config.colors.accent
+                    : config.colors.primary,
               }))}
             />
           </div>
@@ -51,23 +56,34 @@ export const Dashboard: React.FunctionComponent<DashboardProps> = ({
           <div className={styles.diagramContent}>
             <PieChart
               className={`${styles.diagram}`}
+              radius={PieChart.defaultProps.radius - shiftSize}
+              segmentsShift={() => shiftSize}
               label={({ dataEntry }) => dataEntry.title}
               labelStyle={labelConfig}
-              data={genres.map((genre, i) => {
-                const value = games.reduce(
-                  (prev, curr) =>
-                    curr.genres.map((genre) => genre.id).includes(genre.id)
-                      ? ++prev
-                      : prev,
-                  0
-                );
+              data={genres
+                .map((genre) => {
+                  const value = games.reduce(
+                    (prev, curr) =>
+                      curr.genres.map((genre) => genre.id).includes(genre.id)
+                        ? ++prev
+                        : prev,
+                    0
+                  );
 
-                return {
-                  title: genre.name,
-                  color: config.colors[i],
-                  value,
-                };
-              })}
+                  return {
+                    title: genre.name,
+                    color: config.colors.primary,
+                    value,
+                  };
+                })
+                .map((genre, i, array) => {
+                  const biggestValue = array.reduce((prev, curr) =>
+                    prev.value > curr.value ? prev : curr
+                  ).value;
+                  if (biggestValue === genre.value)
+                    return { ...genre, color: config.colors.accent };
+                  return genre;
+                })}
             />
           </div>
         </div>
@@ -76,6 +92,8 @@ export const Dashboard: React.FunctionComponent<DashboardProps> = ({
           <div className={styles.diagramContent}>
             <PieChart
               className={`${styles.diagram}`}
+              radius={PieChart.defaultProps.radius - shiftSize}
+              segmentsShift={() => shiftSize}
               label={({ dataEntry }) => dataEntry.title}
               labelStyle={labelConfig}
               data={gameCreators.map((gameCreator, i) => {
@@ -86,7 +104,7 @@ export const Dashboard: React.FunctionComponent<DashboardProps> = ({
                 );
                 return {
                   title: gameCreator.name,
-                  color: config.colors[i],
+                  color: config.colors.primary,
                   value,
                 };
               })}

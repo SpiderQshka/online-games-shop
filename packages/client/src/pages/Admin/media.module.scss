@@ -1,0 +1,45 @@
+@import "../../styles/config.scss";
+
+@media all and (max-width: 1000px) {
+  .adminContainer {
+    grid-template-columns: 1fr;
+    &:after {
+      position: fixed;
+      content: "";
+      background-color: rgba(0, 0, 0, 0);
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: -1;
+      transition: 0.7s;
+    }
+    &.overlay {
+      &:after {
+        z-index: 0;
+        background-color: rgba(0, 0, 0, 0.3);
+      }
+    }
+    .menuContainer {
+      position: fixed;
+      min-width: $menu-width;
+      top: 0;
+      left: -#{$menu-width};
+      bottom: 0;
+      z-index: 10;
+      transition: 0.7s;
+      &.openedMenu {
+        left: 0;
+      }
+    }
+    .dataContainer {
+      .actionsBlock {
+        background-color: $secondary-color-light;
+        right: 0;
+        top: 0;
+        padding: 10px;
+        box-shadow: rgba(0, 0, 0, 0.5) 0px 2px 35px 0px;
+      }
+    }
+  }
+}

@@ -3,13 +3,14 @@ import React from "react";
 import { Route, useHistory } from "react-router-dom";
 import { OrderItem } from "./OrderItem";
 import styles from "./styles.module.scss";
-
+import moment from "moment";
 interface OrdersProps {
   orders: IOrderForUI[];
 }
 
 export const Orders: React.FunctionComponent<OrdersProps> = ({ orders }) => {
   const history = useHistory();
+
   return (
     <>
       <div className={styles.ordersContent}>
@@ -29,7 +30,7 @@ export const Orders: React.FunctionComponent<OrdersProps> = ({ orders }) => {
               onClick={() => history.push(`/admin/orders/${order.id}`)}
             >
               <span>{order.id}</span>
-              <span>{order.createdAt}</span>
+              <span>{moment(order.createdAt).format("DD-MM-YYYY")}</span>
               <span>{order.price}</span>
               <span>{order.status}</span>
               <span>

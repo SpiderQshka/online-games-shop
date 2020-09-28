@@ -1,4 +1,7 @@
 export const config = {
   apiUrl: "http://localhost:3000/api/v1",
-  colors: ["#a8e6cf", "#dcedc1", "#ffd3b6", "#ffaaa5", "#ff8b94"],
+  colors: {
+    accent: "#f0810f",
+    primary: "#3a3a3a",
+  },
 };

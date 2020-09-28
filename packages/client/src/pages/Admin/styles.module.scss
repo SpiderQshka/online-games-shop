@@ -1,13 +1,16 @@
 @import "../../styles/config.scss";
 
+$menu-width: 200px;
+
 .adminContainer {
   min-height: 100vh;
   background-color: $secondary-color-dark;
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: $menu-width 1fr;
   .menuContainer {
     background-color: $secondary-color-light;
     padding: 30px 0;
+    box-sizing: border-box;
     .header {
       @include primaryFont;
       color: $primary-color-light;
@@ -44,14 +47,19 @@
       display: flex;
       justify-content: center;
     }
-    .updateBtn {
-      position: absolute;
+    .actionsBlock {
+      position: fixed;
       right: 30px;
       top: 30px;
-      background-color: inherit;
-      border: none;
-      width: 50px;
-      cursor: pointer;
+      z-index: 10;
+      .btn {
+        background-color: inherit;
+        border: none;
+        height: 40px;
+        cursor: pointer;
+      }
     }
   }
 }
+
+@import "./media.module.scss";

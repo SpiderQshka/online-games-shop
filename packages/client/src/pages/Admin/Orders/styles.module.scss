@@ -13,10 +13,17 @@
     .orderItem {
       @include primaryFont;
       display: grid;
-      grid-template-columns: 30px repeat(4, 1fr);
       padding: 20px;
+      grid-template-columns: 30px repeat(4, 1fr);
       color: $primary-color-light;
       cursor: pointer;
+      span {
+        line-height: 1.4;
+        padding-right: 15px;
+        &:last-of-type {
+          padding-right: 0;
+        }
+      }
     }
     .headerItem {
       cursor: default;

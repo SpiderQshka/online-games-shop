@@ -53,7 +53,6 @@ export const ordersController: IOrdersController = {
   },
   getAll: async (ctx) => {
     const response = await Order.query();
-
     if (!response) ctx.throw(404, `No orders found`);
 
     ctx.body = response;
