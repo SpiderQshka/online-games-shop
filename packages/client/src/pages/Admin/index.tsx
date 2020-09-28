@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, Redirect, Route, Switch, useHistory } from "react-router-dom";
 import { Dashboard } from "./Dashboard";
 import { MdDashboard, MdUpdate } from "react-icons/md";
-import { RiShoppingCart2Line } from "react-icons/ri";
+import { RiLogoutBoxRLine, RiShoppingCart2Line } from "react-icons/ri";
 import styles from "./styles.module.scss";
 import { useApi } from "context/api";
 import { IApiError, IDiscount, IGameCreator, IGenre } from "interfaces/api";
@@ -150,6 +150,16 @@ export const Admin = () => {
             >
               <RiShoppingCart2Line size="20px" className={styles.icon} />
               Orders
+            </Link>
+          </li>
+          <li className={styles.menuItem}>
+            <Link
+              to="/"
+              onClick={() => setIsMenuOpen(false)}
+              className={`${styles.menuLink}`}
+            >
+              <RiLogoutBoxRLine size="20px" className={styles.icon} />
+              Go out
             </Link>
           </li>
         </ul>

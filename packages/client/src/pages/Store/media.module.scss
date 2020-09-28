@@ -1,0 +1,73 @@
+@import "../../styles/config.scss";
+
+@media all and (max-width: 1100px) {
+  .storeContainer {
+    .storeContent {
+      .gamesContainer {
+        .gamesList {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+    }
+  }
+}
+
+@media all and (max-width: 800px) {
+  .storeContainer {
+    .storeContent {
+      grid-template-columns: 1fr;
+      position: relative;
+      &:after {
+        content: "";
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0);
+        transition: 0.7s;
+        z-index: -1;
+      }
+      &.overlay {
+        &:after {
+          background-color: rgba(0, 0, 0, 0.3);
+          z-index: 0;
+          cursor: pointer;
+        }
+      }
+      .gamesContainer {
+        .infoContainer {
+          .openFiltersBtn {
+            display: flex;
+          }
+        }
+      }
+      .filtersContainer {
+        position: fixed;
+        padding: 30px;
+        box-sizing: border-box;
+        background-color: $secondary-color-dark;
+        top: 0;
+        bottom: 0;
+        right: calc(-#{$filters-menu-width} - 60px);
+        min-width: $filters-menu-width;
+        transition: 0.7s;
+        &.open {
+          right: 0;
+        }
+      }
+    }
+  }
+}
+
+@media all and (max-width: 600px) {
+  .storeContainer {
+    .storeContent {
+      .gamesContainer {
+        .gamesList {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    }
+  }
+}

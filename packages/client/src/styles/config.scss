@@ -14,3 +14,11 @@ $header-height: 70px;
 @mixin primaryFont {
   font-family: "Open Sans", "Helvetica Neue", sans-serif;
 }
+
+@mixin basicBtn {
+  background-color: inherit;
+  border: none;
+  outline: none;
+  @include primaryFont;
+  cursor: pointer;
+}

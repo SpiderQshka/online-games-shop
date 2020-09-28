@@ -1,5 +1,7 @@
 @import "../../styles/config.scss";
 
+$filters-menu-width: 160px;
+
 .storeContainer {
   background-color: $secondary-color-dark;
   padding-top: $header-height;
@@ -7,24 +9,39 @@
   .storeContent {
     margin: 0 auto;
     max-width: 1200px;
+    padding: 0 $default-gap;
     display: grid;
-    grid-template-columns: 1fr 200px;
+    grid-template-columns: 1fr $filters-menu-width;
     grid-column-gap: 40px;
     .gamesContainer {
       .infoContainer {
         padding: $default-gap 0;
-        .text {
-          @include primaryFont;
-          color: $primary-color;
-          margin-right: 7px;
-        }
-        .sortBySelect {
-          border: none;
-          background-color: inherit;
-          color: $primary-color-light;
-          .sortByItem {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .sortByContainer {
+          .text {
             @include primaryFont;
-            background-color: $secondary-color-light;
+            color: $primary-color;
+            margin-right: 7px;
+          }
+          .sortBySelect {
+            border: none;
+            background-color: inherit;
+            color: $primary-color-light;
+            .sortByItem {
+              @include primaryFont;
+              background-color: $secondary-color-light;
+            }
+          }
+        }
+        .openFiltersBtn {
+          @include basicBtn;
+          display: none;
+          align-items: center;
+          .text {
+            margin-right: 10px;
+            color: $primary-color-light;
           }
         }
       }
@@ -89,9 +106,10 @@
       }
     }
     .filtersContainer {
+      z-index: 1;
       .header {
         @include primaryFont;
-        color: $primary-color-light;
+        color: $primary-color;
         padding: $default-gap 0;
         position: relative;
         &.active {
@@ -116,12 +134,12 @@
         width: 100%;
         background-color: inherit;
         border: none;
-        padding: 20px 0;
-        color: $primary-color-light;
+        color: $primary-color;
         .inputGroupHeader {
           @include primaryFont;
           padding: 20px 0;
           font-size: 1.2em;
+          color: $primary-color-light;
         }
         .inputGroup {
           @include primaryFont;
@@ -147,3 +165,5 @@
     }
   }
 }
+
+@import "./media.module.scss";

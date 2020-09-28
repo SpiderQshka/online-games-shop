@@ -10,9 +10,15 @@
   top: 0;
   right: 0;
   left: 0;
+  z-index: 1;
   .navContainer {
     display: flex;
+    z-index: 2;
     margin-left: $default-gap;
+    .openMenuBtn {
+      @include basicBtn;
+      display: none;
+    }
     .logoContainer {
       max-width: 40px;
       margin-right: 10px;
@@ -34,7 +40,7 @@
         &:hover::after {
           height: 5px;
         }
-        a {
+        .link {
           @include primaryFont;
           color: $primary-color-light;
           display: flex;
@@ -69,11 +75,10 @@
       }
     }
     .cartBtn {
+      @include basicBtn;
       background-color: $accent-color;
       height: $header-height;
       padding: 0 20px;
-      border: none;
-      cursor: pointer;
       .iconContainer {
         max-width: 20px;
       }
@@ -81,20 +86,17 @@
     .unauthProfile {
       margin-left: 20px;
       .actionBtn {
-        border: none;
-        outline: none;
+        @include basicBtn;
         height: $header-height;
         padding: 0 20px;
         color: $primary-color-light;
-        cursor: pointer;
         text-transform: uppercase;
         &.signUpBtn {
           background-color: $accent-color;
-        }
-        &.logInBtn {
-          background-color: inherit;
         }
       }
     }
   }
 }
+
+@import "./media.module.scss";

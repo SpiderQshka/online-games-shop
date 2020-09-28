@@ -4,7 +4,7 @@ import { IApiError, IDiscount, IGameCreator, IGenre } from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
 import React, { useEffect, useRef, useState } from "react";
 import { filterGames, getFilterOptions, sortGames } from "utils/api";
-import { FaWindowClose, FaSadTear } from "react-icons/fa";
+import { FaWindowClose, FaSadTear, FaFilter } from "react-icons/fa";
 import styles from "./styles.module.scss";
 import { useHistory } from "react-router-dom";
 
@@ -31,6 +31,7 @@ export const Store = () => {
   );
   const [filtersAmount, setFiltersAmount] = useState<number>(0);
   const [filteredGames, setFilteredGames] = useState<IGameForUI[]>([]);
+  const [isFiltersMenuOpen, setIsFiltersMenuOpen] = useState<boolean>(false);
 
   const removeFilters = () => {
     if (formRef.current) {
@@ -126,25 +127,44 @@ export const Store = () => {
     <>
       <Header />
       <div className={styles.storeContainer}>
-        <div className={styles.storeContent}>
+        <div
+          className={`${styles.storeContent} ${
+            isFiltersMenuOpen && styles.overlay
+          }`}
+          onClick={(e) => {
+            console.log(e.target);
+
+            isFiltersMenuOpen && setIsFiltersMenuOpen(false);
+          }}
+        >
           <div className={styles.gamesContainer}>
             <div className={styles.infoContainer}>
-              <span className={styles.text}>Sort by</span>
-              <select
-                name="sortBy"
-                className={styles.sortBySelect}
-                onChange={(e) =>
-                  setSortType(e.target.value as "creationDate" | "alphabet")
-                }
-                value={sortType}
+              <div className={styles.sortByContainer}>
+                <span className={styles.text}>Sort by</span>
+                <select
+                  name="sortBy"
+                  className={styles.sortBySelect}
+                  onChange={(e) =>
+                    setSortType(e.target.value as "creationDate" | "alphabet")
+                  }
+                  value={sortType}
+                >
+                  <option value="creationDate" className={styles.sortByItem}>
+                    Creation date
+                  </option>
+                  <option value="alphabet" className={styles.sortByItem}>
+                    Alphabet
+                  </option>
+                </select>
+              </div>
+
+              <button
+                className={styles.openFiltersBtn}
+                onClick={() => setIsFiltersMenuOpen(true)}
               >
-                <option value="creationDate" className={styles.sortByItem}>
-                  Creation date
-                </option>
-                <option value="alphabet" className={styles.sortByItem}>
-                  Alphabet
-                </option>
-              </select>
+                <span className={styles.text}>Filters</span>
+                <FaFilter size="20px" />
+              </button>
             </div>
             {!!filteredGames.length ? (
               <ul className={styles.gamesList}>
@@ -198,7 +218,12 @@ export const Store = () => {
               </div>
             )}
           </div>
-          <aside className={styles.filtersContainer}>
+          <aside
+            className={`${styles.filtersContainer} ${
+              isFiltersMenuOpen && styles.open
+            }`}
+            onClick={(e) => e.stopPropagation()}
+          >
             <h5
               className={`${styles.header} ${!!filtersAmount && styles.active}`}
             >

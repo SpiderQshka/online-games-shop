@@ -2,7 +2,7 @@ import { useAuth } from "context/auth";
 import React, { useEffect, useState } from "react";
 import styles from "./styles.module.scss";
 import { SearchBar } from "../SearchBar";
-import { FaUser, FaGamepad, FaShoppingCart } from "react-icons/fa";
+import { FaUser, FaGamepad, FaShoppingCart, FaBars } from "react-icons/fa";
 import { Link, useHistory } from "react-router-dom";
 import { useApi } from "context/api";
 import { IApiError, IGame, IUser } from "interfaces/api";
@@ -16,7 +16,7 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
   const [error, setError] = useState<IApiError | null>(null);
   const [games, setGames] = useState<IGame[]>([]);
   const [user, setUser] = useState<IUser | null>();
-  console.log(user, error);
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const processGames = async () => {
@@ -32,22 +32,37 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
     processGames();
   }, []);
   return (
-    <div className={styles.headerContainer}>
-      <nav className={styles.navContainer}>
+    <div
+      className={`${styles.headerContainer} ${isMenuOpen && styles.overlay}`}
+      onClick={() => isMenuOpen && setIsMenuOpen(false)}
+    >
+      <nav className={styles.navContainer} onClick={(e) => e.stopPropagation()}>
         <div className={styles.logoContainer}>
           <FaGamepad size="100%" />
         </div>
-        <ul className={styles.navList}>
+        <ul className={`${styles.navList} ${isMenuOpen && styles.open}`}>
           <li className={`${styles.navItem}`}>
-            <Link to="/store">Store</Link>
+            <Link to="/store" className={styles.link}>
+              Store
+            </Link>
           </li>
           <li className={`${styles.navItem}`}>
-            <Link to="/contacts">Contacts</Link>
+            <Link to="/contacts" className={styles.link}>
+              Contacts
+            </Link>
           </li>
           <li className={`${styles.navItem}`}>
-            <Link to="/delivery">Delivery</Link>
+            <Link to="/delivery" className={styles.link}>
+              Delivery
+            </Link>
           </li>
         </ul>
+        <button
+          className={styles.openMenuBtn}
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+        >
+          <FaBars size="30px" />
+        </button>
       </nav>
       <div className={styles.profileContainer}>
         <SearchBar games={games} />

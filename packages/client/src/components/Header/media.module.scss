@@ -1,0 +1,51 @@
+@import "../../styles/config.scss";
+
+$nav-list-width: 200px;
+
+@media all and (max-width: 800px) {
+  .headerContainer {
+    &:after {
+      content: "";
+      top: $header-height;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      position: fixed;
+      background-color: rgba(0, 0, 0, 0);
+      display: none;
+    }
+    &.overlay {
+      &:after {
+        display: block;
+        background-color: rgba(0, 0, 0, 0.7);
+        cursor: pointer;
+      }
+    }
+    .navContainer {
+      .openMenuBtn {
+        display: flex;
+        align-items: center;
+      }
+      .navList {
+        position: fixed;
+        width: $nav-list-width;
+        top: $header-height;
+        bottom: 0;
+        left: -#{$nav-list-width};
+        background-color: $secondary-color-light;
+        transition: 0.7s;
+        &.open {
+          left: 0;
+        }
+        .navItem {
+          display: block;
+          .link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+      }
+    }
+  }
+}
