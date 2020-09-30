@@ -1,14 +1,14 @@
 @import "../../styles/config.scss";
 
 .profileContainer {
-  padding-top: $header-height;
+  padding: $header-height $default-gap 0;
   background-color: $secondary-color-dark;
   min-height: calc(100vh - #{$header-height});
   .profileContent {
     display: grid;
     margin: 40px auto 0;
     max-width: 1200px;
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: 250px 1fr;
     grid-template-areas: "menu data" "menu .";
     grid-column-gap: 20px;
     .menuList {
@@ -16,13 +16,17 @@
       .menuItem {
         background-color: $secondary-color-light;
         border-bottom: 2px solid $secondary-color;
-        .menuText {
-          @include primaryFont;
-          display: block;
+        cursor: pointer;
+        .menuLink {
+          display: flex;
+          align-items: center;
           padding: 20px;
-          text-decoration: none;
-          color: $primary-color-light;
-          cursor: pointer;
+          .menuText {
+            @include primaryFont;
+            display: block;
+            text-decoration: none;
+            color: $primary-color-light;
+          }
           .icon {
             margin-right: 10px;
           }
@@ -36,3 +40,5 @@
     }
   }
 }
+
+@import "./media.module.scss";

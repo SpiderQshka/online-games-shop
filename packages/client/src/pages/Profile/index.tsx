@@ -2,11 +2,11 @@ import { Header } from "components/Header";
 import React, { useEffect, useState } from "react";
 import { Switch, Route, Link, Redirect, useHistory } from "react-router-dom";
 import styles from "./styles.module.scss";
-import { FaStar, FaShoppingCart } from "react-icons/fa";
+import { FaStar, FaShoppingCart, FaBars } from "react-icons/fa";
 import { RiAdminLine, RiLogoutBoxRLine } from "react-icons/ri";
 import { Achievements } from "./Achievements";
 import { Orders } from "./Orders";
-import { IApiError, IGame, IAchievement, IUser } from "interfaces/api";
+import { IApiError, IAchievement, IUser } from "interfaces/api";
 import { useApi } from "context/api";
 import { IOrderForUI } from "interfaces/app";
 import { useAuth } from "context/auth";
@@ -77,36 +77,36 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
         <div className={styles.profileContent}>
           <ul className={styles.menuList}>
             <li className={`${styles.menuItem} ${styles.active}`}>
-              <Link to="/profile/orders" className={styles.menuText}>
+              <Link to="/profile/orders" className={styles.menuLink}>
                 <FaShoppingCart color="#f4f4f4" className={styles.icon} />
-                Orders
+                <span className={styles.menuText}>Orders</span>
               </Link>
             </li>
             <li className={`${styles.menuItem} ${styles.active}`}>
-              <Link to="/profile/achievements" className={styles.menuText}>
+              <Link to="/profile/achievements" className={styles.menuLink}>
                 <FaStar color="#f4f4f4" className={styles.icon} />
-                Achievements
+                <span className={styles.menuText}>Achievements</span>
               </Link>
             </li>
             {user?.isAdmin && (
               <li className={`${styles.menuItem} ${styles.active}`}>
-                <Link className={styles.menuText} to="/admin">
+                <Link className={styles.menuLink} to="/admin">
                   <RiAdminLine color="#f4f4f4" className={styles.icon} />
-                  Go to admin panel
+                  <span className={styles.menuText}>Go to admin panel</span>
                 </Link>
               </li>
             )}
             {user && (
               <li className={`${styles.menuItem} ${styles.active}`}>
                 <p
-                  className={styles.menuText}
+                  className={styles.menuLink}
                   onClick={() => {
                     window.localStorage.removeItem("token");
                     history.push("/");
                   }}
                 >
                   <RiLogoutBoxRLine color="#f4f4f4" className={styles.icon} />
-                  Log out
+                  <span className={styles.menuText}>Log out</span>
                 </p>
               </li>
             )}

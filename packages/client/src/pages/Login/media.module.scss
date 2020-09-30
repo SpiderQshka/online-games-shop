@@ -1,0 +1,7 @@
+@import "../../styles/config.scss";
+
+@media all and (max-width: 500px) {
+  .formContainer {
+    background-color: $secondary-color-light;
+  }
+}

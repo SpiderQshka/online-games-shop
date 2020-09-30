@@ -1,0 +1,52 @@
+@import "../../styles/config.scss";
+
+@media all and (max-width: 800px) {
+  .profileContainer {
+    .profileContent {
+      margin-top: $default-gap;
+      grid-template-columns: 1fr;
+      grid-template-areas: "menuBtn menuBtn" "menu menu" "data data";
+      .menuList {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: $default-gap;
+        .menuItem {
+          flex-grow: 1;
+          margin-right: 5px;
+          &:last-of-type {
+            margin-right: 0;
+          }
+          .menuLink {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            .icon {
+              margin-right: 0;
+              margin-bottom: 5px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media all and (max-width: 600px) {
+  .profileContainer {
+    .profileContent {
+      .menuList {
+        .menuItem {
+          .menuLink {
+            .menuText {
+              display: none;
+            }
+            .icon {
+              margin: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+}

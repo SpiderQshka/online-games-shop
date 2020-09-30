@@ -2,7 +2,7 @@
 
 .notFoundContainer {
   background-color: $secondary-color-dark;
-  padding-top: $header-height;
+  padding: $header-height $default-gap 0;
   min-height: calc(100vh - #{$header-height});
   .notFoundContent {
     max-width: 450px;

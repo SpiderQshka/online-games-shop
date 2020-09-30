@@ -14,10 +14,16 @@
     justify-content: space-between;
     margin-top: 20px;
     color: $primary-color-light;
+    .row {
+      padding-right: 7px;
+    }
     &.headerItem {
       font-weight: bold;
       padding-bottom: 20px;
       border-bottom: 2px solid $accent-color;
+      .row {
+        text-align: center;
+      }
     }
     &.footerItem {
       font-weight: bold;

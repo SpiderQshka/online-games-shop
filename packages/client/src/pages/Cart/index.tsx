@@ -20,7 +20,6 @@ export const Cart = () => {
   useEffect(() => {
     const processGames = async () => {
       const gamesIds = getUserSessionData();
-
       const games = await Aigle.map(gamesIds, (gameId) =>
         getGame(gameId).then(({ game, error }) => {
           if (error) setError(error);
@@ -57,13 +56,17 @@ export const Cart = () => {
 
               <ul className={styles.cartList}>
                 <li className={`${styles.cartItem} ${styles.headerItem}`}>
-                  <span className={styles.name}>Name</span>
-                  <span className={styles.price}>Price</span>
+                  <span className={`${styles.row} ${styles.name}`}>Name</span>
+                  <span className={`${styles.row} ${styles.price}`}>Price</span>
                 </li>
                 {games.map((game) => (
                   <li className={styles.cartItem} key={game.id}>
-                    <span className={styles.name}>{game.name}</span>
-                    <span className={styles.price}>{game.price} $</span>
+                    <span className={`${styles.row} ${styles.name}`}>
+                      {game.name}
+                    </span>
+                    <span className={`${styles.row} ${styles.price}`}>
+                      {game.price} $
+                    </span>
                   </li>
                 ))}
               </ul>

@@ -1,12 +1,12 @@
 @import "../../styles/config.scss";
 
 .cartContainer {
-  padding-top: $header-height;
+  padding: $header-height $default-gap 0;
   background-color: $secondary-color-dark;
   min-height: calc(100vh - #{$header-height});
   .emptyCartContent {
     margin: 40px auto 0;
-    padding: 20px;
+    padding: 30px;
     background-color: $secondary-color-light;
     max-width: 600px;
     display: flex;
@@ -22,11 +22,15 @@
       text-transform: uppercase;
       font-size: 35px;
       margin-bottom: 20px;
+      text-align: center;
+      line-height: 1.2;
     }
     .text {
       @include primaryFont;
       color: $primary-color;
       margin-bottom: 20px;
+      text-align: center;
+      line-height: 1.2;
     }
     .btn {
       @include primaryFont;
@@ -64,6 +68,12 @@
           justify-content: space-between;
           margin-top: 20px;
           color: $primary-color-light;
+          .row {
+            padding-right: 7px;
+            &:last-of-type {
+              padding-right: 0;
+            }
+          }
         }
         .headerItem {
           font-weight: bold;
@@ -91,6 +101,7 @@
         color: $primary-color-light;
         font-weight: bold;
         padding-bottom: 20px;
+        border-bottom: 2px solid $primary-color;
         .price {
           font-weight: normal;
         }
@@ -112,3 +123,5 @@
     }
   }
 }
+
+@import "./media.module.scss";

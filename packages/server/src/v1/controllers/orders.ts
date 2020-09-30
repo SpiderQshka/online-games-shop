@@ -182,29 +182,4 @@ export const ordersController: IOrdersController = {
       ctx.throw(400, "Bad request");
     }
   },
-  // delete: async (ctx) => {
-  //   const user = verifyJwtToken(ctx);
-
-  //   const doesOrderRelateToCurrentUser = doesOrderRelateToUser(
-  //     ctx.params.id,
-  //     user.id
-  //   );
-
-  //   if (!doesOrderRelateToCurrentUser && !user.isAdmin)
-  //     ctx.throw(403, "Access denied");
-
-  //   let response;
-
-  //   try {
-  //     await OrderedGame.query().where("orderId", ctx.params.id).delete();
-  //     response = await Order.query().deleteById(ctx.params.id);
-  //   } catch (error) {
-  //     ctx.throw(400, "Bad request");
-  //   }
-
-  //   if (!response)
-  //     ctx.throw(404, `Order with id '${ctx.params.id}' was not found`);
-
-  //   ctx.body = `${response} rows deleted`;
-  // },
 };

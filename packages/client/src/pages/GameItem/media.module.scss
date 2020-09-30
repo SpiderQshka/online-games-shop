@@ -1,0 +1,29 @@
+@import "../../styles/config.scss";
+
+@media all and (max-width: 800px) {
+  .gameItemContainer {
+    .gameItemContent {
+      padding: $default-gap 0;
+      .gameInfoBlock {
+        grid-template-columns: 1fr;
+        grid-template-areas: "header header" "logo logo" "info info";
+        border-bottom: 1px solid $primary-color-dark;
+        padding-bottom: 30px;
+        .gameLogo {
+          height: 400px;
+        }
+        .gameName {
+          text-align: center;
+        }
+      }
+      .gameDescriptionBlock {
+        grid-template-columns: 1fr;
+        padding-top: 30px;
+        .header {
+          text-align: center;
+          margin-bottom: 20px;
+        }
+      }
+    }
+  }
+}

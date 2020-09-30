@@ -15,14 +15,20 @@
     grid-template-columns: repeat(3, 1fr);
     margin-top: 20px;
     color: $primary-color-light;
-    .games {
-      .gameName {
-        display: block;
-        margin-bottom: 5px;
-        color: $accent-color;
-        text-decoration: none;
-        &:last-of-type {
-          margin-bottom: 0;
+    .row {
+      padding-right: 7px;
+      &.date {
+        word-break: break-all;
+      }
+      &.games {
+        .gameName {
+          display: block;
+          margin-bottom: 5px;
+          color: $accent-color;
+          text-decoration: none;
+          &:last-of-type {
+            margin-bottom: 0;
+          }
         }
       }
     }

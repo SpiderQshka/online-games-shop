@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styles from "./styles.module.scss";
 import { IOrderForUI } from "interfaces/app";
+import moment from "moment";
 
 interface OredersProps {
   orders: IOrderForUI[];
@@ -21,8 +22,10 @@ export const Orders: React.FunctionComponent<OredersProps> = ({ orders }) => {
             </li>
             {orders.map((el) => (
               <li className={styles.orderItem} key={el.id}>
-                <span className={styles.date}>{el.createdAt}</span>
-                <span className={styles.games}>
+                <span className={`${styles.row} ${styles.date}`}>
+                  {moment(el.createdAt).format("DD-MM-YYYY")}
+                </span>
+                <span className={`${styles.row} ${styles.games}`}>
                   {el.orderedGames.map((el) => (
                     <Link
                       to={`/store/item/${el.id}`}
@@ -32,7 +35,9 @@ export const Orders: React.FunctionComponent<OredersProps> = ({ orders }) => {
                     </Link>
                   ))}
                 </span>
-                <span className={styles.price}>{el.price}$</span>
+                <span className={`${styles.row} ${styles.price}`}>
+                  {el.price}$
+                </span>
               </li>
             ))}
           </>
