@@ -56,16 +56,16 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
               Delivery
             </Link>
           </li>
-          <li className={`${styles.navItem} ${styles.mobileOnlyItem}`}>
-            <Link to="/profile" className={styles.link}>
-              <div className={styles.iconContainer}>
-                <FaUser size="100%" />
-              </div>
-              <span className={styles.username}>{user?.login}</span>
-            </Link>
-          </li>
           {user ? (
             <>
+              <li className={`${styles.navItem} ${styles.mobileOnlyItem}`}>
+                <Link to="/profile" className={styles.link}>
+                  <div className={styles.iconContainer}>
+                    <FaUser size="100%" />
+                  </div>
+                  <span className={styles.username}>{user?.login}</span>
+                </Link>
+              </li>
               <li className={`${styles.navItem} ${styles.mobileOnlyItem}`}>
                 <Link to="/cart" className={styles.link}>
                   My cart
@@ -73,7 +73,18 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
               </li>
             </>
           ) : (
-            <></>
+            <>
+              <li className={`${styles.navItem} ${styles.mobileOnlyItem}`}>
+                <Link to="/login" className={styles.link}>
+                  Login
+                </Link>
+              </li>
+              <li className={`${styles.navItem} ${styles.mobileOnlyItem}`}>
+                <Link to="/signup" className={styles.link}>
+                  Sign up
+                </Link>
+              </li>
+            </>
           )}
         </ul>
         <button
@@ -83,7 +94,7 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
           <FaBars size="30px" />
         </button>
       </nav>
-      <div className={styles.profileContainer}>
+      <div className={`${styles.profileContainer}`}>
         <SearchBar games={games} />
         {user ? (
           <>

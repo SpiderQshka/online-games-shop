@@ -70,34 +70,8 @@ $nav-list-width: 200px;
         display: none;
       }
     }
+    .unauthProfile {
+      display: none;
+    }
   }
 }
-
-// @media all and (max-width: 600px) {
-//   .headerContainer {
-//     .navContainer {
-//       .navList {
-//         .navItem {
-//           &.mobileOnlyItem {
-//             display: block;
-//             .iconContainer {
-//               max-width: 20px;
-//               margin-right: 10px;
-//             }
-//             .username {
-//               @include primaryFont;
-//               color: $primary-color-light;
-//               text-transform: uppercase;
-//               font-size: 14px;
-//             }
-//           }
-//         }
-//       }
-//     }
-//     .profileContainer {
-//       .profile {
-//         display: none;
-//       }
-//     }
-//   }
-// }
