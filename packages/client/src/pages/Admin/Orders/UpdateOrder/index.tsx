@@ -15,15 +15,13 @@ interface OrderItemProps {
   orders: IOrderForUI[];
 }
 
-export const OrderItem: React.FunctionComponent<OrderItemProps> = ({
+export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
   orders,
 }) => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
   const { putOrder } = useApi();
-  const [order, setOrder] = useState<IOrderForUI | null>(
-    orders.filter((order) => order.id === +id)[0]
-  );
+  const order = orders.filter((order) => order.id === +id)[0];
   const [error, setError] = useState<IApiError | null>();
   const formik = useFormik({
     initialValues: { status: "pending" } as OrderFormValues,

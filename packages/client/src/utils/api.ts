@@ -262,6 +262,46 @@ export const API: IApi = {
           error: { msg: error.request.response, status: error.request.status },
         };
       }),
+  postOrderAdmin: (order) =>
+    axios
+      .post(
+        `${config.apiUrl}/admin/orders`,
+        {
+          gamesIds: order.gamesIds,
+          status: order.status,
+          userId: order.userId,
+        },
+        {
+          headers: {
+            token: window.localStorage.getItem("token"),
+          },
+        }
+      )
+      .then((response) => {
+        return { order: response.data };
+      })
+      .catch((error) => {
+        return {
+          order: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  getUsers: () =>
+    axios
+      .get(`${config.apiUrl}/users`, {
+        headers: {
+          token: window.localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        return { users: response.data };
+      })
+      .catch((error) => {
+        return {
+          users: [],
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
 };
 
 export const getFilterOptions = (checkedFormInputs: HTMLInputElement[]) =>

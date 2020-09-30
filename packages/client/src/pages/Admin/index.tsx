@@ -8,7 +8,8 @@ import { useApi } from "context/api";
 import { IApiError, IDiscount, IGameCreator, IGenre } from "interfaces/api";
 import { IGameForUI, IOrderForUI } from "interfaces/app";
 import { Orders } from "./Orders";
-import { OrderItem } from "./Orders/OrderItem";
+import { UpdateOrder } from "./Orders/UpdateOrder";
+import { CreateOrder } from "./Orders/CreateOrder";
 import { Loader } from "components/Loader";
 import { FaBars } from "react-icons/fa";
 
@@ -177,7 +178,7 @@ export const Admin = () => {
             <MdUpdate size="100%" />
           </button>
           <button
-            className={styles.btn}
+            className={`${styles.btn} ${styles.menuBtn}`}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             <FaBars size="100%" />
@@ -205,8 +206,13 @@ export const Admin = () => {
               component={() => <Orders orders={orders} />}
             />
             <Route
+              exact
+              path="/admin/orders/create"
+              component={() => <CreateOrder />}
+            />
+            <Route
               path="/admin/orders/:id"
-              component={() => <OrderItem orders={orders} />}
+              component={() => <UpdateOrder orders={orders} />}
             />
             <Route component={() => <Redirect to="/admin/dashboard" />} />
           </Switch>

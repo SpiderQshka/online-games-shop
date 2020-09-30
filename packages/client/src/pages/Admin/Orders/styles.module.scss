@@ -14,15 +14,20 @@
       @include primaryFont;
       display: grid;
       padding: 20px;
-      grid-template-columns: 40px repeat(4, 1fr);
+      grid-template-columns: 40px repeat(4, 1fr) 40px;
       color: $primary-color-light;
       cursor: pointer;
       span {
         line-height: 1.4;
         padding-right: 15px;
         word-break: break-all;
+        display: flex;
+        align-items: center;
         &:last-of-type {
           padding-right: 0;
+        }
+        &.addBtn {
+          @include basicBtn;
         }
       }
     }

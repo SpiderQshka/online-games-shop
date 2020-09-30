@@ -20,6 +20,7 @@ interface IOrdersController {
   getMy: Middleware;
   put: Middleware;
   post: Middleware;
+  postAdmin: Middleware;
 }
 
 export const ordersController: IOrdersController = {
@@ -172,6 +173,41 @@ export const ordersController: IOrdersController = {
             gameId: game.id,
             orderId: order.id,
             userId: user.id,
+            price: +game.price,
+          })
+      );
+      ctx.body = { ...order, orderedGames };
+    } catch (e) {
+      console.log(e);
+
+      ctx.throw(400, "Bad request");
+    }
+  },
+  postAdmin: async (ctx) => {
+    try {
+      const gamesIds: number[] = ctx.request.body.gamesIds;
+      const userId = ctx.request.body.userId;
+
+      const games: IGame[] = _.uniqBy(
+        await Aigle.map(gamesIds, (id) => Game.query().findById(id)),
+        (game: IGame) => game.id
+      );
+
+      const price = games.reduce((prev, curr) => prev + +curr.price, 0);
+
+      const order = await Order.query().insert({
+        createdAt: new Date(),
+        price,
+        status: ctx.request.body.status,
+      });
+
+      const orderedGames: IOrderedGame[] = await Aigle.map(
+        games,
+        async (game) =>
+          await OrderedGame.query().insert({
+            gameId: game.id,
+            orderId: order.id,
+            userId,
             price: +game.price,
           })
       );

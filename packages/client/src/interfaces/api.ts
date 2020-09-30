@@ -62,6 +62,10 @@ export interface IApi {
   putOrder: (
     order: IOrderPut
   ) => Promise<{ order: IOrderFromApi | null; error?: IApiError }>;
+  postOrderAdmin: (
+    order: IOrderAdmin
+  ) => Promise<{ order: IOrderFromApi | null; error?: IApiError }>;
+  getUsers: () => Promise<{ users: IUser[]; error?: IApiError }>;
 }
 
 export interface IApiError {
@@ -83,6 +87,10 @@ export interface IOrder {
 
 export interface IOrderPut extends IOrder {
   id: number;
+}
+
+export interface IOrderAdmin extends IOrder {
+  userId: number;
 }
 
 export type OrderStatus = "pending" | "cancelled" | "received";
