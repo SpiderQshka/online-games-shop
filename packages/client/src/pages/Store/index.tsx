@@ -131,9 +131,7 @@ export const Store = () => {
           className={`${styles.storeContent} ${
             isFiltersMenuOpen && styles.overlay
           }`}
-          onClick={(e) => {
-            console.log(e.target);
-
+          onClick={() => {
             isFiltersMenuOpen && setIsFiltersMenuOpen(false);
           }}
         >
