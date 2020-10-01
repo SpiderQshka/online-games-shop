@@ -5,7 +5,7 @@ import { SearchBar } from "../SearchBar";
 import { FaUser, FaGamepad, FaShoppingCart, FaBars } from "react-icons/fa";
 import { Link, useHistory } from "react-router-dom";
 import { useApi } from "context/api";
-import { IApiError, IGame, IUser } from "interfaces/api";
+import { IApiError, IGameFromApi, IUser } from "interfaces/api";
 
 interface HeaderProps {}
 
@@ -14,7 +14,7 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
   const { token } = useAuth();
   const { getGames, getUser } = useApi();
   const [error, setError] = useState<IApiError | null>(null);
-  const [games, setGames] = useState<IGame[]>([]);
+  const [games, setGames] = useState<IGameFromApi[]>([]);
   const [user, setUser] = useState<IUser | null>();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 

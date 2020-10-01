@@ -1,10 +1,10 @@
 import { useApi } from "context/api";
 import { useFormik } from "formik";
-import { IApiError, IGame, IUser, OrderStatus } from "interfaces/api";
+import { IApiError, IGameFromApi, IUser, OrderStatus } from "interfaces/api";
 import { IOrderForUI } from "interfaces/app";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import styles from "./styles.module.scss";
+import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
 
 interface OrderFormValues {
@@ -18,7 +18,7 @@ interface AddOrderProps {}
 export const CreateOrder: React.FunctionComponent<AddOrderProps> = () => {
   const history = useHistory();
   const { postOrderAdmin, getUsers, getGames } = useApi();
-  const [games, setGames] = useState<IGame[]>([]);
+  const [games, setGames] = useState<IGameFromApi[]>([]);
   const [users, setUsers] = useState<IUser[]>([]);
   const [error, setError] = useState<IApiError | null>();
   const formik = useFormik({
@@ -54,7 +54,7 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = () => {
     processAsync();
   }, []);
   return (
-    <div className={styles.orderItemContent}>
+    <div className={styles.itemContent}>
       <h2 className={styles.header}>Create order</h2>
       <form onSubmit={formik.handleSubmit} className={styles.form}>
         <label className={styles.label}>
@@ -70,7 +70,7 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = () => {
             value={formik.values.userId}
           />
         </label>
-        {!!formik.touched.status && !!formik.errors.userId && (
+        {!!formik.touched.userId && !!formik.errors.userId && (
           <p className={styles.errorMsg}>{formik.errors.userId}</p>
         )}
         <label className={styles.label}>
@@ -108,7 +108,7 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = () => {
           </select>
         </label>
 
-        {!!formik.touched.status && !!formik.errors.gamesIds && (
+        {!!formik.touched.gamesIds && !!formik.errors.gamesIds && (
           <p className={styles.errorMsg}>{formik.errors.gamesIds}</p>
         )}
         <button

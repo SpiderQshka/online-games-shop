@@ -12,7 +12,7 @@ export async function seed(knex: Knex): Promise<void> {
       price: +faker.random.number({ min: 0 }),
       numberOfPhysicalCopies: +faker.random.number({ min: 0 }),
       gameCreatorId: 1,
-      creationDate: faker.date.past(),
+      createdAt: faker.date.past(),
     },
     {
       id: 2,
@@ -23,7 +23,7 @@ export async function seed(knex: Knex): Promise<void> {
       price: +faker.random.number({ min: 0 }),
       numberOfPhysicalCopies: +faker.random.number({ min: 0 }),
       gameCreatorId: 1,
-      creationDate: faker.date.past(),
+      createdAt: faker.date.past(),
     },
     {
       id: 3,
@@ -35,7 +35,7 @@ export async function seed(knex: Knex): Promise<void> {
       price: +faker.random.number({ min: 0 }),
       numberOfPhysicalCopies: +faker.random.number({ min: 0 }),
       gameCreatorId: 2,
-      creationDate: faker.date.past(),
+      createdAt: faker.date.past(),
     },
     {
       id: 4,
@@ -46,7 +46,7 @@ export async function seed(knex: Knex): Promise<void> {
       price: +faker.random.number({ min: 0 }),
       numberOfPhysicalCopies: +faker.random.number({ min: 0 }),
       gameCreatorId: 2,
-      creationDate: faker.date.past(),
+      createdAt: faker.date.past(),
     },
   ]);
 }

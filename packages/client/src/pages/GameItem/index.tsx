@@ -3,7 +3,13 @@ import { Header } from "components/Header";
 import styles from "./styles.module.scss";
 import { useParams, useHistory } from "react-router-dom";
 import { useApi } from "context/api";
-import { IApiError, IDiscount, IGame, IGameCreator } from "interfaces/api";
+import {
+  IApiError,
+  IDiscount,
+  IGame,
+  IGameCreator,
+  IGameFromApi,
+} from "interfaces/api";
 import moment from "moment";
 import { IGameForUI } from "interfaces/app";
 import { Loader } from "components/Loader";
@@ -88,7 +94,7 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
           {} as IDiscount
         );
       setGame({
-        ...(game as IGame),
+        ...(game as IGameFromApi),
         gameCreator: gameCreator as IGameCreator,
         genres: gameGenres,
         discount: gameHightestDiscount.amount ? gameHightestDiscount : null,
@@ -125,7 +131,7 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
                   <li className={styles.gameInfoItem}>
                     <span className={styles.fieldName}>Release date</span>
                     <span className={styles.fieldValue}>
-                      {moment(game?.creationDate).format("DD-MM-YYYY")}
+                      {moment(game?.createdAt).format("DD-MM-YYYY")}
                     </span>
                   </li>
                   <li className={styles.gameInfoItem}>

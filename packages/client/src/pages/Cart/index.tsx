@@ -1,5 +1,5 @@
 import { useApi } from "context/api";
-import { IApiError, IGame } from "interfaces/api";
+import { IApiError, IGameFromApi } from "interfaces/api";
 import React, { useEffect, useState } from "react";
 import { getUserSessionData, setUserSessionData } from "utils/helpers";
 import styles from "./styles.module.scss";
@@ -14,7 +14,7 @@ Aigle.mixin(_, {});
 export const Cart = () => {
   const history = useHistory();
   const { getGame, postOrder } = useApi();
-  const [games, setGames] = useState<IGame[]>([]);
+  const [games, setGames] = useState<IGameFromApi[]>([]);
   const [error, setError] = useState<IApiError | null>(null);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export const Cart = () => {
         })
       );
 
-      setGames(games.filter((game) => !!game) as IGame[]);
+      setGames(games.filter((game) => !!game) as IGameFromApi[]);
     };
     processGames();
   }, []);

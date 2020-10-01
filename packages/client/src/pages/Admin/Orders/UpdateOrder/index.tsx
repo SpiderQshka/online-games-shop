@@ -1,6 +1,6 @@
 import { useFormik } from "formik";
 import React, { useEffect, useState } from "react";
-import styles from "./styles.module.scss";
+import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
 import { useHistory, useParams } from "react-router-dom";
 import { IApiError, OrderStatus } from "interfaces/api";
@@ -30,11 +30,13 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
     }),
     onSubmit: (data) => {
       order &&
-        putOrder({
-          id: order.id,
-          gamesIds: order.orderedGames.map((game) => game.id),
-          status: data.status,
-        }).then(({ order, error }) => {
+        putOrder(
+          {
+            gamesIds: order.orderedGames.map((game) => game.id),
+            status: data.status,
+          },
+          order.id
+        ).then(({ order, error }) => {
           if (error) setError(error);
           else history.push("/admin/orders");
         });
@@ -44,11 +46,11 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
     order && formik.setFieldValue("status", order.status);
   }, []);
   return (
-    <div className={styles.orderItemContent}>
+    <div className={styles.itemContent}>
       <h2 className={styles.header}>Update order with id {order?.id}</h2>
       <form onSubmit={formik.handleSubmit} className={styles.form}>
         <label className={styles.label}>
-          <span className={styles.selectText}>Order status</span>
+          <span className={styles.labelText}>Order status</span>
           <select
             name="status"
             onChange={formik.handleChange}

@@ -15,8 +15,9 @@ export const gamesRoutesValidation: IGamesRoutesValidation = {
     ageRating: Joi.number().min(0).max(18).default(null),
     price: Joi.number().min(0).required(),
     numberOfPhysicalCopies: Joi.number().min(0).default(0),
-    gameCreatorId: Joi.string().guid().required(),
+    gameCreatorId: Joi.number().required(),
     createdAt: Joi.date().iso().required(),
+    genresIds: Joi.array().items(Joi.number().min(0).required()).required(),
   },
   put: {
     name: Joi.string().min(5),
@@ -25,7 +26,8 @@ export const gamesRoutesValidation: IGamesRoutesValidation = {
     ageRating: Joi.number().min(0),
     price: Joi.number().min(0),
     numberOfPhysicalCopies: Joi.number().min(0).default(0),
-    gameCreatorId: Joi.string().guid(),
+    gameCreatorId: Joi.number(),
     createdAt: Joi.date().iso(),
+    genresIds: Joi.array().items(Joi.number().min(0).required()),
   },
 };

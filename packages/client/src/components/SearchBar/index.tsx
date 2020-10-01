@@ -1,11 +1,11 @@
-import { IGame } from "interfaces/api";
+import { IGameFromApi } from "interfaces/api";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import styles from "./styles.module.scss";
 
 interface SearchBarProps {
-  games: IGame[];
+  games: IGameFromApi[];
 }
 
 export const SearchBar: React.FunctionComponent<SearchBarProps> = ({

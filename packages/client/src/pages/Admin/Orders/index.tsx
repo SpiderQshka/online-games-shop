@@ -1,9 +1,10 @@
 import { IOrderForUI } from "interfaces/app";
 import React from "react";
 import { useHistory } from "react-router-dom";
-import styles from "./styles.module.scss";
+import styles from "components/AdminTable/styles.module.scss";
 import moment from "moment";
 import { FaPlus } from "react-icons/fa";
+import { BsThreeDots } from "react-icons/bs";
 interface OrdersProps {
   orders: IOrderForUI[];
 }
@@ -12,43 +13,51 @@ export const Orders: React.FunctionComponent<OrdersProps> = ({ orders }) => {
   const history = useHistory();
 
   return (
-    <div className={styles.ordersContent}>
+    <div className={styles.itemsContent}>
       <h2 className={styles.header}>Orders</h2>
-      <ul className={styles.ordersList}>
-        <li className={`${styles.orderItem} ${styles.headerItem}`}>
-          <span>ID</span>
-          <span>Created At</span>
-          <span>Price</span>
-          <span>Status</span>
-          <span>Games</span>
-          <span
-            className={styles.addBtn}
+      <table className={styles.itemsTable}>
+        <tr className={`${styles.row} ${styles.headerRow}`}>
+          <th className={styles.col}>ID</th>
+          <th className={styles.col}>Created At</th>
+          <th className={styles.col}>Price</th>
+          <th className={styles.col}>Status</th>
+          <th className={styles.col}>Games</th>
+          <th
+            className={`${styles.col} ${styles.btnContainer}`}
             onClick={() => history.push("/admin/orders/create")}
           >
-            <FaPlus size="25px" />
-          </span>
-        </li>
+            <button className={styles.btn}>
+              <FaPlus size="25px" />
+            </button>
+          </th>
+        </tr>
         {orders
           .sort((a, b) => a.id - b.id)
           .map((order) => (
-            <li
-              className={styles.orderItem}
-              key={order.id}
-              onClick={() => history.push(`/admin/orders/${order.id}`)}
-            >
-              <span>{order.id}</span>
-              <span>{moment(order.createdAt).format("DD-MM-YYYY")}</span>
-              <span>{order.price}</span>
-              <span>{order.status}</span>
-              <span>
+            <tr className={styles.row} key={order.id}>
+              <td className={styles.col}>{order.id}</td>
+              <td className={styles.col}>
+                {moment(order.createdAt).format("DD-MM-YYYY")}
+              </td>
+              <td className={styles.col}>{order.price}</td>
+              <td className={styles.col}>{order.status}</td>
+              <td className={styles.col}>
                 {order.orderedGames.reduce(
                   (prev, curr, i) => (i ? `${prev}, ${curr.name}` : curr.name),
                   ""
                 )}
-              </span>
-            </li>
+              </td>
+              <td className={`${styles.col} ${styles.btnContainer}`}>
+                <button
+                  className={styles.btn}
+                  onClick={() => history.push(`/admin/orders/${order.id}`)}
+                >
+                  <BsThreeDots size="25px" />
+                </button>
+              </td>
+            </tr>
           ))}
-      </ul>
+      </table>
     </div>
   );
 };

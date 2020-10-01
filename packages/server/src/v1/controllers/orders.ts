@@ -166,15 +166,13 @@ export const ordersController: IOrdersController = {
         status: ctx.request.body.status,
       });
 
-      const orderedGames: IOrderedGame[] = await Aigle.map(
-        games,
-        async (game) =>
-          await OrderedGame.query().insert({
-            gameId: game.id,
-            orderId: order.id,
-            userId: user.id,
-            price: +game.price,
-          })
+      const orderedGames: IOrderedGame[] = await Aigle.map(games, (game) =>
+        OrderedGame.query().insert({
+          gameId: game.id,
+          orderId: order.id,
+          userId: user.id,
+          price: +game.price,
+        })
       );
       ctx.body = { ...order, orderedGames };
     } catch (e) {

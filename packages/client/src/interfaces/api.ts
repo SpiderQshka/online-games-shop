@@ -10,8 +10,10 @@ export interface IApi {
   register: (
     data: LoginFormValues
   ) => Promise<{ token: string | null; error?: IApiError }>;
-  getGames: () => Promise<{ games: IGame[]; error?: IApiError }>;
-  getGame: (id: number) => Promise<{ game: IGame | null; error?: IApiError }>;
+  getGames: () => Promise<{ games: IGameFromApi[]; error?: IApiError }>;
+  getGame: (
+    id: number
+  ) => Promise<{ game: IGameFromApi | null; error?: IApiError }>;
   getGameCreators: () => Promise<{
     gameCreators: IGameCreator[];
     error?: IApiError;
@@ -60,12 +62,20 @@ export interface IApi {
     error?: IApiError;
   }>;
   putOrder: (
-    order: IOrderPut
+    order: IOrder,
+    id: number
   ) => Promise<{ order: IOrderFromApi | null; error?: IApiError }>;
   postOrderAdmin: (
     order: IOrderAdmin
   ) => Promise<{ order: IOrderFromApi | null; error?: IApiError }>;
   getUsers: () => Promise<{ users: IUser[]; error?: IApiError }>;
+  postGame: (
+    game: IGame
+  ) => Promise<{ game: IGameFromApi | null; error?: IApiError }>;
+  putGame: (
+    game: IGame,
+    id: number
+  ) => Promise<{ game: IGameFromApi | null; error?: IApiError }>;
 }
 
 export interface IApiError {
@@ -102,6 +112,21 @@ export interface IOrderFromApi {
 }
 
 export interface IGame {
+  name: string;
+  logo: string;
+  description: string;
+  ageRating: number;
+  price: number;
+  numberOfPhysicalCopies: number;
+  gameCreatorId: number;
+  createdAt: string;
+  genresIds: number[];
+}
+
+export interface IGamePut extends IGame {
+  id: number;
+}
+export interface IGameFromApi {
   id: number;
   name: string;
   logo: string;
@@ -110,7 +135,7 @@ export interface IGame {
   price: number;
   numberOfPhysicalCopies: number;
   gameCreatorId: number;
-  creationDate: string;
+  createdAt: string;
 }
 
 export interface IGameCreator {

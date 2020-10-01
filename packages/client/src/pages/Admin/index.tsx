@@ -11,7 +11,10 @@ import { Orders } from "./Orders";
 import { UpdateOrder } from "./Orders/UpdateOrder";
 import { CreateOrder } from "./Orders/CreateOrder";
 import { Loader } from "components/Loader";
-import { FaBars } from "react-icons/fa";
+import { FaBars, FaGamepad } from "react-icons/fa";
+import { Games } from "./Games";
+import { CreateGame } from "./Games/CreateGame";
+import { UpdateGame } from "./Games/UpdateGame";
 
 export const Admin = () => {
   const history = useHistory();
@@ -155,6 +158,19 @@ export const Admin = () => {
           </li>
           <li className={styles.menuItem}>
             <Link
+              to="/admin/games"
+              onClick={() => setIsMenuOpen(false)}
+              className={`${styles.menuLink} ${
+                history.location.pathname.includes("/admin/games") &&
+                styles.active
+              }`}
+            >
+              <FaGamepad size="20px" className={styles.icon} />
+              Games
+            </Link>
+          </li>
+          <li className={styles.menuItem}>
+            <Link
               to="/"
               onClick={() => setIsMenuOpen(false)}
               className={`${styles.menuLink}`}
@@ -207,12 +223,26 @@ export const Admin = () => {
             />
             <Route
               exact
+              path="/admin/games"
+              component={() => <Games games={games} />}
+            />
+            <Route
+              exact
               path="/admin/orders/create"
               component={() => <CreateOrder />}
             />
             <Route
+              exact
+              path="/admin/games/create"
+              component={() => <CreateGame />}
+            />
+            <Route
               path="/admin/orders/:id"
               component={() => <UpdateOrder orders={orders} />}
+            />
+            <Route
+              path="/admin/games/:id"
+              component={() => <UpdateGame games={games} />}
             />
             <Route component={() => <Redirect to="/admin/dashboard" />} />
           </Switch>

@@ -1,0 +1,64 @@
+@import "../../styles/config.scss";
+
+.itemsContent {
+  .header {
+    @include primaryFont;
+    color: $primary-color-light;
+    text-transform: uppercase;
+    font-size: 25px;
+    margin-bottom: 30px;
+  }
+  .itemsTable {
+    background-color: $secondary-color-light;
+    min-width: 100%;
+    .row {
+      @include primaryFont;
+      display: table-row;
+      vertical-align: middle;
+      position: relative;
+      white-space: nowrap;
+      color: $primary-color-light;
+      border-bottom: 2px solid $secondary-color-dark;
+      .col {
+        display: table-cell;
+        padding: 20px 0;
+        line-height: 1.4;
+        padding-right: 20px;
+        vertical-align: inherit;
+        &:first-of-type {
+          padding-left: 20px;
+        }
+        &.largeText {
+          min-width: 300px;
+          white-space: normal;
+        }
+        &.list {
+          list-style: none;
+        }
+        &.imgContainer {
+          min-width: 300px;
+          .img {
+            width: 100%;
+            min-height: 10rem;
+            background: no-repeat center/cover $primary-color-light;
+          }
+        }
+        &.btnContainer {
+          .btn {
+            margin-left: auto;
+            @include basicBtn;
+            display: flex;
+            align-items: center;
+          }
+        }
+      }
+    }
+    .headerRow {
+      font-weight: bold;
+      text-align: left;
+      border-bottom: 2px solid $accent-color;
+    }
+  }
+}
+
+@import "./media.module.scss";

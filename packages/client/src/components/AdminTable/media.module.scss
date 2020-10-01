@@ -1,0 +1,13 @@
+@import "../../styles/config.scss";
+
+@media all and (max-width: 700px) {
+  .ordersContent {
+    .ordersList {
+      .orderItem {
+        span {
+          word-break: break-all;
+        }
+      }
+    }
+  }
+}

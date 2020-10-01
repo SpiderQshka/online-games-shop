@@ -242,17 +242,13 @@ export const API: IApi = {
           error: { msg: error.request.response, status: error.request.status },
         };
       }),
-  putOrder: (order) =>
+  putOrder: (order, id) =>
     axios
-      .put(
-        `${config.apiUrl}/orders/${order.id}`,
-        { gamesIds: order.gamesIds, status: order.status },
-        {
-          headers: {
-            token: window.localStorage.getItem("token"),
-          },
-        }
-      )
+      .put(`${config.apiUrl}/orders/${id}`, order, {
+        headers: {
+          token: window.localStorage.getItem("token"),
+        },
+      })
       .then((response) => {
         return { order: response.data };
       })
@@ -299,6 +295,38 @@ export const API: IApi = {
       .catch((error) => {
         return {
           users: [],
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  postGame: (game) =>
+    axios
+      .post(`${config.apiUrl}/games`, game, {
+        headers: {
+          token: window.localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        return { game: response.data };
+      })
+      .catch((error) => {
+        return {
+          game: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  putGame: (game, id) =>
+    axios
+      .put(`${config.apiUrl}/games/${id}`, game, {
+        headers: {
+          token: window.localStorage.getItem("token"),
+        },
+      })
+      .then((response) => {
+        return { game: response.data };
+      })
+      .catch((error) => {
+        return {
+          game: null,
           error: { msg: error.request.response, status: error.request.status },
         };
       }),
@@ -361,8 +389,8 @@ export const sortGames = (
     case "creationDate":
       return [...games].sort(
         (prev, curr) =>
-          new Date(prev.creationDate).getTime() -
-          new Date(curr.creationDate).getTime()
+          new Date(prev.createdAt).getTime() -
+          new Date(curr.createdAt).getTime()
       );
 
     case "alphabet":
