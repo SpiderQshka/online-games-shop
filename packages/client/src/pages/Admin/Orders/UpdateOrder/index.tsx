@@ -30,13 +30,10 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
     }),
     onSubmit: (data) => {
       order &&
-        putOrder(
-          {
-            gamesIds: order.orderedGames.map((game) => game.id),
-            status: data.status,
-          },
-          order.id
-        ).then(({ order, error }) => {
+        putOrder(order.id, {
+          gamesIds: order.orderedGames.map((game) => game.id),
+          status: data.status,
+        }).then(({ order, error }) => {
           if (error) setError(error);
           else history.push("/admin/orders");
         });

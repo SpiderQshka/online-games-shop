@@ -5,6 +5,7 @@ import { Game } from "models/Game";
 import _ from "lodash";
 import Aigle from "aigle";
 import { UsedGenre } from "models/UsedGenre";
+import { Genre } from "models/Genre";
 
 Aigle.mixin(_, {});
 
@@ -52,11 +53,33 @@ export const gamesController: IGamesController = {
         .findById(ctx.params.id)
         .patchAndFetchById(ctx.params.id, ctx.request.body);
 
-      // Aigle.map(genresIds, (id) => UsedGenre.query().patchAndFetchById(id, ))
-
-      console.log(game);
-
       if (!game) ctx.throw(404);
+
+      const usedGenres = await UsedGenre.query();
+
+      const gameGenresIds =
+        usedGenres.length > 0
+          ? _.uniq(
+              usedGenres
+                .filter((usedGenre) => usedGenre.gameId === game.id)
+                .map((usedGenre) => usedGenre.genreId)
+            )
+          : [];
+
+      console.log(gameGenresIds);
+
+      const deletedUsedGenres = await Aigle.map(gameGenresIds, (genreId) =>
+        UsedGenre.query()
+          .delete()
+          .where("genreId", genreId)
+          .where("gameId", game.id)
+      );
+
+      console.log(deletedUsedGenres);
+
+      Aigle.map(genresIds, (genreId) =>
+        UsedGenre.query().insert({ gameId: game.id, genreId })
+      );
 
       ctx.body = game;
     } catch (e) {

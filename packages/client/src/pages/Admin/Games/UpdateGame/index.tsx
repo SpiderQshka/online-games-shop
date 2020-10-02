@@ -1,6 +1,6 @@
 import { useApi } from "context/api";
 import { useFormik } from "formik";
-import { IApiError, IGame, IGameCreator, IGenre } from "interfaces/api";
+import { IApiError, IGame, IGameCreatorFromApi, IGenre } from "interfaces/api";
 import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
@@ -19,7 +19,7 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
   const history = useHistory();
   const game = games.filter((game) => game.id === +id)[0];
   const { putGame, getGameCreators, getGenres } = useApi();
-  const [gameCreators, setGameCreators] = useState<IGameCreator[]>([]);
+  const [gameCreators, setGameCreators] = useState<IGameCreatorFromApi[]>([]);
   const [genres, setGenres] = useState<IGenre[]>([]);
   const [error, setError] = useState<IApiError | null>();
   const formik = useFormik({
@@ -53,19 +53,16 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
         .required("Required"),
     }),
     onSubmit: (data) => {
-      putGame(
-        {
-          ...data,
-          createdAt: new Date(data.createdAt).toISOString(),
-        },
-        +id
-      ).then(({ game, error }) => {
+      putGame(game.id, {
+        ...data,
+        createdAt: new Date(data.createdAt).toISOString(),
+      }).then(({ game, error }) => {
         if (error) setError(error);
         else history.push("/admin/games");
       });
     },
   });
-  console.log(formik.values.createdAt);
+
   useEffect(() => {
     const processAsync = async () => {
       const {
@@ -79,14 +76,12 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
 
       setGameCreators(gameCreators);
       setGenres(genres);
-
-      formik.setValues({ ...formik.values, gameCreatorId: gameCreators[0].id });
     };
     processAsync();
   }, []);
   return (
     <div className={styles.itemContent}>
-      <h2 className={styles.header}>Create game</h2>
+      <h2 className={styles.header}>Update game with id {game.id}</h2>
       <form onSubmit={formik.handleSubmit} className={styles.form}>
         <label className={styles.label}>
           <span className={styles.labelText}>Name</span>
@@ -240,7 +235,7 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
             true && styles.active
           }`}
         >
-          Create
+          Update
         </button>
         {!!error && <p className={styles.errorMsg}>{error.msg}</p>}
       </form>

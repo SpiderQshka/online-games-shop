@@ -50,8 +50,8 @@ export const sortGames = (
     case "creationDate":
       return [...games].sort(
         (prev, curr) =>
-          new Date(prev.creationDate).getTime() -
-          new Date(curr.creationDate).getTime()
+          new Date(prev.createdAt).getTime() -
+          new Date(curr.createdAt).getTime()
       );
 
     case "alphabet":
@@ -60,3 +60,22 @@ export const sortGames = (
       );
   }
 };
+
+export const getFilterOptions = (checkedFormInputs: HTMLInputElement[]) =>
+  checkedFormInputs.reduce((prev, curr) => {
+    switch (curr.type) {
+      case "radio":
+        return {
+          ...prev,
+          [curr.name]: +curr.value,
+        };
+      case "checkbox":
+        return {
+          ...prev,
+          [curr.name]: prev[curr.name]
+            ? [...prev[curr.name], +curr.value]
+            : [+curr.value],
+        };
+    }
+    return {};
+  }, {} as any);

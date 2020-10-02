@@ -1,9 +1,9 @@
 import React from "react";
 import styles from "./styles.module.scss";
-import { IAchievement } from "interfaces/api";
+import { IAchievement, IAchievementFromApi } from "interfaces/api";
 
 interface AchievementsProps {
-  achievements: IAchievement[];
+  achievements: IAchievementFromApi[];
 }
 
 export const Achievements: React.FunctionComponent<AchievementsProps> = ({

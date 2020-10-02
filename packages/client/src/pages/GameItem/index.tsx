@@ -8,6 +8,7 @@ import {
   IDiscount,
   IGame,
   IGameCreator,
+  IGameCreatorFromApi,
   IGameFromApi,
 } from "interfaces/api";
 import moment from "moment";
@@ -96,7 +97,7 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
         );
       setGame({
         ...(game as IGameFromApi),
-        gameCreator: gameCreator as IGameCreator,
+        gameCreator: gameCreator as IGameCreatorFromApi,
         genres: gameGenres,
         discount: gameHightestDiscount.amount ? gameHightestDiscount : null,
       } as IGameForUI);

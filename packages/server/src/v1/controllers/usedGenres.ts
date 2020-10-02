@@ -10,6 +10,7 @@ interface IUsedGenresController {
   getAll: Middleware;
   put: Middleware;
   post: Middleware;
+  delete: Middleware;
 }
 
 export const usedGenresController: IUsedGenresController = {
@@ -59,6 +60,15 @@ export const usedGenresController: IUsedGenresController = {
   post: async (ctx) => {
     try {
       const response = await UsedGenre.query().insert(ctx.request.body);
+
+      ctx.body = response;
+    } catch (e) {
+      ctx.throw(400, "Bad request");
+    }
+  },
+  delete: async (ctx) => {
+    try {
+      const response = await UsedGenre.query().deleteById(ctx.params.id);
 
       ctx.body = response;
     } catch (e) {
