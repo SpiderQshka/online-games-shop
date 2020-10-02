@@ -41,3 +41,10 @@ Screenshots:
 
 # Registration name
 ![Registration page](https://www.linkpicture.com/q/Screenshot_2020-09-25-React-App-13.png)
+
+# Admin page
+## Dashboard
+![Dashboard](https://www.linkpicture.com/q/Screenshot_2020-09-30-React-App-1.png)
+
+## Orders
+![Orders](https://www.linkpicture.com/q/Screenshot_2020-09-30-React-App-2.png) 

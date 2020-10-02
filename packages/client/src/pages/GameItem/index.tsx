@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Header } from "components/Header";
 import styles from "./styles.module.scss";
 import { useParams, useHistory } from "react-router-dom";
@@ -16,6 +16,7 @@ import { Loader } from "components/Loader";
 import { getUserSessionData, setUserSessionData } from "utils/helpers";
 import { FaShoppingCart } from "react-icons/fa";
 import { useAuth } from "context/auth";
+import { isInteger } from "lodash";
 
 interface GameItemProps {}
 
@@ -36,17 +37,17 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [sessionData, setSessionData] = useState<number[]>([]);
 
-  const addToCartHandler = () => {
+  const addToCartHandler = useCallback(() => {
     if (game && token) {
       const sessionData = [...new Set([...getUserSessionData(), game.id])];
       setUserSessionData(sessionData);
       setSessionData(sessionData);
     } else history.push("/login");
-  };
+  }, [game, token]);
 
   useEffect(() => {
     setIsLoading(true);
-    if (isNaN(id as any)) history.push("/store");
+    if (!isInteger(+id)) history.push("/store");
     const processGame = async () => {
       const { game, error: gameError } = await getGame(id as any);
       if (gameError) setError(gameError);
@@ -103,6 +104,8 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
     };
     processGame();
   }, [id, sessionData.length]);
+
+  const isGameInCart = game && getUserSessionData().includes(game.id);
 
   return (
     <>
@@ -176,15 +179,11 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
               <div className={styles.buttonsBlock}>
                 <button
                   className={`${styles.actionBtn} ${
-                    game &&
-                    getUserSessionData().includes(game.id) &&
-                    styles.active
+                    isGameInCart && styles.active
                   }`}
-                  onClick={() => addToCartHandler()}
+                  onClick={addToCartHandler}
                 >
-                  {game && getUserSessionData().includes(game.id)
-                    ? "Already in cart"
-                    : "Add to cart"}
+                  {isGameInCart ? "Already in cart" : "Add to cart"}
                   <span className={styles.msg}>
                     <FaShoppingCart size="15px" />
                   </span>
