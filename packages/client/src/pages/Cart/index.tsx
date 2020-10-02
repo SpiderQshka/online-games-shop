@@ -1,13 +1,15 @@
 import { useApi } from "context/api";
-import { IApiError, IGame } from "interfaces/api";
+import { IApiError, IGame, IOrderFromApi } from "interfaces/api";
 import React, { useCallback, useEffect, useState } from "react";
 import { getUserSessionData, setUserSessionData } from "utils/helpers";
 import styles from "./styles.module.scss";
 import _ from "lodash";
 import Aigle from "aigle";
 import { Header } from "components/Header";
-import { useHistory } from "react-router-dom";
+import { Route, useHistory } from "react-router-dom";
 import { GiTumbleweed } from "react-icons/gi";
+import { SuccessPage } from "pages/Store/SuccessPage";
+import { IOrderForUI } from "interfaces/app";
 
 Aigle.mixin(_, {});
 
@@ -41,7 +43,8 @@ export const Cart = () => {
       else {
         setGames([]);
         setUserSessionData([]);
-        history.push("/profile");
+        const orderForUI = { ...order, orderedGames: games };
+        history.push("/cart/success", orderForUI);
       }
     });
   }, [games]);

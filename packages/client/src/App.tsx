@@ -12,6 +12,7 @@ import { ApiContext } from "context/api";
 import { API } from "utils/api";
 import { IconContext } from "react-icons";
 import { PageLoader } from "components/Loader";
+import { SuccessPage } from "pages/Store/SuccessPage";
 const SignUp = lazy(() => import("pages/SignUp"));
 const Profile = lazy(() => import("pages/Profile"));
 const NotFound = lazy(() => import("pages/NotFound"));
@@ -39,6 +40,7 @@ function App() {
                 <Route exact path="/store" component={Store} />
                 <Route path="/store/item/:id" component={GameItem} />
                 <PrivateRoute exact path="/cart" component={Cart} />
+                <Route path="/cart/success" component={SuccessPage} />
                 <PrivateRoute path="/admin" component={Admin} />
                 <Route component={NotFound} />
               </Switch>

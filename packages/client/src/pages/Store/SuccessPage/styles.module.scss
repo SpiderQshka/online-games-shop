@@ -1,14 +1,19 @@
-@import "../../styles/config.scss";
+@import "../../../styles/config.scss";
 
-.notFoundContainer {
+.successPageContainer {
   background-color: $secondary-color-dark;
   padding: $header-height $default-gap 0;
   min-height: calc(100vh - #{$header-height});
-  .notFoundContent {
+  .successPageContent {
     max-width: 450px;
     margin: 0 auto;
-    padding-top: 250px;
-    .error {
+    padding-top: 150px;
+    .iconContainer {
+      max-width: 200px;
+      margin-bottom: 30px;
+      margin: 0 auto;
+    }
+    .header {
       @include primaryFont;
       color: $primary-color-light;
       font-size: 100px;
