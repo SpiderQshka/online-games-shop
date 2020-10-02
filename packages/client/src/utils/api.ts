@@ -1,16 +1,15 @@
 import axios from "axios";
 import { config } from "config";
-import { IOrder, IApi, IGameCreator } from "interfaces/api";
-import { IGameForUI } from "interfaces/app";
+import { IOrder, IApi } from "interfaces/api";
 
-import _ from "lodash";
+import { getAuthToken } from "./helpers";
 
 export const API: IApi = {
   postOrder: (order: IOrder) =>
     axios
       .post(`${config.apiUrl}/orders`, order, {
         headers: {
-          token: window.localStorage.getItem("token"),
+          token: getAuthToken(),
         },
       })
       .then((response) => {
@@ -150,7 +149,7 @@ export const API: IApi = {
     axios
       .get(`${config.apiUrl}/my/orders`, {
         headers: {
-          token: window.localStorage.getItem("token"),
+          token: getAuthToken(),
         },
       })
       .then((response) => {
@@ -166,7 +165,7 @@ export const API: IApi = {
     axios
       .get(`${config.apiUrl}/my/orderedGames`, {
         headers: {
-          token: window.localStorage.getItem("token"),
+          token: getAuthToken(),
         },
       })
       .then((response) => {
@@ -182,7 +181,7 @@ export const API: IApi = {
     axios
       .get(`${config.apiUrl}/my/achievements`, {
         headers: {
-          token: window.localStorage.getItem("token"),
+          token: getAuthToken(),
         },
       })
       .then((response) => {
@@ -198,7 +197,7 @@ export const API: IApi = {
     axios
       .get(`${config.apiUrl}/my/users`, {
         headers: {
-          token: window.localStorage.getItem("token"),
+          token: getAuthToken(),
         },
       })
       .then((response) => {
@@ -214,7 +213,7 @@ export const API: IApi = {
     axios
       .get(`${config.apiUrl}/orders`, {
         headers: {
-          token: window.localStorage.getItem("token"),
+          token: getAuthToken(),
         },
       })
       .then((response) => {
@@ -230,7 +229,7 @@ export const API: IApi = {
     axios
       .get(`${config.apiUrl}/orderedGames`, {
         headers: {
-          token: window.localStorage.getItem("token"),
+          token: getAuthToken(),
         },
       })
       .then((response) => {
@@ -249,7 +248,7 @@ export const API: IApi = {
         { gamesIds: order.gamesIds, status: order.status },
         {
           headers: {
-            token: window.localStorage.getItem("token"),
+            token: getAuthToken(),
           },
         }
       )
@@ -282,52 +281,3 @@ export const getFilterOptions = (checkedFormInputs: HTMLInputElement[]) =>
     }
     return {};
   }, {} as any);
-
-export const filterGames = (
-  games: IGameForUI[],
-  filterBy: {
-    name?: string;
-    ageRating?: number;
-    price?: number;
-    gameCreator?: IGameCreator;
-    creationDate?: Date;
-    genresIds?: number[];
-  }
-) =>
-  games.filter((game: any) => {
-    const anyFilteredBy = filterBy as any;
-
-    for (let key in filterBy) {
-      if (key === "genresIds") {
-        const gameGenresIds = game.genres?.map((el: any) => el.id);
-        if (
-          !_.isEqual(
-            _.intersection(gameGenresIds, filterBy.genresIds),
-            filterBy.genresIds?.sort()
-          )
-        )
-          return false;
-      } else if (!_.isEqual(game[key], anyFilteredBy[key])) return false;
-    }
-
-    return true;
-  });
-
-export const sortGames = (
-  games: IGameForUI[],
-  sortBy: "creationDate" | "alphabet"
-) => {
-  switch (sortBy) {
-    case "creationDate":
-      return [...games].sort(
-        (prev, curr) =>
-          new Date(prev.creationDate).getTime() -
-          new Date(curr.creationDate).getTime()
-      );
-
-    case "alphabet":
-      return [...games].sort((prev, curr) =>
-        prev.name.localeCompare(curr.name)
-      );
-  }
-};

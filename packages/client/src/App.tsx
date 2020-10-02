@@ -1,11 +1,11 @@
-import React, { useState, lazy, Suspense } from "react";
+import React, { useState, lazy, Suspense, useEffect, useCallback } from "react";
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   Redirect,
 } from "react-router-dom";
-import { AuthContext } from "./context/auth";
+import { AuthContext, useAuth } from "./context/auth";
 import "./styles/reset.scss";
 import { PrivateRoute } from "components/PrivateRoute";
 import { ApiContext } from "context/api";
@@ -21,19 +21,9 @@ const GameItem = lazy(() => import("pages/GameItem"));
 const Cart = lazy(() => import("pages/Cart"));
 const Admin = lazy(() => import("pages/Admin"));
 function App() {
-  const [token, setAuthToken] = useState<string | null>(
-    window.localStorage.getItem("token")
-      ? window.localStorage.getItem("token")
-      : null
-  );
-
-  const setToken = (token: string) => {
-    localStorage.setItem("token", token);
-    setAuthToken(token);
-  };
   return (
     <IconContext.Provider value={{ color: "#f4f4f4" }}>
-      <AuthContext.Provider value={{ setToken, token }}>
+      <AuthContext.Provider value={useAuth()}>
         <ApiContext.Provider value={API}>
           <Router>
             <Suspense fallback={<PageLoader />}>

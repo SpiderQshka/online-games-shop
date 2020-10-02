@@ -26,8 +26,7 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
     getUserAchievements,
     getUser,
   } = useApi();
-  const { token } = useAuth();
-
+  const { removeToken } = useAuth();
   useEffect(() => {
     const processOrders = async () => {
       const { orders, error: ordersError } = await getUserOrders();
@@ -70,6 +69,7 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
     processOrders();
     processAchievements();
   }, []);
+
   return (
     <>
       <Header />
@@ -88,7 +88,7 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
                 <span className={styles.menuText}>Achievements</span>
               </Link>
             </li>
-            {user?.isAdmin && (
+            {user && user.isAdmin && (
               <li className={`${styles.menuItem} ${styles.active}`}>
                 <Link className={styles.menuLink} to="/admin">
                   <RiAdminLine color="#f4f4f4" className={styles.icon} />
@@ -101,7 +101,7 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
                 <p
                   className={styles.menuLink}
                   onClick={() => {
-                    window.localStorage.removeItem("token");
+                    removeToken();
                     history.push("/");
                   }}
                 >

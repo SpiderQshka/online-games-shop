@@ -13,7 +13,7 @@ export const Achievements: React.FunctionComponent<AchievementsProps> = ({
     <>
       <h2 className={styles.header}>Achievements</h2>
       <ul className={styles.achievementsList}>
-        {!!achievements.length ? (
+        {achievements.length > 0 ? (
           <>
             <li className={`${styles.achievementItem} ${styles.headerItem}`}>
               <span className={`${styles.row} ${styles.achievementName}`}>
@@ -40,7 +40,7 @@ export const Achievements: React.FunctionComponent<AchievementsProps> = ({
               <span className={`${styles.row} ${styles.achievementDiscount}`}>
                 {achievements.reduce((prev, curr) => prev + curr.discount, 0)}%
               </span>
-            </li>{" "}
+            </li>
           </>
         ) : (
           <li className={styles.notFound}>

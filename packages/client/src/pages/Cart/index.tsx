@@ -1,6 +1,6 @@
 import { useApi } from "context/api";
 import { IApiError, IGame } from "interfaces/api";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { getUserSessionData, setUserSessionData } from "utils/helpers";
 import styles from "./styles.module.scss";
 import _ from "lodash";
@@ -32,7 +32,7 @@ export const Cart = () => {
     processGames();
   }, []);
 
-  const submitHandler = () => {
+  const submitHandler = useCallback(() => {
     postOrder({
       gamesIds: games.map((game) => +game.id),
       status: "pending",
@@ -44,7 +44,7 @@ export const Cart = () => {
         history.push("/profile");
       }
     });
-  };
+  }, [games]);
   return (
     <>
       <Header />
