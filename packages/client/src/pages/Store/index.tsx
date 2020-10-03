@@ -3,7 +3,7 @@ import { useApi } from "context/api";
 import { IApiError, IDiscount, IGameCreator, IGenre } from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { getFilterOptions } from "utils/api";
+import { getFilterOptions } from "utils/helpers";
 import { filterGames, sortGames } from "utils/helpers";
 import { FaWindowClose, FaSadTear, FaFilter } from "react-icons/fa";
 import styles from "./styles.module.scss";

@@ -262,22 +262,3 @@ export const API: IApi = {
         };
       }),
 };
-
-export const getFilterOptions = (checkedFormInputs: HTMLInputElement[]) =>
-  checkedFormInputs.reduce((prev, curr) => {
-    switch (curr.type) {
-      case "radio":
-        return {
-          ...prev,
-          [curr.name]: +curr.value,
-        };
-      case "checkbox":
-        return {
-          ...prev,
-          [curr.name]: prev[curr.name]
-            ? [...prev[curr.name], +curr.value]
-            : [+curr.value],
-        };
-    }
-    return {};
-  }, {} as any);
