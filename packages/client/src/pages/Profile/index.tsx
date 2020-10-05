@@ -2,19 +2,15 @@ import { Header } from "components/Header";
 import React, { useEffect, useState } from "react";
 import { Switch, Route, Link, Redirect, useHistory } from "react-router-dom";
 import styles from "./styles.module.scss";
-import { FaStar, FaShoppingCart, FaBars } from "react-icons/fa";
+import { FaStar, FaShoppingCart } from "react-icons/fa";
 import { RiAdminLine, RiLogoutBoxRLine } from "react-icons/ri";
 import { Achievements } from "./Achievements";
 import { Orders } from "./Orders";
-import {
-  IApiError,
-  IAchievement,
-  IUser,
-  IAchievementFromApi,
-} from "interfaces/api";
+import { IApiError, IUser, IAchievementFromApi } from "interfaces/api";
 import { useApi } from "context/api";
 import { IOrderForUI } from "interfaces/app";
 import { useAuth } from "context/auth";
+import { removeUserSessionData } from "utils/helpers";
 
 interface IProfileProps {}
 
@@ -107,6 +103,7 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
                   className={styles.menuLink}
                   onClick={() => {
                     removeToken();
+                    removeUserSessionData();
                     history.push("/");
                   }}
                 >

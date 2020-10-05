@@ -1,8 +1,8 @@
 import { useApi } from "context/api";
 import { useFormik } from "formik";
-import { IApiError, IGameFromApi, IUser, OrderStatus } from "interfaces/api";
-import { IOrderForUI } from "interfaces/app";
-import React, { useEffect, useState } from "react";
+import { IApiError, IUser, OrderStatus } from "interfaces/api";
+import { IGameForUI } from "interfaces/app";
+import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
@@ -13,13 +13,18 @@ interface OrderFormValues {
   userId: number;
 }
 
-interface AddOrderProps {}
+interface AddOrderProps {
+  games: IGameForUI[];
+  users: IUser[];
+}
 
-export const CreateOrder: React.FunctionComponent<AddOrderProps> = () => {
+export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
+  games,
+  users,
+}) => {
   const history = useHistory();
-  const { postOrderAdmin, getUsers, getGames } = useApi();
-  const [games, setGames] = useState<IGameFromApi[]>([]);
-  const [users, setUsers] = useState<IUser[]>([]);
+  const { postOrderAdmin } = useApi();
+
   const [error, setError] = useState<IApiError | null>();
   const formik = useFormik({
     initialValues: {
@@ -40,19 +45,6 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = () => {
     },
   });
 
-  useEffect(() => {
-    const processAsync = async () => {
-      const { games, error } = await getGames();
-      if (error) setError(error);
-
-      const { users, error: usersError } = await getUsers();
-      if (usersError) setError(usersError);
-
-      setGames(games);
-      setUsers(users);
-    };
-    processAsync();
-  }, []);
   return (
     <div className={styles.itemContent}>
       <h2 className={styles.header}>Create order</h2>

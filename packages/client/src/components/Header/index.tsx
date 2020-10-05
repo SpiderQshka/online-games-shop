@@ -1,4 +1,3 @@
-import { useAuth } from "context/auth";
 import React, { useEffect, useState } from "react";
 import styles from "./styles.module.scss";
 import { SearchBar } from "../SearchBar";
@@ -11,7 +10,6 @@ interface HeaderProps {}
 
 export const Header: React.FunctionComponent<HeaderProps> = () => {
   const history = useHistory();
-  const { token } = useAuth();
   const { getGames, getUser } = useApi();
   const [error, setError] = useState<IApiError | null>(null);
   const [games, setGames] = useState<IGameFromApi[]>([]);

@@ -25,17 +25,12 @@ export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> 
       logo: Yup.string().required("Required"),
       yearOfFoundation: Yup.number().min(1960).required("Required"),
     }),
-    onSubmit: (data) => {
-      console.log(data);
-
+    onSubmit: (data) =>
       postGameCreator(data).then(({ gameCreator, error }) => {
         if (error) setError(error);
         else history.push("/admin/gameCreators");
-      });
-    },
+      }),
   });
-
-  console.log(formik.errors);
 
   return (
     <div className={styles.itemContent}>

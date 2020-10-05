@@ -85,8 +85,6 @@ export const ordersController: IOrdersController = {
   put: async (ctx) => {
     const user = verifyJwtToken(ctx);
     try {
-      const gamesIds = ctx.request.body.games as number[];
-
       const doesOrderRelateToCurrrentUser = await doesOrderRelateToUser(
         ctx.params.id,
         user.id
@@ -94,47 +92,39 @@ export const ordersController: IOrdersController = {
 
       if (!doesOrderRelateToCurrrentUser && !user.isAdmin) ctx.throw(403);
 
-      const games: IGame[] = _.uniqBy(
-        await Aigle.map(gamesIds, (id) => Game.query().findById(id)),
-        (game: IGame) => game.id
+      const gamesIds = ctx.request.body.gamesIds as number[];
+
+      const games: IGame[] = await Aigle.map(gamesIds, (id) =>
+        Game.query().findById(id)
       );
 
       const price = games.reduce((prev, curr) => prev + +curr.price, 0);
 
-      const updatedOrder: any = {
+      const updatedOrder = {
         price,
         status: ctx.request.body.status,
       };
-      if (!price) delete updatedOrder.price;
 
       const order = await Order.query().patchAndFetchById(
         ctx.params.id,
-        updatedOrder
+        games.length > 0 ? updatedOrder : {}
       );
 
-      const orderedGames: IOrderedGame[] = await Aigle.map(
-        games,
-        async (game: IGame) => {
-          const orderedGame = await OrderedGame.query()
-            .where("orderId", order.id)
-            .where("gameId", game.id)
-            .where("userId", user.id)[0];
-          const updatedOrderedGame = {
-            gameId: game.id,
-            orderId: order.id,
-            userId: user.id,
-            price: game.price,
-          };
-          return OrderedGame.query().patchAndFetchById(
-            orderedGame.id,
-            updatedOrderedGame
-          );
-        }
+      const userId = (await OrderedGame.query().where("orderId", order.id))[0]
+        .userId;
+
+      await OrderedGame.query().delete().where("orderId", order.id);
+
+      const orderedGames = await Aigle.map(games, (game) =>
+        OrderedGame.query().insert({
+          gameId: game.id,
+          orderId: order.id,
+          price,
+          userId,
+        })
       );
       ctx.body = orderedGames;
     } catch (e) {
-      console.log(e);
-
       switch (e.status) {
         case 404:
           ctx.throw(404, `Order with id '${ctx.params.id}' was not found`);
@@ -151,7 +141,7 @@ export const ordersController: IOrdersController = {
     const user = verifyJwtToken(ctx);
 
     try {
-      const gamesIds: number[] = ctx.request.body.gamesIds;
+      const gamesIds: number[] = [...ctx.request.body.gamesIds];
 
       const games: IGame[] = _.uniqBy(
         await Aigle.map(gamesIds, (id) => Game.query().findById(id)),

@@ -33,12 +33,11 @@ export const UpdateGameCreator: React.FunctionComponent<UpdateGameCreatorProps> 
       logo: Yup.string().required("Required"),
       yearOfFoundation: Yup.number().min(1960).required("Required"),
     }),
-    onSubmit: (data) => {
+    onSubmit: (data) =>
       putGameCreator(gameCreator.id, data).then(({ gameCreator, error }) => {
         if (error) setError(error);
         else history.push("/admin/gameCreators");
-      });
-    },
+      }),
   });
 
   return (

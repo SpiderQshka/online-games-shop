@@ -15,11 +15,14 @@ export const UpdateAchievement: React.FunctionComponent<UpdateAchievementProps> 
 }) => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
+
   const achievement = achievements.filter(
     (achievement) => achievement.id === +id
   )[0];
   const { putAchievement } = useApi();
+
   const [error, setError] = useState<IApiError | null>();
+
   const formik = useFormik({
     initialValues: {
       name: achievement.name,
@@ -31,14 +34,11 @@ export const UpdateAchievement: React.FunctionComponent<UpdateAchievementProps> 
         .required("Required"),
       discount: Yup.number().min(0).max(100).required("Required"),
     }),
-    onSubmit: (data) => {
-      console.log(data);
-
+    onSubmit: (data) =>
       putAchievement(achievement.id, data).then(({ achievement, error }) => {
         if (error) setError(error);
         else history.push("/admin/achievements");
-      });
-    },
+      }),
   });
 
   return (

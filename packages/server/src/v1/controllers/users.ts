@@ -85,6 +85,8 @@ export const usersController: IUsersController = {
 
       ctx.body = { user: response, token };
     } catch (e) {
+      console.log(e);
+
       if (e instanceof UniqueViolationError)
         ctx.throw(400, "Login is already taken");
 

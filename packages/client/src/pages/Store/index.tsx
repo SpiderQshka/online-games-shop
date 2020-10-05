@@ -3,7 +3,6 @@ import { useApi } from "context/api";
 import {
   IApiError,
   IDiscount,
-  IGameCreator,
   IGameCreatorFromApi,
   IGenre,
 } from "interfaces/api";

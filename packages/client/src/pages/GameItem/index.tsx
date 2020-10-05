@@ -6,8 +6,6 @@ import { useApi } from "context/api";
 import {
   IApiError,
   IDiscount,
-  IGame,
-  IGameCreator,
   IGameCreatorFromApi,
   IGameFromApi,
 } from "interfaces/api";

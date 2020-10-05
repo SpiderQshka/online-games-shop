@@ -1,22 +1,25 @@
 import { useFormik } from "formik";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
 import { useHistory, useParams } from "react-router-dom";
 import { IApiError, OrderStatus } from "interfaces/api";
 import { useApi } from "context/api";
-import { IOrderForUI } from "interfaces/app";
+import { IGameForUI, OrderWithUserId } from "interfaces/app";
 
 interface OrderFormValues {
+  gamesIds: number[];
   status: OrderStatus;
 }
 
 interface OrderItemProps {
-  orders: IOrderForUI[];
+  orders: OrderWithUserId[];
+  games: IGameForUI[];
 }
 
 export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
   orders,
+  games,
 }) => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
@@ -24,24 +27,22 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
   const order = orders.filter((order) => order.id === +id)[0];
   const [error, setError] = useState<IApiError | null>();
   const formik = useFormik({
-    initialValues: { status: "pending" } as OrderFormValues,
+    initialValues: {
+      status: order.status,
+      gamesIds: order.orderedGames.map((game) => game.id),
+    } as OrderFormValues,
     validationSchema: Yup.object({
       status: Yup.string().required("Required"),
+      gamesIds: Yup.array().of(Yup.number().min(1)).min(1).required("Required"),
     }),
     onSubmit: (data) => {
       order &&
-        putOrder(order.id, {
-          gamesIds: order.orderedGames.map((game) => game.id),
-          status: data.status,
-        }).then(({ order, error }) => {
+        putOrder(order.id, data).then(({ order, error }) => {
           if (error) setError(error);
           else history.push("/admin/orders");
         });
     },
   });
-  useEffect(() => {
-    order && formik.setFieldValue("status", order.status);
-  }, []);
   return (
     <div className={styles.itemContent}>
       <h2 className={styles.header}>Update order with id {order?.id}</h2>
@@ -63,6 +64,27 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
 
         {!!formik.touched.status && !!formik.errors.status && (
           <p className={styles.errorMsg}>{formik.errors.status}</p>
+        )}
+        <label className={styles.label}>
+          <span className={styles.labelText}>Games</span>
+          <select
+            name="gamesIds"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            className={`${styles.input} ${styles.gamesInput}`}
+            value={formik.values.gamesIds.map((id) => `${id}`)}
+            multiple
+          >
+            {games.map((game) => (
+              <option value={game.id} key={game.id}>
+                {game.name}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        {!!formik.touched.gamesIds && !!formik.errors.gamesIds && (
+          <p className={styles.errorMsg}>{formik.errors.gamesIds}</p>
         )}
         <button
           type="submit"

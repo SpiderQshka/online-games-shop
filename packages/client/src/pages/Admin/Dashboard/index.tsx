@@ -1,4 +1,4 @@
-import { IGameCreator, IGameCreatorPut, IGenre } from "interfaces/api";
+import { IGameCreatorFromApi, IGenre } from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
 import React from "react";
 import { PieChart } from "react-minimal-pie-chart";
@@ -8,7 +8,7 @@ import { config } from "config";
 interface DashboardProps {
   genres: IGenre[];
   games: IGameForUI[];
-  gameCreators: IGameCreatorPut[];
+  gameCreators: IGameCreatorFromApi[];
 }
 
 export const Dashboard: React.FunctionComponent<DashboardProps> = ({

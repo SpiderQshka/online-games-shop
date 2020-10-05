@@ -1,12 +1,13 @@
-import { IOrderForUI } from "interfaces/app";
+import { OrderWithUserId } from "interfaces/app";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import styles from "components/AdminTable/styles.module.scss";
 import moment from "moment";
 import { FaPlus } from "react-icons/fa";
 import { BsThreeDots } from "react-icons/bs";
+
 interface OrdersProps {
-  orders: IOrderForUI[];
+  orders: OrderWithUserId[];
 }
 
 export const Orders: React.FunctionComponent<OrdersProps> = ({ orders }) => {
@@ -18,6 +19,7 @@ export const Orders: React.FunctionComponent<OrdersProps> = ({ orders }) => {
       <table className={styles.itemsTable}>
         <tr className={`${styles.row} ${styles.headerRow}`}>
           <th className={styles.col}>ID</th>
+          <th className={styles.col}>User ID</th>
           <th className={styles.col}>Created At</th>
           <th className={styles.col}>Price</th>
           <th className={styles.col}>Status</th>
@@ -36,6 +38,7 @@ export const Orders: React.FunctionComponent<OrdersProps> = ({ orders }) => {
           .map((order) => (
             <tr className={styles.row} key={order.id}>
               <td className={styles.col}>{order.id}</td>
+              <td className={styles.col}>{order.userId}</td>
               <td className={styles.col}>
                 {moment(order.createdAt).format("DD-MM-YYYY")}
               </td>

@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./styles.module.scss";
-import { IAchievement, IAchievementFromApi } from "interfaces/api";
+import { IAchievementFromApi } from "interfaces/api";
 
 interface AchievementsProps {
   achievements: IAchievementFromApi[];

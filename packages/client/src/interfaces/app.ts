@@ -23,3 +23,7 @@ export interface IGameForUI {
 export interface IOrderForUI extends IOrderFromApi {
   orderedGames: IGameFromApi[];
 }
+
+export interface OrderWithUserId extends IOrderForUI {
+  userId: number;
+}

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link, Redirect, Route, Switch, useHistory } from "react-router-dom";
 import { Dashboard } from "./Dashboard";
 import { MdDashboard, MdDeveloperMode, MdUpdate } from "react-icons/md";
-import { GrUserManager } from "react-icons/gr";
 import { RiLogoutBoxRLine, RiShoppingCart2Line } from "react-icons/ri";
 import styles from "./styles.module.scss";
 import { useApi } from "context/api";
@@ -12,8 +11,9 @@ import {
   IDiscount,
   IGameCreatorPut,
   IGenre,
+  IUser,
 } from "interfaces/api";
-import { IGameForUI, IOrderForUI } from "interfaces/app";
+import { IGameForUI, OrderWithUserId } from "interfaces/app";
 import { Orders } from "./Orders";
 import { UpdateOrder } from "./Orders/UpdateOrder";
 import { CreateOrder } from "./Orders/CreateOrder";
@@ -42,11 +42,13 @@ export const Admin = () => {
     getOrders,
     getOrderedGames,
     getAchievements,
+    getUsers,
   } = useApi();
   const [error, setError] = useState<IApiError | null>(null);
   const [games, setGames] = useState<IGameForUI[]>([]);
   const [genres, setGenres] = useState<IGenre[]>([]);
-  const [orders, setOrders] = useState<IOrderForUI[]>([]);
+  const [orders, setOrders] = useState<OrderWithUserId[]>([]);
+  const [users, setUsers] = useState<IUser[]>([]);
   const [gameCreators, setGameCreators] = useState<IGameCreatorPut[]>([]);
   const [achievements, setAchievements] = useState<IAchievementFromApi[]>([]);
   const [updateTrigger, setUpdateTrigger] = useState<boolean>(false);
@@ -82,6 +84,9 @@ export const Admin = () => {
 
       const { orders, error: ordersError } = await getOrders();
       if (ordersError) setError(ordersError);
+
+      const { users, error: usersError } = await getUsers();
+      if (usersError) setError(usersError);
 
       const {
         orderedGames,
@@ -125,16 +130,20 @@ export const Admin = () => {
           discount: gameHightestDiscount.amount ? gameHightestDiscount : null,
         };
       });
-      const ordersForUI: IOrderForUI[] = orders.map((order) => {
+      const ordersForUI: OrderWithUserId[] = orders.map((order) => {
         const gamesIds = orderedGames
           .filter((el) => +el.orderId === +order.id)
           .map((el) => el.gameId);
         const gamesForOrder = games.filter((game) =>
           gamesIds.includes(game.id)
         );
+        const userId = orderedGames.filter(
+          (orderedGame) => orderedGame.orderId === order.id
+        )[0].userId;
         return {
           ...order,
           orderedGames: gamesForOrder,
+          userId,
         };
       });
       setGames(gamesForUI);
@@ -142,6 +151,7 @@ export const Admin = () => {
       setGameCreators(gameCreators);
       setOrders(ordersForUI);
       setAchievements(achievements);
+      setUsers(users);
       setIsLoading(false);
     };
     processAsync();
@@ -287,12 +297,14 @@ export const Admin = () => {
             <Route
               exact
               path="/admin/orders/create"
-              component={() => <CreateOrder />}
+              component={() => <CreateOrder users={users} games={games} />}
             />
             <Route
               exact
               path="/admin/games/create"
-              component={() => <CreateGame />}
+              component={() => (
+                <CreateGame gameCreators={gameCreators} genres={genres} />
+              )}
             />
             <Route
               exact
@@ -306,11 +318,17 @@ export const Admin = () => {
             />
             <Route
               path="/admin/orders/:id"
-              component={() => <UpdateOrder orders={orders} />}
+              component={() => <UpdateOrder games={games} orders={orders} />}
             />
             <Route
               path="/admin/games/:id"
-              component={() => <UpdateGame games={games} />}
+              component={() => (
+                <UpdateGame
+                  games={games}
+                  gameCreators={gameCreators}
+                  genres={genres}
+                />
+              )}
             />
             <Route
               path="/admin/achievements/:id"

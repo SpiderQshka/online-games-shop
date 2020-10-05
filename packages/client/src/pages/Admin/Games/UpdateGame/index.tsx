@@ -1,7 +1,7 @@
 import { useApi } from "context/api";
 import { useFormik } from "formik";
 import { IApiError, IGame, IGameCreatorFromApi, IGenre } from "interfaces/api";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
@@ -10,17 +10,19 @@ import moment from "moment";
 
 interface UpdateGameProps {
   games: IGameForUI[];
+  gameCreators: IGameCreatorFromApi[];
+  genres: IGenre[];
 }
 
 export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
   games,
+  gameCreators,
+  genres,
 }) => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
   const game = games.filter((game) => game.id === +id)[0];
-  const { putGame, getGameCreators, getGenres } = useApi();
-  const [gameCreators, setGameCreators] = useState<IGameCreatorFromApi[]>([]);
-  const [genres, setGenres] = useState<IGenre[]>([]);
+  const { putGame } = useApi();
   const [error, setError] = useState<IApiError | null>();
   const formik = useFormik({
     initialValues: {
@@ -63,22 +65,6 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
     },
   });
 
-  useEffect(() => {
-    const processAsync = async () => {
-      const {
-        gameCreators,
-        error: gameCreatorsError,
-      } = await getGameCreators();
-      if (gameCreatorsError) setError(gameCreatorsError);
-
-      const { genres, error: genresError } = await getGenres();
-      if (genresError) setError(genresError);
-
-      setGameCreators(gameCreators);
-      setGenres(genres);
-    };
-    processAsync();
-  }, []);
   return (
     <div className={styles.itemContent}>
       <h2 className={styles.header}>Update game with id {game.id}</h2>

@@ -23,14 +23,11 @@ export const CreateAchievement: React.FunctionComponent<CreateAchievementProps> 
         .required("Required"),
       discount: Yup.number().min(0).max(100).required("Required"),
     }),
-    onSubmit: (data) => {
-      console.log(data);
-
+    onSubmit: (data) =>
       postAchievement(data).then(({ achievement, error }) => {
         if (error) setError(error);
         else history.push("/admin/achievements");
-      });
-    },
+      }),
   });
 
   return (

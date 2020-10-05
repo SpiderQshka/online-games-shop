@@ -94,7 +94,7 @@
       .buttonsBlock {
         display: flex;
         width: 100%;
-        justify-content: end;
+        justify-content: flex-end;
         .actionBtn {
           position: relative;
           color: $primary-color-light;
