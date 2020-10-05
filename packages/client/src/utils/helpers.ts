@@ -50,8 +50,8 @@ export const sortGames = (
     case "creationDate":
       return [...games].sort(
         (prev, curr) =>
-          new Date(prev.creationDate).getTime() -
-          new Date(curr.creationDate).getTime()
+          new Date(prev.createdAt).getTime() -
+          new Date(curr.createdAt).getTime()
       );
 
     case "alphabet":

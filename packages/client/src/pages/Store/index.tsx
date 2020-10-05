@@ -1,6 +1,12 @@
 import { Header } from "components/Header";
 import { useApi } from "context/api";
-import { IApiError, IDiscount, IGameCreator, IGenre } from "interfaces/api";
+import {
+  IApiError,
+  IDiscount,
+  IGameCreator,
+  IGameCreatorFromApi,
+  IGenre,
+} from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { getFilterOptions } from "utils/helpers";
@@ -23,7 +29,7 @@ export const Store = () => {
   const formRef = useRef(null);
 
   const [games, setGames] = useState<IGameForUI[]>([]);
-  const [gameCreators, setGameCreators] = useState<IGameCreator[]>([]);
+  const [gameCreators, setGameCreators] = useState<IGameCreatorFromApi[]>([]);
   const [genres, setGenres] = useState<IGenre[]>([]);
 
   const [error, setError] = useState<IApiError | null>(null);

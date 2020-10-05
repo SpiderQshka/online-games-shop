@@ -1,6 +1,7 @@
 import { useApi } from "context/api";
 import { IApiError, IGameFromApi } from "interfaces/api";
 import React, { useCallback, useEffect, useState } from "react";
+
 import { getUserSessionData, setUserSessionData } from "utils/helpers";
 import styles from "./styles.module.scss";
 import _ from "lodash";

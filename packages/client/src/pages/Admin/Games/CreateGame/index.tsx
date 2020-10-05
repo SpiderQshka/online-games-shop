@@ -1,6 +1,12 @@
 import { useApi } from "context/api";
 import { useFormik } from "formik";
-import { IApiError, IGame, IGameCreator, IGenre } from "interfaces/api";
+import {
+  IApiError,
+  IGame,
+  IGameCreator,
+  IGameCreatorFromApi,
+  IGenre,
+} from "interfaces/api";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
@@ -12,7 +18,7 @@ interface CreateGameProps {}
 export const CreateGame: React.FunctionComponent<CreateGameProps> = () => {
   const history = useHistory();
   const { postGame, getGameCreators, getGenres } = useApi();
-  const [gameCreators, setGameCreators] = useState<IGameCreator[]>([]);
+  const [gameCreators, setGameCreators] = useState<IGameCreatorFromApi[]>([]);
   const [genres, setGenres] = useState<IGenre[]>([]);
   const [error, setError] = useState<IApiError | null>();
   const formik = useFormik({

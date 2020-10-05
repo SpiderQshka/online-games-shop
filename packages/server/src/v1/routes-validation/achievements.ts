@@ -10,10 +10,10 @@ interface IAchievementsRoutesValidation {
 export const achievementsRoutesValidation: IAchievementsRoutesValidation = {
   post: {
     name: Joi.string().min(3).required(),
-    discount: Joi.number().min(1).max(99).required(),
+    discount: Joi.number().min(0).max(100).required(),
   },
   put: {
     name: Joi.string().min(3),
-    discount: Joi.number().min(1).max(99),
+    discount: Joi.number().min(0).max(100),
   },
 };

@@ -6,13 +6,13 @@ export async function seed(knex: Knex): Promise<void> {
     {
       id: 1,
       name: faker.internet.userName(),
-      logo: faker.system.filePath(),
+      logo: "https://www.linkpicture.com/q/1200x630wa.png",
       yearOfFoundation: faker.random.number(),
     },
     {
       id: 2,
       name: faker.internet.userName(),
-      logo: faker.system.filePath(),
+      logo: "https://www.linkpicture.com/q/Total-logo-earth.png",
       yearOfFoundation: faker.random.number(),
     },
   ]);

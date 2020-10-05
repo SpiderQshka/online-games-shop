@@ -241,7 +241,7 @@ export const API: IApi = {
           error: { msg: error.request.response, status: error.request.status },
         };
       }),
-  putOrder: (order, id) =>
+  putOrder: (id, order) =>
     axios
       .put(`${config.apiUrl}/orders/${id}`, order, {
         headers: {
@@ -285,7 +285,7 @@ export const API: IApi = {
     axios
       .get(`${config.apiUrl}/users`, {
         headers: {
-          token: window.localStorage.getItem("token"),
+          token: getAuthToken(),
         },
       })
       .then((response) => {
@@ -301,7 +301,7 @@ export const API: IApi = {
     axios
       .post(`${config.apiUrl}/games`, game, {
         headers: {
-          token: window.localStorage.getItem("token"),
+          token: getAuthToken(),
         },
       })
       .then((response) => {
@@ -313,11 +313,11 @@ export const API: IApi = {
           error: { msg: error.request.response, status: error.request.status },
         };
       }),
-  putGame: (game, id) =>
+  putGame: (id, game) =>
     axios
       .put(`${config.apiUrl}/games/${id}`, game, {
         headers: {
-          token: window.localStorage.getItem("token"),
+          token: getAuthToken(),
         },
       })
       .then((response) => {
@@ -326,6 +326,86 @@ export const API: IApi = {
       .catch((error) => {
         return {
           game: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  postGameCreator: (gameCreator) =>
+    axios
+      .post(`${config.apiUrl}/gameCreators`, gameCreator, {
+        headers: {
+          token: getAuthToken(),
+        },
+      })
+      .then((response) => {
+        return { gameCreator: response.data };
+      })
+      .catch((error) => {
+        return {
+          gameCreator: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  putGameCreator: (id, gameCreator) =>
+    axios
+      .put(`${config.apiUrl}/gameCreators/${id}`, gameCreator, {
+        headers: {
+          token: getAuthToken(),
+        },
+      })
+      .then((response) => {
+        return { gameCreator: response.data };
+      })
+      .catch((error) => {
+        return {
+          gameCreator: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  getAchievements: () =>
+    axios
+      .get(`${config.apiUrl}/achievements`, {
+        headers: {
+          token: getAuthToken(),
+        },
+      })
+      .then((response) => {
+        return { achievements: response.data };
+      })
+      .catch((error) => {
+        return {
+          achievements: [],
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  postAchievement: (achievement) =>
+    axios
+      .post(`${config.apiUrl}/achievements`, achievement, {
+        headers: {
+          token: getAuthToken(),
+        },
+      })
+      .then((response) => {
+        return { achievement: response.data };
+      })
+      .catch((error) => {
+        return {
+          achievement: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  putAchievement: (id, achievement) =>
+    axios
+      .put(`${config.apiUrl}/achievements/${id}`, achievement, {
+        headers: {
+          token: getAuthToken(),
+        },
+      })
+      .then((response) => {
+        return { achievement: response.data };
+      })
+      .catch((error) => {
+        return {
+          achievement: null,
           error: { msg: error.request.response, status: error.request.status },
         };
       }),

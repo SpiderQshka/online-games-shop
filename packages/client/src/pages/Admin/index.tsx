@@ -1,20 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { Link, Redirect, Route, Switch, useHistory } from "react-router-dom";
 import { Dashboard } from "./Dashboard";
-import { MdDashboard, MdUpdate } from "react-icons/md";
+import { MdDashboard, MdDeveloperMode, MdUpdate } from "react-icons/md";
+import { GrUserManager } from "react-icons/gr";
 import { RiLogoutBoxRLine, RiShoppingCart2Line } from "react-icons/ri";
 import styles from "./styles.module.scss";
 import { useApi } from "context/api";
-import { IApiError, IDiscount, IGameCreator, IGenre } from "interfaces/api";
+import {
+  IAchievementFromApi,
+  IApiError,
+  IDiscount,
+  IGameCreatorPut,
+  IGenre,
+} from "interfaces/api";
 import { IGameForUI, IOrderForUI } from "interfaces/app";
 import { Orders } from "./Orders";
 import { UpdateOrder } from "./Orders/UpdateOrder";
 import { CreateOrder } from "./Orders/CreateOrder";
 import { Loader } from "components/Loader";
-import { FaBars, FaGamepad } from "react-icons/fa";
+import { FaBars, FaGamepad, FaStar } from "react-icons/fa";
 import { Games } from "./Games";
 import { CreateGame } from "./Games/CreateGame";
 import { UpdateGame } from "./Games/UpdateGame";
+import { CreateGameCreator } from "./GameCreators/CreateGameCreator";
+import { GameCreators } from "./GameCreators";
+import { UpdateGameCreator } from "./GameCreators/UpdateGameCreator";
+import { Achievements } from "./Achievements";
+import { CreateAchievement } from "./Achievements/CreateAchievement";
+import { UpdateAchievement } from "./Achievements/UpdateAchievement";
 
 export const Admin = () => {
   const history = useHistory();
@@ -28,12 +41,14 @@ export const Admin = () => {
     getGenres,
     getOrders,
     getOrderedGames,
+    getAchievements,
   } = useApi();
   const [error, setError] = useState<IApiError | null>(null);
   const [games, setGames] = useState<IGameForUI[]>([]);
   const [genres, setGenres] = useState<IGenre[]>([]);
   const [orders, setOrders] = useState<IOrderForUI[]>([]);
-  const [gameCreators, setGameCreators] = useState<IGameCreator[]>([]);
+  const [gameCreators, setGameCreators] = useState<IGameCreatorPut[]>([]);
+  const [achievements, setAchievements] = useState<IAchievementFromApi[]>([]);
   const [updateTrigger, setUpdateTrigger] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -73,6 +88,12 @@ export const Admin = () => {
         error: orderedGamesError,
       } = await getOrderedGames();
       if (orderedGamesError) setError(orderedGamesError);
+
+      const {
+        achievements,
+        error: achievementsError,
+      } = await getAchievements();
+      if (achievementsError) setError(achievementsError);
 
       const gamesForUI = games.map((game) => {
         const gameCreator = gameCreators.filter(
@@ -120,6 +141,7 @@ export const Admin = () => {
       setGenres(genres);
       setGameCreators(gameCreators);
       setOrders(ordersForUI);
+      setAchievements(achievements);
       setIsLoading(false);
     };
     processAsync();
@@ -167,6 +189,32 @@ export const Admin = () => {
             >
               <FaGamepad size="20px" className={styles.icon} />
               Games
+            </Link>
+          </li>
+          <li className={styles.menuItem}>
+            <Link
+              to="/admin/gameCreators"
+              onClick={() => setIsMenuOpen(false)}
+              className={`${styles.menuLink} ${
+                history.location.pathname.includes("/admin/gameCreators") &&
+                styles.active
+              }`}
+            >
+              <MdDeveloperMode size="20px" className={styles.icon} />
+              Game creators
+            </Link>
+          </li>
+          <li className={styles.menuItem}>
+            <Link
+              to="/admin/achievements"
+              onClick={() => setIsMenuOpen(false)}
+              className={`${styles.menuLink} ${
+                history.location.pathname.includes("/admin/achievements") &&
+                styles.active
+              }`}
+            >
+              <FaStar size="20px" className={styles.icon} />
+              Achievements
             </Link>
           </li>
           <li className={styles.menuItem}>
@@ -228,6 +276,16 @@ export const Admin = () => {
             />
             <Route
               exact
+              path="/admin/gameCreators"
+              component={() => <GameCreators gameCreators={gameCreators} />}
+            />
+            <Route
+              exact
+              path="/admin/achievements"
+              component={() => <Achievements achievements={achievements} />}
+            />
+            <Route
+              exact
               path="/admin/orders/create"
               component={() => <CreateOrder />}
             />
@@ -237,12 +295,34 @@ export const Admin = () => {
               component={() => <CreateGame />}
             />
             <Route
+              exact
+              path="/admin/gameCreators/create"
+              component={() => <CreateGameCreator />}
+            />
+            <Route
+              exact
+              path="/admin/achievements/create"
+              component={() => <CreateAchievement />}
+            />
+            <Route
               path="/admin/orders/:id"
               component={() => <UpdateOrder orders={orders} />}
             />
             <Route
               path="/admin/games/:id"
               component={() => <UpdateGame games={games} />}
+            />
+            <Route
+              path="/admin/achievements/:id"
+              component={() => (
+                <UpdateAchievement achievements={achievements} />
+              )}
+            />
+            <Route
+              path="/admin/gameCreators/:id"
+              component={() => (
+                <UpdateGameCreator gameCreators={gameCreators} />
+              )}
             />
             <Route component={() => <Redirect to="/admin/dashboard" />} />
           </Switch>

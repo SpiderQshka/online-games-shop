@@ -10,7 +10,7 @@
   }
   .itemsTable {
     background-color: $secondary-color-light;
-    min-width: 100%;
+    // min-width: 100%;
     .row {
       @include primaryFont;
       display: table-row;
@@ -36,7 +36,7 @@
           list-style: none;
         }
         &.imgContainer {
-          min-width: 300px;
+          width: 400px;
           .img {
             width: 100%;
             min-height: 10rem;

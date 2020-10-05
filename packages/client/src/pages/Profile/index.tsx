@@ -6,7 +6,12 @@ import { FaStar, FaShoppingCart, FaBars } from "react-icons/fa";
 import { RiAdminLine, RiLogoutBoxRLine } from "react-icons/ri";
 import { Achievements } from "./Achievements";
 import { Orders } from "./Orders";
-import { IApiError, IAchievement, IUser } from "interfaces/api";
+import {
+  IApiError,
+  IAchievement,
+  IUser,
+  IAchievementFromApi,
+} from "interfaces/api";
 import { useApi } from "context/api";
 import { IOrderForUI } from "interfaces/app";
 import { useAuth } from "context/auth";
@@ -18,7 +23,7 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
   const [error, setError] = useState<IApiError | null>(null);
   const [orders, setOrders] = useState<IOrderForUI[]>([]);
   const [user, setUser] = useState<IUser | null>(null);
-  const [achievements, setAchievements] = useState<IAchievement[]>([]);
+  const [achievements, setAchievements] = useState<IAchievementFromApi[]>([]);
   const {
     getUserOrders,
     getUserOrderedGames,

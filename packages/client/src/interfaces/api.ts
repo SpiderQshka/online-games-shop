@@ -15,12 +15,12 @@ export interface IApi {
     id: number
   ) => Promise<{ game: IGameFromApi | null; error?: IApiError }>;
   getGameCreators: () => Promise<{
-    gameCreators: IGameCreator[];
+    gameCreators: IGameCreatorFromApi[];
     error?: IApiError;
   }>;
   getGameCreator: (
     id: number
-  ) => Promise<{ gameCreator: IGameCreator | null; error?: IApiError }>;
+  ) => Promise<{ gameCreator: IGameCreatorFromApi | null; error?: IApiError }>;
   getDiscounts: () => Promise<{
     discounts: IDiscount[];
     error?: IApiError;
@@ -46,7 +46,7 @@ export interface IApi {
     error?: IApiError;
   }>;
   getUserAchievements: () => Promise<{
-    achievements: IAchievement[];
+    achievements: IAchievementFromApi[];
     error?: IApiError;
   }>;
   getUser: () => Promise<{
@@ -62,8 +62,8 @@ export interface IApi {
     error?: IApiError;
   }>;
   putOrder: (
-    order: IOrder,
-    id: number
+    id: number,
+    order: IOrder
   ) => Promise<{ order: IOrderFromApi | null; error?: IApiError }>;
   postOrderAdmin: (
     order: IOrderAdmin
@@ -73,9 +73,27 @@ export interface IApi {
     game: IGame
   ) => Promise<{ game: IGameFromApi | null; error?: IApiError }>;
   putGame: (
-    game: IGame,
-    id: number
+    id: number,
+    game: IGame
   ) => Promise<{ game: IGameFromApi | null; error?: IApiError }>;
+  postGameCreator: (
+    gameCreator: IGameCreator
+  ) => Promise<{ gameCreator: IGameCreatorFromApi | null; error?: IApiError }>;
+  putGameCreator: (
+    id: number,
+    gameCreator: IGameCreator
+  ) => Promise<{ gameCreator: IGameCreatorFromApi | null; error?: IApiError }>;
+  getAchievements: () => Promise<{
+    achievements: IAchievementFromApi[];
+    error?: IApiError;
+  }>;
+  postAchievement: (
+    achievement: IAchievement
+  ) => Promise<{ achievement: IAchievementFromApi | null; error?: IApiError }>;
+  putAchievement: (
+    id: number,
+    achievement: IAchievement
+  ) => Promise<{ achievement: IAchievementFromApi | null; error?: IApiError }>;
 }
 
 export interface IApiError {
@@ -126,6 +144,7 @@ export interface IGame {
 export interface IGamePut extends IGame {
   id: number;
 }
+
 export interface IGameFromApi {
   id: number;
   name: string;
@@ -139,10 +158,17 @@ export interface IGameFromApi {
 }
 
 export interface IGameCreator {
-  id: number;
   name: string;
   logo: string;
   yearOfFoundation: number;
+}
+
+export interface IGameCreatorPut extends IGameCreator {
+  id: number;
+}
+
+export interface IGameCreatorFromApi extends IGameCreator {
+  id: number;
 }
 
 export interface IDiscount {
@@ -179,7 +205,10 @@ export interface IOrderedGame {
 }
 
 export interface IAchievement {
-  id: number;
   name: string;
   discount: number;
+}
+
+export interface IAchievementFromApi extends IAchievement {
+  id: number;
 }

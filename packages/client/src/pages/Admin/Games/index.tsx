@@ -1,8 +1,7 @@
-import { IGameForUI, IOrderForUI } from "interfaces/app";
+import { IGameForUI } from "interfaces/app";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import styles from "components/AdminTable/styles.module.scss";
-import moment from "moment";
 import { FaPlus } from "react-icons/fa";
 import { BsThreeDots } from "react-icons/bs";
 interface OrdersProps {
@@ -14,7 +13,7 @@ export const Games: React.FunctionComponent<OrdersProps> = ({ games }) => {
 
   return (
     <div className={styles.itemsContent}>
-      <h2 className={styles.header}>Orders</h2>
+      <h2 className={styles.header}>Games</h2>
       <table className={styles.itemsTable}>
         <tr className={`${styles.row} ${styles.headerRow}`}>
           <th className={styles.col}>ID</th>
