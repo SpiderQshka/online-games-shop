@@ -13,7 +13,7 @@ export const Orders: React.FunctionComponent<OredersProps> = ({ orders }) => {
     <>
       <h2 className={styles.header}>Orders</h2>
       <ul className={styles.ordersList}>
-        {!!orders.length ? (
+        {orders.length > 0 ? (
           <>
             <li className={`${styles.orderItem} ${styles.headerItem}`}>
               <span className={styles.date}>Date</span>
@@ -30,6 +30,7 @@ export const Orders: React.FunctionComponent<OredersProps> = ({ orders }) => {
                     <Link
                       to={`/store/item/${el.id}`}
                       className={styles.gameName}
+                      key={el.id}
                     >
                       {el.name}
                     </Link>

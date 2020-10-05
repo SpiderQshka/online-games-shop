@@ -22,6 +22,54 @@ export const Dashboard: React.FunctionComponent<DashboardProps> = ({
     fill: "#fff",
   };
   const shiftSize = 0.5;
+
+  const gamesData = games.map((game, i) => ({
+    title: game.name,
+    value: +game.price,
+    color:
+      games.reduce((prev, curr) => (+prev.price < +curr.price ? curr : prev))
+        .id === game.id
+        ? config.colors.accent
+        : config.colors.primary,
+  }));
+
+  const genresData = genres
+    .map((genre) => {
+      const value = games.reduce(
+        (prev, curr) =>
+          curr.genres.map((genre) => genre.id).includes(genre.id)
+            ? ++prev
+            : prev,
+        0
+      );
+
+      return {
+        title: genre.name,
+        color: config.colors.primary,
+        value,
+      };
+    })
+    .map((genre, i, array) => {
+      const biggestValue = array.reduce((prev, curr) =>
+        prev.value > curr.value ? prev : curr
+      ).value;
+      if (biggestValue === genre.value)
+        return { ...genre, color: config.colors.accent };
+      return genre;
+    });
+
+  const gameCreatorsData = gameCreators.map((gameCreator, i) => {
+    const value = games.reduce(
+      (prev, curr) => (gameCreator.id === curr.gameCreator.id ? ++prev : prev),
+      0
+    );
+    return {
+      title: gameCreator.name,
+      color: config.colors.primary,
+      value,
+    };
+  });
+
   return (
     <div className={styles.dashboardContent}>
       <h2 className={styles.header}>Dashboard</h2>
@@ -38,16 +86,7 @@ export const Dashboard: React.FunctionComponent<DashboardProps> = ({
                 ...labelConfig,
                 fontSize: "5px",
               }}
-              data={games.map((game, i) => ({
-                title: game.name,
-                value: +game.price,
-                color:
-                  games.reduce((prev, curr) =>
-                    +prev.price < +curr.price ? curr : prev
-                  ).id === game.id
-                    ? config.colors.accent
-                    : config.colors.primary,
-              }))}
+              data={gamesData}
             />
           </div>
         </div>
@@ -60,30 +99,7 @@ export const Dashboard: React.FunctionComponent<DashboardProps> = ({
               segmentsShift={() => shiftSize}
               label={({ dataEntry }) => dataEntry.title}
               labelStyle={labelConfig}
-              data={genres
-                .map((genre) => {
-                  const value = games.reduce(
-                    (prev, curr) =>
-                      curr.genres.map((genre) => genre.id).includes(genre.id)
-                        ? ++prev
-                        : prev,
-                    0
-                  );
-
-                  return {
-                    title: genre.name,
-                    color: config.colors.primary,
-                    value,
-                  };
-                })
-                .map((genre, i, array) => {
-                  const biggestValue = array.reduce((prev, curr) =>
-                    prev.value > curr.value ? prev : curr
-                  ).value;
-                  if (biggestValue === genre.value)
-                    return { ...genre, color: config.colors.accent };
-                  return genre;
-                })}
+              data={genresData}
             />
           </div>
         </div>
@@ -96,18 +112,7 @@ export const Dashboard: React.FunctionComponent<DashboardProps> = ({
               segmentsShift={() => shiftSize}
               label={({ dataEntry }) => dataEntry.title}
               labelStyle={labelConfig}
-              data={gameCreators.map((gameCreator, i) => {
-                const value = games.reduce(
-                  (prev, curr) =>
-                    gameCreator.id === curr.gameCreator.id ? ++prev : prev,
-                  0
-                );
-                return {
-                  title: gameCreator.name,
-                  color: config.colors.primary,
-                  value,
-                };
-              })}
+              data={gameCreatorsData}
             />
           </div>
         </div>

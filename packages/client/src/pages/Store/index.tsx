@@ -2,8 +2,9 @@ import { Header } from "components/Header";
 import { useApi } from "context/api";
 import { IApiError, IDiscount, IGameCreator, IGenre } from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
-import React, { useEffect, useRef, useState } from "react";
-import { filterGames, getFilterOptions, sortGames } from "utils/api";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { getFilterOptions } from "utils/helpers";
+import { filterGames, sortGames } from "utils/helpers";
 import { FaWindowClose, FaSadTear, FaFilter } from "react-icons/fa";
 import styles from "./styles.module.scss";
 import { useHistory } from "react-router-dom";
@@ -33,7 +34,7 @@ export const Store = () => {
   const [filteredGames, setFilteredGames] = useState<IGameForUI[]>([]);
   const [isFiltersMenuOpen, setIsFiltersMenuOpen] = useState<boolean>(false);
 
-  const removeFilters = () => {
+  const removeFilters = useCallback(() => {
     if (formRef.current) {
       const form = (formRef.current as any) as HTMLFormElement;
       const formInputs = [...form.elements] as HTMLInputElement[];
@@ -41,19 +42,24 @@ export const Store = () => {
     }
     setFilteredGames(sortGames(games, sortType));
     setFiltersAmount(0);
-  };
+  }, [formRef.current, games, sortType]);
 
-  const handleFilterTypeChange = (e: React.FormEvent) => {
-    const form = e.currentTarget as HTMLFormElement;
-    const formInputs = [...form.elements] as HTMLInputElement[];
-    const checkedFormInputs = formInputs.filter((input) => input.checked);
+  const handleFilterTypeChange = useCallback(
+    (e: React.FormEvent) => {
+      const form = e.currentTarget as HTMLFormElement;
+      const formInputs = [...form.elements] as HTMLInputElement[];
+      const checkedFormInputs = formInputs.filter((input) => input.checked);
 
-    if (checkedFormInputs.length) {
-      const filterOptions = getFilterOptions(checkedFormInputs);
-      setFilteredGames(sortGames(filterGames(games, filterOptions), sortType));
-      setFiltersAmount(checkedFormInputs.length);
-    } else removeFilters();
-  };
+      if (checkedFormInputs.length) {
+        const filterOptions = getFilterOptions(checkedFormInputs);
+        setFilteredGames(
+          sortGames(filterGames(games, filterOptions), sortType)
+        );
+        setFiltersAmount(checkedFormInputs.length);
+      } else removeFilters();
+    },
+    [games, sortType]
+  );
 
   useEffect(() => setFilteredGames(sortGames(filteredGames, sortType)), [
     sortType,
