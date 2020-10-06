@@ -6,6 +6,7 @@ import { useApi } from "context/api";
 import {
   IApiError,
   IDiscount,
+  IDiscountFromApi,
   IGameCreatorFromApi,
   IGameFromApi,
 } from "interfaces/api";
@@ -91,7 +92,7 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
         .filter((el) => gameDiscountsIds.includes(el.id))
         .reduce(
           (prev, curr) => (prev.amount > curr.amount ? prev : curr),
-          {} as IDiscount
+          {} as IDiscountFromApi
         );
       setGame({
         ...(game as IGameFromApi),

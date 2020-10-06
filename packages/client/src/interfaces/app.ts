@@ -1,5 +1,7 @@
 import {
   IDiscount,
+  IDiscountFromApi,
+  IGameCreatorFromApi,
   IGameCreatorPut,
   IGameFromApi,
   IGenre,
@@ -14,10 +16,10 @@ export interface IGameForUI {
   ageRating: number;
   price: number;
   numberOfPhysicalCopies: number;
-  gameCreator: IGameCreatorPut;
+  gameCreator: IGameCreatorFromApi;
   createdAt: string;
   genres: IGenre[];
-  discount: IDiscount | null;
+  discount: IDiscountFromApi | null;
 }
 
 export interface IOrderForUI extends IOrderFromApi {
@@ -26,4 +28,8 @@ export interface IOrderForUI extends IOrderFromApi {
 
 export interface OrderWithUserId extends IOrderForUI {
   userId: number;
+}
+
+export interface IDiscountForUI extends IDiscountFromApi {
+  games: IGameFromApi[];
 }

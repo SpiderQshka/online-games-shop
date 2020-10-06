@@ -22,7 +22,7 @@ export interface IApi {
     id: number
   ) => Promise<{ gameCreator: IGameCreatorFromApi | null; error?: IApiError }>;
   getDiscounts: () => Promise<{
-    discounts: IDiscount[];
+    discounts: IDiscountFromApi[];
     error?: IApiError;
   }>;
   getUsedDiscounts: () => Promise<{
@@ -94,6 +94,13 @@ export interface IApi {
     id: number,
     achievement: IAchievement
   ) => Promise<{ achievement: IAchievementFromApi | null; error?: IApiError }>;
+  postDiscount: (
+    discount: IDiscount
+  ) => Promise<{ discount: IDiscountFromApi | null; error?: IApiError }>;
+  putDiscount: (
+    id: number,
+    discount: IDiscount
+  ) => Promise<{ discount: IDiscountFromApi | null; error?: IApiError }>;
 }
 
 export interface IApiError {
@@ -172,11 +179,19 @@ export interface IGameCreatorFromApi extends IGameCreator {
 }
 
 export interface IDiscount {
-  id: number;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   amount: number;
-  type: string;
+  type: "%" | "$";
+  gamesIds: number[];
+}
+
+export interface IDiscountFromApi {
+  id: number;
+  startDate: string;
+  endDate: string;
+  amount: number;
+  type: "%" | "$";
 }
 
 export interface IUsedDiscount {

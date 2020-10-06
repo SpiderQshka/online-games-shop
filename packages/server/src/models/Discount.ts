@@ -10,7 +10,7 @@ export class Discount extends Model {
   static get jsonSchema() {
     return {
       type: "object",
-      required: ["startDate", "duration", "amount"],
+      required: ["startDate", "endDate", "amount", "type"],
       properties: {
         id: { type: "integer" },
         startDate: { type: "date" },

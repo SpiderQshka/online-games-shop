@@ -9,16 +9,17 @@ import {
   IAchievementFromApi,
   IApiError,
   IDiscount,
-  IGameCreatorPut,
+  IDiscountFromApi,
+  IGameCreatorFromApi,
   IGenre,
   IUser,
 } from "interfaces/api";
-import { IGameForUI, OrderWithUserId } from "interfaces/app";
+import { IDiscountForUI, IGameForUI, OrderWithUserId } from "interfaces/app";
 import { Orders } from "./Orders";
 import { UpdateOrder } from "./Orders/UpdateOrder";
 import { CreateOrder } from "./Orders/CreateOrder";
 import { Loader } from "components/Loader";
-import { FaBars, FaGamepad, FaStar } from "react-icons/fa";
+import { FaBars, FaGamepad, FaPercent, FaStar } from "react-icons/fa";
 import { Games } from "./Games";
 import { CreateGame } from "./Games/CreateGame";
 import { UpdateGame } from "./Games/UpdateGame";
@@ -28,6 +29,10 @@ import { UpdateGameCreator } from "./GameCreators/UpdateGameCreator";
 import { Achievements } from "./Achievements";
 import { CreateAchievement } from "./Achievements/CreateAchievement";
 import { UpdateAchievement } from "./Achievements/UpdateAchievement";
+import { Discounts } from "./Discounts";
+import { CreateDiscount } from "./Discounts/CreateDiscount";
+import Aigle from "aigle";
+import { UpdateDiscount } from "./Discounts/UpdateDiscount";
 
 export const Admin = () => {
   const history = useHistory();
@@ -49,7 +54,8 @@ export const Admin = () => {
   const [genres, setGenres] = useState<IGenre[]>([]);
   const [orders, setOrders] = useState<OrderWithUserId[]>([]);
   const [users, setUsers] = useState<IUser[]>([]);
-  const [gameCreators, setGameCreators] = useState<IGameCreatorPut[]>([]);
+  const [discounts, setDiscounts] = useState<IDiscountForUI[]>([]);
+  const [gameCreators, setGameCreators] = useState<IGameCreatorFromApi[]>([]);
   const [achievements, setAchievements] = useState<IAchievementFromApi[]>([]);
   const [updateTrigger, setUpdateTrigger] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -121,7 +127,7 @@ export const Admin = () => {
           .filter((el) => gameDiscountsIds.includes(el.id))
           .reduce(
             (prev, curr) => (prev.amount > curr.amount ? prev : curr),
-            {} as IDiscount
+            {} as IDiscountFromApi
           );
         return {
           ...game,
@@ -146,12 +152,22 @@ export const Admin = () => {
           userId,
         };
       });
+      const discountsForUI = discounts.map((discount) => {
+        const gamesIds = usedDiscounts
+          .filter((el) => el.discountId === discount.id)
+          .map((el) => el.gameId);
+        const gamesForDiscount = games.filter((game) =>
+          gamesIds.includes(game.id)
+        );
+        return { ...discount, games: gamesForDiscount };
+      });
       setGames(gamesForUI);
       setGenres(genres);
       setGameCreators(gameCreators);
       setOrders(ordersForUI);
       setAchievements(achievements);
       setUsers(users);
+      setDiscounts(discountsForUI);
       setIsLoading(false);
     };
     processAsync();
@@ -229,6 +245,19 @@ export const Admin = () => {
           </li>
           <li className={styles.menuItem}>
             <Link
+              to="/admin/discounts"
+              onClick={() => setIsMenuOpen(false)}
+              className={`${styles.menuLink} ${
+                history.location.pathname.includes("/admin/discounts") &&
+                styles.active
+              }`}
+            >
+              <FaPercent size="20px" className={styles.icon} />
+              Discounts
+            </Link>
+          </li>
+          <li className={styles.menuItem}>
+            <Link
               to="/"
               onClick={() => setIsMenuOpen(false)}
               className={`${styles.menuLink}`}
@@ -296,6 +325,11 @@ export const Admin = () => {
             />
             <Route
               exact
+              path="/admin/discounts"
+              component={() => <Discounts discounts={discounts} />}
+            />
+            <Route
+              exact
               path="/admin/orders/create"
               component={() => <CreateOrder users={users} games={games} />}
             />
@@ -315,6 +349,11 @@ export const Admin = () => {
               exact
               path="/admin/achievements/create"
               component={() => <CreateAchievement />}
+            />
+            <Route
+              exact
+              path="/admin/discounts/create"
+              component={() => <CreateDiscount games={games} />}
             />
             <Route
               path="/admin/orders/:id"
@@ -340,6 +379,12 @@ export const Admin = () => {
               path="/admin/gameCreators/:id"
               component={() => (
                 <UpdateGameCreator gameCreators={gameCreators} />
+              )}
+            />
+            <Route
+              path="/admin/discounts/:id"
+              component={() => (
+                <UpdateDiscount games={games} discounts={discounts} />
               )}
             />
             <Route component={() => <Redirect to="/admin/dashboard" />} />

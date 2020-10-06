@@ -409,4 +409,36 @@ export const API: IApi = {
           error: { msg: error.request.response, status: error.request.status },
         };
       }),
+  postDiscount: (discount) =>
+    axios
+      .post(`${config.apiUrl}/discounts`, discount, {
+        headers: {
+          token: getAuthToken(),
+        },
+      })
+      .then((response) => {
+        return { discount: response.data };
+      })
+      .catch((error) => {
+        return {
+          discount: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  putDiscount: (id, discount) =>
+    axios
+      .put(`${config.apiUrl}/discounts/${id}`, discount, {
+        headers: {
+          token: getAuthToken(),
+        },
+      })
+      .then((response) => {
+        return { discount: response.data };
+      })
+      .catch((error) => {
+        return {
+          discount: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
 };

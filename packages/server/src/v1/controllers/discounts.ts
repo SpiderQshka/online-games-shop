@@ -2,6 +2,8 @@ import { Middleware } from "koa";
 import knex from "db/knex";
 import { Model } from "objection";
 import { Discount } from "models/Discount";
+import { UsedDiscount } from "models/UsedDiscount";
+import Aigle from "aigle";
 
 Model.knex(knex);
 
@@ -39,13 +41,22 @@ export const discountsController: IDiscountsController = {
   },
   put: async (ctx) => {
     try {
-      const response = await Discount.query()
+      const gamesIds = ctx.request.body.gamesIds as number[];
+      delete ctx.request.body.gamesIds;
+
+      const discount = await Discount.query()
         .findById(ctx.params.id)
         .patchAndFetchById(ctx.params.id, ctx.request.body);
 
-      if (!response) ctx.throw(404);
+      if (!discount) ctx.throw(404);
 
-      ctx.body = response;
+      await UsedDiscount.query().delete().where("discountId", discount.id);
+
+      Aigle.map(gamesIds, (gameId) =>
+        UsedDiscount.query().insert({ discountId: discount.id, gameId })
+      );
+
+      ctx.body = discount;
     } catch (e) {
       switch (e.status) {
         case 404:
@@ -58,10 +69,17 @@ export const discountsController: IDiscountsController = {
   },
   post: async (ctx) => {
     try {
-      const response = await Discount.query().insert(ctx.request.body);
+      const gamesIds = ctx.request.body.gamesIds as number[];
+      delete ctx.request.body.gamesIds;
 
-      ctx.body = response;
+      const discount = await Discount.query().insert(ctx.request.body);
+      Aigle.map(gamesIds, (gameId) =>
+        UsedDiscount.query().insert({ discountId: discount.id, gameId })
+      );
+
+      ctx.body = discount;
     } catch (e) {
+      3;
       ctx.throw(400, "Bad request");
     }
   },
