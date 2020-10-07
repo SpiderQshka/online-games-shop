@@ -20,18 +20,6 @@
         background-color: rgba(0, 0, 0, 0.3);
       }
     }
-    .menuContainer {
-      position: fixed;
-      min-width: $menu-width;
-      top: 0;
-      left: -#{$menu-width};
-      bottom: 0;
-      z-index: 10;
-      transition: 0.7s;
-      &.openedMenu {
-        left: 0;
-      }
-    }
     .dataContainer {
       .actionsBlock {
         position: fixed;

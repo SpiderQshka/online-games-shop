@@ -26,11 +26,11 @@
       border: none;
       color: $primary-color-light;
       padding: 15px 20px;
-      margin-top: 15px;
+      margin-top: 5px;
       cursor: pointer;
     }
     .errorMsg {
-      margin-top: 10px;
+      margin: 10px 0;
       @include primaryFont;
       color: $error-color;
     }

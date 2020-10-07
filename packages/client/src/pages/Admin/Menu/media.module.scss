@@ -1,0 +1,16 @@
+@import "../../../styles/config.scss";
+
+@media all and (max-width: 1000px) {
+  .menuContainer {
+    position: fixed;
+    min-width: $admin-menu-width;
+    top: 0;
+    left: -#{$admin-menu-width};
+    bottom: 0;
+    z-index: 10;
+    transition: 0.7s;
+    &.openedMenu {
+      left: 0;
+    }
+  }
+}

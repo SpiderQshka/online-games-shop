@@ -117,7 +117,7 @@ export const Store = () => {
         const gameHightestDiscount = discounts
           .filter((el) => gameDiscountsIds.includes(el.id))
           .reduce(
-            (prev, curr) => (prev.amount > curr.amount ? prev : curr),
+            (prev, curr) => (+prev.amount > +curr.amount ? prev : curr),
             {} as IDiscountFromApi
           );
         return {

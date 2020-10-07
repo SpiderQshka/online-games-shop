@@ -38,6 +38,11 @@ export const CreateDiscount: React.FunctionComponent<CreateDiscountProps> = ({
     validationSchema: Yup.object({
       endDate: Yup.string().required("Required"),
       startDate: Yup.string().required("Required"),
+      // .max(
+      //   Yup.ref("endDate"),
+      //   "Start date should be equal or less than end date"
+      // )
+      // .min(Date.now(), "Discount should start at least today!"),
       gamesIds: Yup.array().of(Yup.number().min(1)).min(1).required("Required"),
       amount: Yup.number().min(1).max(100).required("Required"),
       type: Yup.string().required("Required").oneOf(["%", "$"]),
