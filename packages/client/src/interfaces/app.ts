@@ -1,10 +1,8 @@
 import {
-  IDiscount,
   IDiscountFromApi,
   IGameCreatorFromApi,
-  IGameCreatorPut,
   IGameFromApi,
-  IGenre,
+  IGenreFromApi,
   IOrderFromApi,
 } from "./api";
 
@@ -18,7 +16,7 @@ export interface IGameForUI {
   numberOfPhysicalCopies: number;
   gameCreator: IGameCreatorFromApi;
   createdAt: string;
-  genres: IGenre[];
+  genres: IGenreFromApi[];
   discount: IDiscountFromApi | null;
 }
 

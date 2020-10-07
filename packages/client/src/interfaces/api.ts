@@ -30,7 +30,7 @@ export interface IApi {
     error?: IApiError;
   }>;
   getGenres: () => Promise<{
-    genres: IGenre[];
+    genres: IGenreFromApi[];
     error?: IApiError;
   }>;
   getUsedGenres: () => Promise<{
@@ -101,6 +101,13 @@ export interface IApi {
     id: number,
     discount: IDiscount
   ) => Promise<{ discount: IDiscountFromApi | null; error?: IApiError }>;
+  postGenre: (
+    genre: IGenre
+  ) => Promise<{ genre: IGenreFromApi | null; error?: IApiError }>;
+  putGenre: (
+    id: number,
+    genre: IGenre
+  ) => Promise<{ genre: IGenreFromApi | null; error?: IApiError }>;
 }
 
 export interface IApiError {
@@ -201,8 +208,11 @@ export interface IUsedDiscount {
 }
 
 export interface IGenre {
-  id: number;
   name: string;
+}
+
+export interface IGenreFromApi extends IGenre {
+  id: number;
 }
 
 export interface IUsedGenre {

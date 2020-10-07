@@ -52,7 +52,7 @@ export const discountsController: IDiscountsController = {
 
       await UsedDiscount.query().delete().where("discountId", discount.id);
 
-      Aigle.map(gamesIds, (gameId) =>
+      await Aigle.map(gamesIds, (gameId) =>
         UsedDiscount.query().insert({ discountId: discount.id, gameId })
       );
 

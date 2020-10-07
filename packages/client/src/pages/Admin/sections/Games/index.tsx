@@ -4,6 +4,8 @@ import { useHistory } from "react-router-dom";
 import styles from "components/AdminTable/styles.module.scss";
 import { FaPlus } from "react-icons/fa";
 import { BsThreeDots } from "react-icons/bs";
+import moment from "moment";
+
 interface OrdersProps {
   games: IGameForUI[];
 }
@@ -19,6 +21,7 @@ export const Games: React.FunctionComponent<OrdersProps> = ({ games }) => {
           <th className={styles.col}>ID</th>
           <th className={styles.col}>Name</th>
           <th className={styles.col}>Logo</th>
+          <th className={styles.col}>Creation date</th>
           <th className={styles.col}>Game creator</th>
           <th className={styles.col}>Description</th>
           <th className={styles.col}>Age rating</th>
@@ -44,6 +47,9 @@ export const Games: React.FunctionComponent<OrdersProps> = ({ games }) => {
                   className={styles.img}
                   style={{ backgroundImage: `url(${game.logo})` }}
                 ></div>
+              </td>
+              <td className={styles.col}>
+                {moment(game.createdAt).format("DD-MM-YYYY")}
               </td>
               <td className={styles.col}>{game.gameCreator.name}</td>
               <td className={`${styles.col} ${styles.largeText}`}>

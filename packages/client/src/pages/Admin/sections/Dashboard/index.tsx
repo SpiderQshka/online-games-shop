@@ -1,4 +1,4 @@
-import { IGameCreatorFromApi, IGenre } from "interfaces/api";
+import { IGameCreatorFromApi, IGenreFromApi } from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
 import React from "react";
 import { PieChart } from "react-minimal-pie-chart";
@@ -6,7 +6,7 @@ import styles from "./styles.module.scss";
 import { config } from "config";
 
 interface DashboardProps {
-  genres: IGenre[];
+  genres: IGenreFromApi[];
   games: IGameForUI[];
   gameCreators: IGameCreatorFromApi[];
 }

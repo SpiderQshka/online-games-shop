@@ -24,6 +24,7 @@ export const Discounts: React.FunctionComponent<DiscountsProps> = ({
           <th className={styles.col}>Start date</th>
           <th className={styles.col}>End date</th>
           <th className={styles.col}>Amount</th>
+          <th className={styles.col}>Type</th>
           <th className={styles.col}>Games</th>
           <th
             className={`${styles.col} ${styles.btnContainer}`}
@@ -46,6 +47,7 @@ export const Discounts: React.FunctionComponent<DiscountsProps> = ({
                 {moment(discount.endDate).format("DD-MM-YYYY")}
               </td>
               <td className={styles.col}>{discount.amount}</td>
+              <td className={styles.col}>{discount.type}</td>
               <td className={`${styles.col} ${styles.list}`}>
                 {discount.games.map((game) => (
                   <li key={game.id} className={styles.listItem}>

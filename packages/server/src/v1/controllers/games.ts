@@ -66,14 +66,14 @@ export const gamesController: IGamesController = {
             )
           : [];
 
-      Aigle.map(gameGenresIds, (genreId) =>
+      await Aigle.map(gameGenresIds, (genreId) =>
         UsedGenre.query()
           .delete()
           .where("genreId", genreId)
           .where("gameId", game.id)
       );
 
-      Aigle.map(genresIds, (genreId) =>
+      await Aigle.map(genresIds, (genreId) =>
         UsedGenre.query().insert({ gameId: game.id, genreId })
       );
 

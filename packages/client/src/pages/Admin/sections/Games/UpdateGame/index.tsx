@@ -1,6 +1,11 @@
 import { useApi } from "context/api";
 import { useFormik } from "formik";
-import { IApiError, IGame, IGameCreatorFromApi, IGenre } from "interfaces/api";
+import {
+  IApiError,
+  IGame,
+  IGameCreatorFromApi,
+  IGenreFromApi,
+} from "interfaces/api";
 import React, { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
@@ -11,7 +16,7 @@ import moment from "moment";
 interface UpdateGameProps {
   games: IGameForUI[];
   gameCreators: IGameCreatorFromApi[];
-  genres: IGenre[];
+  genres: IGenreFromApi[];
 }
 
 export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({

@@ -7,7 +7,7 @@ import {
   IApiError,
   IDiscountFromApi,
   IGameCreatorFromApi,
-  IGenre,
+  IGenreFromApi,
   IUser,
 } from "interfaces/api";
 import { IDiscountForUI, IGameForUI, OrderWithUserId } from "interfaces/app";
@@ -28,6 +28,9 @@ import { CreateDiscount } from "../sections/Discounts/CreateDiscount";
 import { UpdateDiscount } from "../sections/Discounts/UpdateDiscount";
 import { Loader } from "components/Loader";
 import styles from "./styles.module.scss";
+import { Genres } from "../sections/Genres";
+import { CreateGenre } from "../sections/Genres/CreateGenre";
+import { UpdateGenre } from "../sections/Genres/UpdateGenre";
 
 interface RoutesProps {
   isLoading: boolean;
@@ -56,7 +59,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
   } = useApi();
   const [error, setError] = useState<IApiError | null>(null);
   const [games, setGames] = useState<IGameForUI[]>([]);
-  const [genres, setGenres] = useState<IGenre[]>([]);
+  const [genres, setGenres] = useState<IGenreFromApi[]>([]);
   const [orders, setOrders] = useState<OrderWithUserId[]>([]);
   const [users, setUsers] = useState<IUser[]>([]);
   const [discounts, setDiscounts] = useState<IDiscountForUI[]>([]);
@@ -217,6 +220,11 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
       />
       <Route
         exact
+        path="/admin/genres"
+        component={() => <Genres genres={genres} />}
+      />
+      <Route
+        exact
         path="/admin/orders/create"
         component={() => <CreateOrder users={users} games={games} />}
       />
@@ -243,6 +251,11 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         component={() => <CreateDiscount games={games} />}
       />
       <Route
+        exact
+        path="/admin/genres/create"
+        component={() => <CreateGenre />}
+      />
+      <Route
         path="/admin/orders/:id"
         component={() => <UpdateOrder games={games} orders={orders} />}
       />
@@ -267,6 +280,10 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
       <Route
         path="/admin/discounts/:id"
         component={() => <UpdateDiscount games={games} discounts={discounts} />}
+      />
+      <Route
+        path="/admin/genres/:id"
+        component={() => <UpdateGenre genres={genres} />}
       />
       <Route component={() => <Redirect to="/admin/dashboard" />} />
     </Switch>

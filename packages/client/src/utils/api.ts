@@ -441,4 +441,36 @@ export const API: IApi = {
           error: { msg: error.request.response, status: error.request.status },
         };
       }),
+  postGenre: (genre) =>
+    axios
+      .post(`${config.apiUrl}/genres`, genre, {
+        headers: {
+          token: getAuthToken(),
+        },
+      })
+      .then((response) => {
+        return { genre: response.data };
+      })
+      .catch((error) => {
+        return {
+          genre: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  putGenre: (id, genre) =>
+    axios
+      .put(`${config.apiUrl}/genres/${id}`, genre, {
+        headers: {
+          token: getAuthToken(),
+        },
+      })
+      .then((response) => {
+        return { genre: response.data };
+      })
+      .catch((error) => {
+        return {
+          genre: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
 };

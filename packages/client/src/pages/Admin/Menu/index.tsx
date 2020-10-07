@@ -1,5 +1,5 @@
 import React from "react";
-import { FaGamepad, FaPercent, FaStar } from "react-icons/fa";
+import { FaGamepad, FaPercent, FaStar, FaTheaterMasks } from "react-icons/fa";
 import { MdDashboard, MdDeveloperMode } from "react-icons/md";
 import { RiLogoutBoxRLine, RiShoppingCart2Line } from "react-icons/ri";
 import { Link, useHistory } from "react-router-dom";
@@ -96,6 +96,19 @@ export const Menu: React.FunctionComponent<MenuProps> = ({
           >
             <FaPercent size="20px" className={styles.icon} />
             Discounts
+          </Link>
+        </li>
+        <li className={styles.menuItem}>
+          <Link
+            to="/admin/genres"
+            onClick={() => setIsMenuOpen(false)}
+            className={`${styles.menuLink} ${
+              history.location.pathname.includes("/admin/genres") &&
+              styles.active
+            }`}
+          >
+            <FaTheaterMasks size="20px" className={styles.icon} />
+            Genres
           </Link>
         </li>
         <li className={styles.menuItem}>

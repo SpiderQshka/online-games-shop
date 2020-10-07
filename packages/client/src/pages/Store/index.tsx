@@ -2,10 +2,9 @@ import { Header } from "components/Header";
 import { useApi } from "context/api";
 import {
   IApiError,
-  IDiscount,
   IDiscountFromApi,
   IGameCreatorFromApi,
-  IGenre,
+  IGenreFromApi,
 } from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -30,7 +29,7 @@ export const Store = () => {
 
   const [games, setGames] = useState<IGameForUI[]>([]);
   const [gameCreators, setGameCreators] = useState<IGameCreatorFromApi[]>([]);
-  const [genres, setGenres] = useState<IGenre[]>([]);
+  const [genres, setGenres] = useState<IGenreFromApi[]>([]);
 
   const [error, setError] = useState<IApiError | null>(null);
   const [sortType, setSortType] = useState<"creationDate" | "alphabet">(
@@ -196,7 +195,7 @@ export const Store = () => {
                       {game.discount && (
                         <>
                           <span className={styles.saleSize}>
-                            {`-${game.discount.amount}%`}
+                            {`-${game.discount.amount}${game.discount.type}`}
                           </span>
                           <span className={styles.previousPrice}>
                             {game.price} $
@@ -205,12 +204,16 @@ export const Store = () => {
                       )}
 
                       <span className={styles.currentPrice}>
-                        {Math.trunc(
-                          game.price *
-                            (game.discount
-                              ? (100 - game.discount.amount) / 100
-                              : 1)
-                        )}
+                        {game.discount
+                          ? game.discount.type === "%"
+                            ? Math.trunc(
+                                game.price *
+                                  (game.discount
+                                    ? (100 - game.discount.amount) / 100
+                                    : 1)
+                              )
+                            : Math.trunc(game.price - game.discount.amount)
+                          : game.price}
                         $
                       </span>
                     </div>
