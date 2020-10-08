@@ -18,7 +18,7 @@ export const CreateGenre: React.FunctionComponent<CreateGenreProps> = () => {
     } as IGenre,
     validationSchema: Yup.object({
       name: Yup.string()
-        .min(5, "Name should be at least 5 characters long")
+        .min(3, "Name should be at least 3 characters long")
         .required("Required"),
     }),
     onSubmit: (data) =>

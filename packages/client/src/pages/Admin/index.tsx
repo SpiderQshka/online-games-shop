@@ -11,10 +11,16 @@ export const Admin = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
   return (
-    <div className={`${styles.adminContainer} ${isMenuOpen && styles.overlay}`}>
+    <div
+      className={`${styles.adminContainer} ${isMenuOpen && styles.overlay}`}
+      onClick={() => setIsMenuOpen(false)}
+    >
       <Menu isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
       <div className={styles.dataContainer}>
-        <div className={styles.actionsBlock}>
+        <div
+          className={styles.actionsBlock}
+          onClick={(e) => e.stopPropagation()}
+        >
           <button
             className={styles.btn}
             onClick={() => {

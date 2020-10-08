@@ -4,6 +4,12 @@
   background-color: $secondary-color-light;
   padding: 30px 0;
   box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  left: 0;
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 2px 35px 0px;
   .header {
     @include primaryFont;
     color: $primary-color-light;

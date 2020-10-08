@@ -5,7 +5,6 @@ import { useParams, useHistory } from "react-router-dom";
 import { useApi } from "context/api";
 import {
   IApiError,
-  IDiscount,
   IDiscountFromApi,
   IGameCreatorFromApi,
   IGameFromApi,

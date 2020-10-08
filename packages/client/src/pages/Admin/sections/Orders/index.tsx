@@ -44,11 +44,12 @@ export const Orders: React.FunctionComponent<OrdersProps> = ({ orders }) => {
               </td>
               <td className={styles.col}>{order.price}</td>
               <td className={styles.col}>{order.status}</td>
-              <td className={styles.col}>
-                {order.orderedGames.reduce(
-                  (prev, curr, i) => (i ? `${prev}, ${curr.name}` : curr.name),
-                  ""
-                )}
+              <td className={`${styles.col} ${styles.list}`}>
+                {order.orderedGames.map((el) => (
+                  <li className={styles.listItem} key={el.id}>
+                    {el.name}
+                  </li>
+                ))}
               </td>
               <td className={`${styles.col} ${styles.btnContainer}`}>
                 <button

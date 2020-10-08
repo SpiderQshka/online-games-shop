@@ -18,6 +18,7 @@ export const Menu: React.FunctionComponent<MenuProps> = ({
   return (
     <div
       className={`${styles.menuContainer} ${isMenuOpen && styles.openedMenu}`}
+      onClick={(e) => e.stopPropagation()}
     >
       <h2 className={styles.header}>Menu</h2>
       <ul className={styles.menuList}>

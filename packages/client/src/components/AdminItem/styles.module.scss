@@ -2,6 +2,7 @@
 
 .itemContent {
   max-width: 600px;
+  padding-left: $admin-menu-width;
   .header {
     @include primaryFont;
     color: $primary-color-light;
@@ -13,12 +14,29 @@
     background-color: $secondary-color-light;
     padding: 30px;
     .label {
-      display: block;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 10px;
       .labelText {
         @include primaryFont;
         color: $primary-color-light;
         margin-right: 10px;
+      }
+      .input {
+        padding: 15px;
+        color: $primary-color-light;
+        border-radius: 4px;
+        border: none;
+        outline: none;
+        margin: 8px 0;
+        background-color: $primary-color-dark;
+        &::placeholder {
+          color: $primary-color;
+        }
+        &:first-of-type {
+          margin-top: 0;
+        }
       }
     }
     .button {
@@ -26,13 +44,15 @@
       border: none;
       color: $primary-color-light;
       padding: 15px 20px;
-      margin-top: 5px;
+      margin-top: 10px;
       cursor: pointer;
     }
     .errorMsg {
-      margin: 10px 0;
+      margin: 10px 0 18px;
       @include primaryFont;
       color: $error-color;
     }
   }
 }
+
+@import "./media.module.scss";

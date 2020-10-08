@@ -190,7 +190,7 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
           <input
             name="createdAt"
             type="date"
-            max={Date.now()}
+            max={moment(Date.now()).format("YYYY-MM-DD")}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             className={`${styles.input} ${styles.creationDateInput}`}

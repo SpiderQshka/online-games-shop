@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
 import { useHistory, useParams } from "react-router-dom";
-import { IApiError, IDiscountFromApi } from "interfaces/api";
+import { IApiError } from "interfaces/api";
 import { useApi } from "context/api";
 import { IDiscountForUI, IGameForUI } from "interfaces/app";
 import moment from "moment";
@@ -67,6 +67,7 @@ export const UpdateDiscount: React.FunctionComponent<UpdateDiscountProps> = ({
             onBlur={formik.handleBlur}
             className={`${styles.input} ${styles.startDateInput}`}
             value={formik.values.startDate}
+            max={formik.values.endDate}
           />
         </label>
 
@@ -82,6 +83,7 @@ export const UpdateDiscount: React.FunctionComponent<UpdateDiscountProps> = ({
             onBlur={formik.handleBlur}
             className={`${styles.input} ${styles.endDateInput}`}
             value={formik.values.endDate}
+            min={formik.values.startDate}
           />
         </label>
 

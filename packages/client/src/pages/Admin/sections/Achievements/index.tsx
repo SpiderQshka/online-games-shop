@@ -37,7 +37,7 @@ export const Achievements: React.FunctionComponent<AchievementsProps> = ({
             <tr className={styles.row} key={achievement.id}>
               <td className={styles.col}>{achievement.id}</td>
               <td className={styles.col}>{achievement.name}</td>
-              <td className={`${styles.col}`}>{achievement.discount}</td>
+              <td className={`${styles.col}`}>{achievement.discount}%</td>
               <td className={`${styles.col} ${styles.btnContainer}`}>
                 <button
                   className={styles.btn}

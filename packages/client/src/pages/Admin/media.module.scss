@@ -2,7 +2,6 @@
 
 @media all and (max-width: 1000px) {
   .adminContainer {
-    grid-template-columns: 1fr;
     &:after {
       position: fixed;
       content: "";
@@ -16,18 +15,12 @@
     }
     &.overlay {
       &:after {
-        z-index: 0;
+        z-index: 1;
         background-color: rgba(0, 0, 0, 0.3);
       }
     }
     .dataContainer {
       .actionsBlock {
-        position: fixed;
-        background-color: $secondary-color-light;
-        right: 0;
-        top: 0;
-        padding: 10px;
-        box-shadow: rgba(0, 0, 0, 0.5) 0px 2px 35px 0px;
         .btn.menuBtn {
           display: inline;
         }

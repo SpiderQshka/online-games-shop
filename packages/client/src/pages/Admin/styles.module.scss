@@ -2,24 +2,25 @@
 
 .adminContainer {
   min-height: 100vh;
+  min-width: 100%;
   background-color: $secondary-color-dark;
-  display: grid;
-  grid-template-columns: $admin-menu-width 1fr;
-
+  display: inline-block;
   .dataContainer {
     background-color: inherit;
     padding: 30px;
-    position: relative;
     .loaderContainer {
       padding: 30px;
       display: flex;
       justify-content: center;
     }
     .actionsBlock {
-      position: absolute;
-      right: 30px;
-      top: 30px;
-      z-index: 10;
+      position: fixed;
+      background-color: $secondary-color-light;
+      right: 0;
+      top: 0;
+      padding: 10px;
+      z-index: 1;
+      box-shadow: rgba(0, 0, 0, 0.5) 0px 2px 35px 0px;
       .btn {
         background-color: inherit;
         border: none;

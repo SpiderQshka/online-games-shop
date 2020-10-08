@@ -1,6 +1,7 @@
 @import "../../../../styles/config.scss";
 
 .dashboardContent {
+  padding-left: $admin-menu-width;
   .header {
     @include primaryFont;
     color: $primary-color-light;
@@ -27,3 +28,5 @@
     }
   }
 }
+
+@import "./media.module.scss";

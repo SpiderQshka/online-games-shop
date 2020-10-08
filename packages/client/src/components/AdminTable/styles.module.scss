@@ -1,6 +1,7 @@
 @import "../../styles/config.scss";
 
 .itemsContent {
+  padding-left: $admin-menu-width;
   .header {
     @include primaryFont;
     color: $primary-color-light;

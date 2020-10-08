@@ -4,7 +4,6 @@ import {
   IApiError,
   IGame,
   IGameCreatorFromApi,
-  IGenre,
   IGenreFromApi,
 } from "interfaces/api";
 import React, { useEffect, useState } from "react";
@@ -200,7 +199,7 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = () => {
             <input
               name="createdAt"
               type="date"
-              max={Date.now()}
+              max={moment(Date.now()).format("YYYY-MM-DD")}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className={`${styles.input} ${styles.creationDateInput}`}

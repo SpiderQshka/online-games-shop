@@ -1,6 +1,6 @@
 import { useApi } from "context/api";
 import { useFormik } from "formik";
-import { IApiError, IUser, OrderStatus } from "interfaces/api";
+import { IApiError } from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
@@ -38,11 +38,6 @@ export const CreateDiscount: React.FunctionComponent<CreateDiscountProps> = ({
     validationSchema: Yup.object({
       endDate: Yup.string().required("Required"),
       startDate: Yup.string().required("Required"),
-      // .max(
-      //   Yup.ref("endDate"),
-      //   "Start date should be equal or less than end date"
-      // )
-      // .min(Date.now(), "Discount should start at least today!"),
       gamesIds: Yup.array().of(Yup.number().min(1)).min(1).required("Required"),
       amount: Yup.number().min(1).max(100).required("Required"),
       type: Yup.string().required("Required").oneOf(["%", "$"]),
@@ -66,6 +61,8 @@ export const CreateDiscount: React.FunctionComponent<CreateDiscountProps> = ({
             type="date"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
+            min={moment(new Date()).format("YYYY-MM-DD")}
+            max={formik.values.endDate}
             className={`${styles.input} ${styles.startDateInput}`}
             value={formik.values.startDate}
           />
@@ -81,6 +78,7 @@ export const CreateDiscount: React.FunctionComponent<CreateDiscountProps> = ({
             type="date"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
+            min={formik.values.startDate}
             className={`${styles.input} ${styles.endDateInput}`}
             value={formik.values.endDate}
           />

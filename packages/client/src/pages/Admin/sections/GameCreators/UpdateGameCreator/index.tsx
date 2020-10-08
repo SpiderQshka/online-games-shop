@@ -31,7 +31,7 @@ export const UpdateGameCreator: React.FunctionComponent<UpdateGameCreatorProps> 
         .min(5, "Name should be at least 5 characters long")
         .required("Required"),
       logo: Yup.string().required("Required"),
-      yearOfFoundation: Yup.number().min(1960).required("Required"),
+      yearOfFoundation: Yup.number().min(1900).required("Required"),
     }),
     onSubmit: (data) =>
       putGameCreator(gameCreator.id, data).then(({ gameCreator, error }) => {
@@ -79,7 +79,7 @@ export const UpdateGameCreator: React.FunctionComponent<UpdateGameCreatorProps> 
           <input
             name="yearOfFoundation"
             type="number"
-            min="1960"
+            min="1900"
             max={new Date().getFullYear()}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
