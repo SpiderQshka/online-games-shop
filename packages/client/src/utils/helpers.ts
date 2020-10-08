@@ -1,6 +1,7 @@
 import { IGameCreator } from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
 import _ from "lodash";
+import { SortType } from "pages/Store";
 
 export const setUserSessionData = (gamesIds: number[]) =>
   localStorage.setItem("gamesIds", JSON.stringify(gamesIds));
@@ -42,10 +43,7 @@ export const filterGames = (
     return true;
   });
 
-export const sortGames = (
-  games: IGameForUI[],
-  sortBy: "creationDate" | "alphabet"
-) => {
+export const sortGames = (games: IGameForUI[], sortBy: SortType) => {
   switch (sortBy) {
     case "creationDate":
       return [...games].sort(
@@ -58,6 +56,24 @@ export const sortGames = (
       return [...games].sort((prev, curr) =>
         prev.name.localeCompare(curr.name)
       );
+    case "discount":
+      return [...games].sort((prev, curr) => {
+        const prevDisountInPercents = prev.discount
+          ? prev.discount?.type === "%"
+            ? prev.discount?.amount
+            : ((prev.price - (prev.price - prev.discount.amount)) /
+                prev.price) *
+              100
+          : 0;
+        const currDisountInPercents = curr.discount
+          ? curr.discount?.type === "%"
+            ? curr.discount?.amount
+            : ((curr.price - (curr.price - curr.discount.amount)) /
+                curr.price) *
+              100
+          : 0;
+        return currDisountInPercents - prevDisountInPercents;
+      });
   }
 };
 

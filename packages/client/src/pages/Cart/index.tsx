@@ -9,6 +9,7 @@ import Aigle from "aigle";
 import { Header } from "components/Header";
 import { useHistory } from "react-router-dom";
 import { GiTumbleweed } from "react-icons/gi";
+import { Loader } from "components/Loader";
 
 Aigle.mixin(_, {});
 
@@ -17,8 +18,10 @@ export const Cart = () => {
   const { getGame, postOrder } = useApi();
   const [games, setGames] = useState<IGameFromApi[]>([]);
   const [error, setError] = useState<IApiError | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    setIsLoading(true);
     const processGames = async () => {
       const gamesIds = getUserSessionData();
       const games = await Aigle.map(gamesIds, (gameId) =>
@@ -29,6 +32,7 @@ export const Cart = () => {
       );
 
       setGames(games.filter((game) => !!game) as IGameFromApi[]);
+      setIsLoading(false);
     };
     processGames();
   }, []);
@@ -51,7 +55,11 @@ export const Cart = () => {
     <>
       <Header />
       <div className={styles.cartContainer}>
-        {games.length ? (
+        {isLoading ? (
+          <div className={styles.loaderContainer}>
+            <Loader />
+          </div>
+        ) : games.length ? (
           <div className={styles.cartContent}>
             <div className={styles.cartListContainer}>
               <h2 className={styles.header}>My cart</h2>

@@ -28,7 +28,10 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
     getUser,
   } = useApi();
   const { removeToken } = useAuth();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   useEffect(() => {
+    setIsLoading(true);
     const processOrders = async () => {
       const { orders, error: ordersError } = await getUserOrders();
       if (ordersError) setError(ordersError);
@@ -61,6 +64,7 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
           return { ...order, orderedGames: orderGames };
         })
       );
+      setIsLoading(false);
     };
     const processAchievements = async () => {
       const { achievements, error } = await getUserAchievements();
@@ -117,11 +121,18 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
             <Switch>
               <Route
                 path="/profile/orders"
-                component={() => <Orders orders={orders} />}
+                component={() => (
+                  <Orders orders={orders} isLoading={isLoading} />
+                )}
               />
               <Route
                 path="/profile/achievements"
-                component={() => <Achievements achievements={achievements} />}
+                component={() => (
+                  <Achievements
+                    achievements={achievements}
+                    isLoading={isLoading}
+                  />
+                )}
               />
               <Route component={() => <Redirect to="/profile/orders" />} />
             </Switch>

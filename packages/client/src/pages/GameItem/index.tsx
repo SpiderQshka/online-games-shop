@@ -87,17 +87,31 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
         .filter((el) => el.gameId === game?.id)
         .map((el) => el.discountId);
 
-      const gameHightestDiscount = discounts
-        .filter((el) => gameDiscountsIds.includes(el.id))
-        .reduce(
-          (prev, curr) => (prev.amount > curr.amount ? prev : curr),
-          {} as IDiscountFromApi
-        );
+      const gameHightestDiscount = game
+        ? discounts
+            .filter((el) => gameDiscountsIds.includes(el.id))
+            .reduce((prev, curr) => {
+              const prevDisountInPercents =
+                prev.type === "%"
+                  ? prev.amount
+                  : ((game.price - (game.price - prev.amount)) / game.price) *
+                    100;
+              const currDisountInPercents =
+                curr.type === "%"
+                  ? curr.amount
+                  : ((game.price - (game.price - curr.amount)) / game.price) *
+                    100;
+
+              return prevDisountInPercents > currDisountInPercents
+                ? prev
+                : curr;
+            }, {} as IDiscountFromApi)
+        : null;
       setGame({
         ...(game as IGameFromApi),
         gameCreator: gameCreator as IGameCreatorFromApi,
         genres: gameGenres,
-        discount: gameHightestDiscount.amount ? gameHightestDiscount : null,
+        discount: gameHightestDiscount,
       } as IGameForUI);
       setIsLoading(false);
     };
@@ -161,17 +175,24 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
                 {game?.discount && (
                   <>
                     <span className={styles.saleSize}>
-                      {`-${game.discount.amount}%`}
+                      {`-${game.discount.amount}${game.discount.type}`}
                     </span>
                     <span className={styles.previousPrice}>{game.price} $</span>
                   </>
                 )}
 
                 <span className={styles.currentPrice}>
-                  {Math.trunc(
-                    (game?.price as number) *
-                      (game?.discount ? (100 - game.discount.amount) / 100 : 1)
-                  )}
+                  {game &&
+                    (game.discount
+                      ? game.discount.type === "%"
+                        ? Math.trunc(
+                            game.price *
+                              (game.discount
+                                ? (100 - game.discount.amount) / 100
+                                : 1)
+                          )
+                        : Math.trunc(game.price - game.discount.amount)
+                      : game.price)}
                   $
                 </span>
               </div>

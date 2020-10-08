@@ -13,6 +13,9 @@ import { filterGames, sortGames } from "utils/helpers";
 import { FaWindowClose, FaSadTear, FaFilter } from "react-icons/fa";
 import styles from "./styles.module.scss";
 import { useHistory } from "react-router-dom";
+import { Loader } from "components/Loader";
+
+export type SortType = "creationDate" | "alphabet" | "discount";
 
 export const Store = () => {
   const {
@@ -32,12 +35,11 @@ export const Store = () => {
   const [genres, setGenres] = useState<IGenreFromApi[]>([]);
 
   const [error, setError] = useState<IApiError | null>(null);
-  const [sortType, setSortType] = useState<"creationDate" | "alphabet">(
-    "alphabet"
-  );
+  const [sortType, setSortType] = useState<SortType>("alphabet");
   const [filtersAmount, setFiltersAmount] = useState<number>(0);
   const [filteredGames, setFilteredGames] = useState<IGameForUI[]>([]);
   const [isFiltersMenuOpen, setIsFiltersMenuOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const removeFilters = useCallback(() => {
     if (formRef.current) {
@@ -71,6 +73,7 @@ export const Store = () => {
   ]);
 
   useEffect(() => {
+    setIsLoading(true);
     const processAsync = async () => {
       const { games, error: gamesError } = await getGames();
       if (gamesError) setError(gamesError);
@@ -115,10 +118,20 @@ export const Store = () => {
           .map((el) => el.discountId);
         const gameHightestDiscount = discounts
           .filter((el) => gameDiscountsIds.includes(el.id))
-          .reduce(
-            (prev, curr) => (+prev.amount > +curr.amount ? prev : curr),
-            {} as IDiscountFromApi
-          );
+          .reduce((prev, curr) => {
+            const prevDisountInPercents =
+              prev.type === "%"
+                ? prev.amount
+                : ((game.price - (game.price - prev.amount)) / game.price) *
+                  100;
+            const currDisountInPercents =
+              curr.type === "%"
+                ? curr.amount
+                : ((game.price - (game.price - curr.amount)) / game.price) *
+                  100;
+
+            return prevDisountInPercents > currDisountInPercents ? prev : curr;
+          }, {} as IDiscountFromApi);
         return {
           ...game,
           gameCreator,
@@ -130,6 +143,7 @@ export const Store = () => {
       setFilteredGames(sortGames(storeGames, sortType));
       setGenres(genres);
       setGameCreators(gameCreators);
+      setIsLoading(false);
     };
     processAsync();
   }, []);
@@ -153,9 +167,7 @@ export const Store = () => {
                 <select
                   name="sortBy"
                   className={styles.sortBySelect}
-                  onChange={(e) =>
-                    setSortType(e.target.value as "creationDate" | "alphabet")
-                  }
+                  onChange={(e) => setSortType(e.target.value as SortType)}
                   value={sortType}
                 >
                   <option value="creationDate" className={styles.sortByItem}>
@@ -163,6 +175,9 @@ export const Store = () => {
                   </option>
                   <option value="alphabet" className={styles.sortByItem}>
                     Alphabet
+                  </option>
+                  <option value="discount" className={styles.sortByItem}>
+                    Discount
                   </option>
                 </select>
               </div>
@@ -175,7 +190,11 @@ export const Store = () => {
                 <FaFilter size="20px" />
               </button>
             </div>
-            {!!filteredGames.length ? (
+            {isLoading ? (
+              <div className={styles.loaderContainer}>
+                <Loader />
+              </div>
+            ) : filteredGames.length > 0 ? (
               <ul className={styles.gamesList}>
                 {filteredGames.map((game) => (
                   <li
@@ -258,37 +277,53 @@ export const Store = () => {
             >
               <h4 className={styles.inputGroupHeader}>Genres</h4>
               <ul className={styles.inputGroup}>
-                {genres.map((genre) => (
-                  <li className={styles.inputGroupItem} key={genre.id}>
-                    <label className={styles.label}>
-                      <input
-                        key={genre.id}
-                        type="checkbox"
-                        name="genresIds"
-                        value={genre.id}
-                        className={styles.input}
-                      />
-                      {genre.name}
-                    </label>
+                {isLoading ? (
+                  <li
+                    className={`${styles.inputGroupItem} ${styles.loadingItem}`}
+                  >
+                    Loading...
                   </li>
-                ))}
+                ) : (
+                  genres.map((genre) => (
+                    <li className={styles.inputGroupItem} key={genre.id}>
+                      <label className={styles.label}>
+                        <input
+                          key={genre.id}
+                          type="checkbox"
+                          name="genresIds"
+                          value={genre.id}
+                          className={styles.input}
+                        />
+                        {genre.name}
+                      </label>
+                    </li>
+                  ))
+                )}
               </ul>
               <h4 className={styles.inputGroupHeader}>Game creators</h4>
               <ul className={styles.inputGroup}>
-                {gameCreators.map((gameCreator) => (
-                  <li className={styles.inputGroupItem} key={gameCreator.id}>
-                    <label className={styles.label}>
-                      <input
-                        key={gameCreator.id}
-                        type="radio"
-                        name="gameCreatorId"
-                        value={gameCreator.id}
-                        className={styles.input}
-                      />
-                      {gameCreator.name}
-                    </label>
+                {isLoading ? (
+                  <li
+                    className={`${styles.inputGroupItem} ${styles.loadingItem}`}
+                  >
+                    Loading...
                   </li>
-                ))}
+                ) : (
+                  gameCreators.map((gameCreator) => (
+                    <li className={styles.inputGroupItem} key={gameCreator.id}>
+                      <label className={styles.label}>
+                        <input
+                          key={gameCreator.id}
+                          type="radio"
+                          name="gameCreatorId"
+                          value={gameCreator.id}
+                          className={styles.input}
+                        />
+                        {gameCreator.name}
+                      </label>
+                    </li>
+                  ))
+                )}
               </ul>
             </form>
           </aside>

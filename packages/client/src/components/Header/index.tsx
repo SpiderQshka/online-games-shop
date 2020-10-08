@@ -15,8 +15,10 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
   const [games, setGames] = useState<IGameFromApi[]>([]);
   const [user, setUser] = useState<IUser | null>();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    setIsLoading(true);
     const processGames = async () => {
       const { games, error } = await getGames();
       if (error) setError(error);
@@ -26,6 +28,7 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
 
       setGames(games);
       setUser(user);
+      setIsLoading(false);
     };
     processGames();
   }, []);
@@ -54,14 +57,16 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
               Delivery
             </Link>
           </li>
-          {user ? (
+          {isLoading ? (
+            <></>
+          ) : user ? (
             <>
               <li className={`${styles.navItem} ${styles.mobileOnlyItem}`}>
                 <Link to="/profile" className={styles.link}>
                   <div className={styles.iconContainer}>
                     <FaUser size="100%" />
                   </div>
-                  <span className={styles.username}>{user?.login}</span>
+                  <span className={styles.username}>{user.login}</span>
                 </Link>
               </li>
               <li className={`${styles.navItem} ${styles.mobileOnlyItem}`}>
@@ -94,7 +99,9 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
       </nav>
       <div className={`${styles.profileContainer}`}>
         <SearchBar games={games} />
-        {user ? (
+        {isLoading ? (
+          <div className={styles.loadingProfile}></div>
+        ) : user ? (
           <>
             <div
               className={styles.profile}

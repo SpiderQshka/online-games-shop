@@ -14,6 +14,11 @@ $filters-menu-width: 160px;
     grid-template-columns: 1fr $filters-menu-width;
     grid-column-gap: 40px;
     .gamesContainer {
+      .loaderContainer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
       .infoContainer {
         padding: $default-gap 0;
         display: flex;
@@ -158,6 +163,8 @@ $filters-menu-width: 160px;
                   display: block;
                 }
               }
+            }
+            &.loadingItem {
             }
           }
         }

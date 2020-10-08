@@ -70,7 +70,8 @@ $nav-list-width: 200px;
         display: none;
       }
     }
-    .unauthProfile {
+    .unauthProfile,
+    .loadingProfile {
       display: none;
     }
   }
