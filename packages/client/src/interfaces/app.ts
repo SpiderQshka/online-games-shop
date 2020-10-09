@@ -1,27 +1,20 @@
 import {
   IDiscountFromApi,
   IGameCreatorFromApi,
+  IGameForOrder,
   IGameFromApi,
   IGenreFromApi,
   IOrderFromApi,
 } from "./api";
 
-export interface IGameForUI {
-  id: number;
-  name: string;
-  logo: string;
-  description: string;
-  ageRating: number;
-  price: number;
-  numberOfPhysicalCopies: number;
+export interface IGameForUI extends IGameFromApi {
   gameCreator: IGameCreatorFromApi;
-  createdAt: string;
   genres: IGenreFromApi[];
   discount: IDiscountFromApi | null;
 }
 
 export interface IOrderForUI extends IOrderFromApi {
-  orderedGames: IGameFromApi[];
+  orderedGames: IGameForOrder[];
 }
 
 export interface OrderWithUserId extends IOrderForUI {

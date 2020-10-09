@@ -7,7 +7,6 @@ import {
   IApiError,
   IDiscountFromApi,
   IGameCreatorFromApi,
-  IGameFromApi,
 } from "interfaces/api";
 import moment from "moment";
 import { IGameForUI } from "interfaces/app";
@@ -15,7 +14,7 @@ import { Loader } from "components/Loader";
 import { getUserSessionData, setUserSessionData } from "utils/helpers";
 import { FaShoppingCart } from "react-icons/fa";
 import { useAuth } from "context/auth";
-import { isInteger } from "lodash";
+import { isInteger, uniq } from "lodash";
 
 interface GameItemProps {}
 
@@ -34,15 +33,24 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
   const [error, setError] = useState<IApiError | null>(null);
   const [game, setGame] = useState<IGameForUI | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [sessionData, setSessionData] = useState<number[]>([]);
+  const [sessionData, setSessionData] = useState<
+    { id: number; isPhysical: boolean }[]
+  >([]);
 
-  const addToCartHandler = useCallback(() => {
-    if (game && token) {
-      const sessionData = [...new Set([...getUserSessionData(), game.id])];
-      setUserSessionData(sessionData);
-      setSessionData(sessionData);
-    } else history.push("/login");
-  }, [game, token]);
+  const addToCartHandler = useCallback(
+    (isPhysical: boolean) => {
+      if (game && token) {
+        const games = uniq([
+          ...getUserSessionData(),
+          { id: game.id, isPhysical },
+        ]);
+
+        setUserSessionData(games);
+        setSessionData(games);
+      } else history.push("/login");
+    },
+    [game, token]
+  );
 
   useEffect(() => {
     setIsLoading(true);
@@ -107,18 +115,51 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
                 : curr;
             }, {} as IDiscountFromApi)
         : null;
+
       setGame({
-        ...(game as IGameFromApi),
+        ...game,
         gameCreator: gameCreator as IGameCreatorFromApi,
         genres: gameGenres,
-        discount: gameHightestDiscount,
+        discount:
+          gameHightestDiscount && gameHightestDiscount.amount
+            ? gameHightestDiscount
+            : null,
       } as IGameForUI);
       setIsLoading(false);
     };
     processGame();
   }, [id, sessionData.length]);
 
-  const isGameInCart = game && getUserSessionData().includes(game.id);
+  const isGameInCart =
+    game &&
+    getUserSessionData()
+      .map((game) => game.id)
+      .includes(game.id);
+
+  const isCopyPhysical =
+    game &&
+    getUserSessionData()
+      .filter((gameFromUserData) => gameFromUserData.id === game.id)
+      .map((el) => el.isPhysical)
+      .some((el) => el);
+
+  const isCopyDigital =
+    game &&
+    getUserSessionData()
+      .filter((gameFromUserData) => gameFromUserData.id === game.id)
+      .map((el) => el.isPhysical)
+      .some((el) => !el);
+
+  const gamePriceWithDiscount =
+    game &&
+    (game.discount
+      ? game.discount.type === "%"
+        ? Math.trunc(
+            game.price *
+              (game.discount ? (100 - game.discount.amount) / 100 : 1)
+          )
+        : Math.trunc(game.price - game.discount.amount)
+      : game.price);
 
   return (
     <>
@@ -177,33 +218,33 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
                     <span className={styles.saleSize}>
                       {`-${game.discount.amount}${game.discount.type}`}
                     </span>
-                    <span className={styles.previousPrice}>{game.price} $</span>
+                    {/* <span className={styles.previousPrice}>{game.price}$</span> */}
                   </>
                 )}
 
-                <span className={styles.currentPrice}>
-                  {game &&
-                    (game.discount
-                      ? game.discount.type === "%"
-                        ? Math.trunc(
-                            game.price *
-                              (game.discount
-                                ? (100 - game.discount.amount) / 100
-                                : 1)
-                          )
-                        : Math.trunc(game.price - game.discount.amount)
-                      : game.price)}
-                  $
-                </span>
+                {/* <span className={styles.currentPrice}>
+                  {gamePriceWithDiscount}$
+                </span> */}
               </div>
               <div className={styles.buttonsBlock}>
                 <button
-                  className={`${styles.actionBtn} ${
+                  className={`${styles.actionBtn} ${styles.digital} ${
                     isGameInCart && styles.active
-                  }`}
-                  onClick={addToCartHandler}
+                  } ${isCopyDigital && styles.inCart}`}
+                  onClick={() => !isCopyDigital && addToCartHandler(false)}
                 >
-                  {isGameInCart ? "Already in cart" : "Add to cart"}
+                  Digital ({gamePriceWithDiscount}$)
+                  <span className={styles.msg}>
+                    <FaShoppingCart size="15px" />
+                  </span>
+                </button>
+                <button
+                  className={`${styles.actionBtn} ${styles.physical} ${
+                    isGameInCart && styles.active
+                  } ${isCopyPhysical && styles.inCart}`}
+                  onClick={() => !isCopyPhysical && addToCartHandler(true)}
+                >
+                  Physical ({game?.physicalCopyPrice}$)
                   <span className={styles.msg}>
                     <FaShoppingCart size="15px" />
                   </span>

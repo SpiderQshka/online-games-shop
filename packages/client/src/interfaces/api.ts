@@ -124,15 +124,13 @@ export interface IUser {
 
 export interface IOrder {
   gamesIds: number[];
+  physicalGamesCopiesIds: number[];
   status: OrderStatus;
-}
-
-export interface IOrderPut extends IOrder {
-  id: number;
 }
 
 export interface IOrderAdmin extends IOrder {
   userId: number;
+  physicalGamesCopiesIds: number[];
 }
 
 export type OrderStatus = "pending" | "cancelled" | "received";
@@ -153,22 +151,15 @@ export interface IGame {
   gameCreatorId: number;
   createdAt: string;
   genresIds: number[];
+  physicalCopyPrice: number;
 }
 
-export interface IGamePut extends IGame {
+export interface IGameFromApi extends IGame {
   id: number;
 }
 
-export interface IGameFromApi {
-  id: number;
-  name: string;
-  logo: string;
-  description: string;
-  ageRating: number;
-  price: number;
-  numberOfPhysicalCopies: number;
-  gameCreatorId: number;
-  createdAt: string;
+export interface IGameForOrder extends IGameFromApi {
+  isPhysical: boolean;
 }
 
 export interface IGameCreator {
@@ -227,6 +218,7 @@ export interface IOrderedGame {
   userId: number;
   gameId: number;
   price: number;
+  isPhysical: boolean;
 }
 
 export interface IAchievement {

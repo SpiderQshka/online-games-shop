@@ -43,6 +43,9 @@ export const Orders: React.FunctionComponent<OredersProps> = ({
                         key={el.id}
                       >
                         {el.name}
+                        {el.isPhysical && (
+                          <span className={styles.accent}>Physical copy</span>
+                        )}
                       </Link>
                     ))}
                   </span>

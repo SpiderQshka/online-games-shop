@@ -99,7 +99,7 @@
           position: relative;
           color: $primary-color-light;
           border: none;
-          padding: 20px 40px;
+          padding: 20px 20px;
           border-radius: 5px;
           font-size: 17px;
           @include primaryFont;
@@ -107,12 +107,30 @@
           outline: none;
           cursor: pointer;
           background-color: $accent-color;
+          &.digital {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            border-right: 3px solid $secondary-color-dark;
+          }
+          &.physical {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+          }
           &.active {
-            background-color: $primary-color-light;
-            color: $secondary-color-dark;
-            cursor: not-allowed;
-            .msg {
-              display: flex;
+            &.inCart {
+              background-color: $primary-color-light;
+              color: $secondary-color-dark;
+              cursor: not-allowed;
+              .msg {
+                display: flex;
+              }
+              &.physical {
+                .msg {
+                  display: flex;
+                  left: auto;
+                  right: -15px;
+                }
+              }
             }
           }
           .msg {

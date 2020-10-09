@@ -1,5 +1,5 @@
 import { useApi } from "context/api";
-import { IApiError, IGameFromApi } from "interfaces/api";
+import { IApiError, IGameForOrder } from "interfaces/api";
 import React, { useCallback, useEffect, useState } from "react";
 
 import { getUserSessionData, setUserSessionData } from "utils/helpers";
@@ -16,22 +16,23 @@ Aigle.mixin(_, {});
 export const Cart = () => {
   const history = useHistory();
   const { getGame, postOrder } = useApi();
-  const [games, setGames] = useState<IGameFromApi[]>([]);
+  const [games, setGames] = useState<IGameForOrder[]>([]);
   const [error, setError] = useState<IApiError | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     setIsLoading(true);
     const processGames = async () => {
-      const gamesIds = getUserSessionData();
-      const games = await Aigle.map(gamesIds, (gameId) =>
-        getGame(gameId).then(({ game, error }) => {
+      const gamesFromSessionData = getUserSessionData();
+      const games = await Aigle.map(gamesFromSessionData, (game, i) =>
+        getGame(game.id).then(({ game, error }) => {
           if (error) setError(error);
-          else return game;
+          else
+            return { ...game, isPhysical: gamesFromSessionData[i].isPhysical };
         })
       );
 
-      setGames(games.filter((game) => !!game) as IGameFromApi[]);
+      setGames(games.filter((game) => !!game) as IGameForOrder[]);
       setIsLoading(false);
     };
     processGames();
@@ -39,8 +40,13 @@ export const Cart = () => {
 
   const submitHandler = useCallback(() => {
     postOrder({
-      gamesIds: games.map((game) => +game.id),
+      gamesIds: games
+        .filter((game) => !game.isPhysical)
+        .map((game) => +game.id),
       status: "pending",
+      physicalGamesCopiesIds: games
+        .filter((game) => game.isPhysical)
+        .map((game) => +game.id),
     }).then(({ order, error }) => {
       if (error) setError(error);
       else {
@@ -73,9 +79,12 @@ export const Cart = () => {
                   <li className={styles.cartItem} key={game.id}>
                     <span className={`${styles.row} ${styles.name}`}>
                       {game.name}
+                      {game.isPhysical && (
+                        <span className={styles.accent}>Physical copy</span>
+                      )}
                     </span>
                     <span className={`${styles.row} ${styles.price}`}>
-                      {game.price} $
+                      {!game.isPhysical ? game.price : game.physicalCopyPrice} $
                     </span>
                   </li>
                 ))}

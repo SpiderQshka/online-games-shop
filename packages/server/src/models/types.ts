@@ -5,9 +5,10 @@ export interface IAchievement {
 
 export interface IDiscount {
   id: number;
-  startDate: Date;
-  duration: number;
-  amount: string;
+  startDate: string;
+  endDate: string;
+  amount: number;
+  type: "%" | "$";
 }
 
 export interface IGame {
@@ -19,6 +20,7 @@ export interface IGame {
   price: number;
   numberOfPhysicalCopies: number | null;
   gameCreatorId: number;
+  physicalCopyPrice: number;
 }
 
 export interface IGameCreator {
@@ -45,6 +47,7 @@ export interface IOrderedGame {
   userId: number;
   gameId: number;
   price: number;
+  isPhysical: boolean;
 }
 
 export interface IUnlockedAchievement {
@@ -57,6 +60,7 @@ export interface IUsedDiscount {
   id: number;
   discountId: number;
   gameId: number;
+  isPhysical: boolean;
 }
 
 export interface IUsedGenre {

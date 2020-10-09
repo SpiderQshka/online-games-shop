@@ -6,7 +6,12 @@ import { FaStar, FaShoppingCart } from "react-icons/fa";
 import { RiAdminLine, RiLogoutBoxRLine } from "react-icons/ri";
 import { Achievements } from "./Achievements";
 import { Orders } from "./Orders";
-import { IApiError, IUser, IAchievementFromApi } from "interfaces/api";
+import {
+  IApiError,
+  IUser,
+  IAchievementFromApi,
+  IGameForOrder,
+} from "interfaces/api";
 import { useApi } from "context/api";
 import { IOrderForUI } from "interfaces/app";
 import { useAuth } from "context/auth";
@@ -32,7 +37,7 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    const processOrders = async () => {
+    const processAsync = async () => {
       const { orders, error: ordersError } = await getUserOrders();
       if (ordersError) setError(ordersError);
 
@@ -51,28 +56,55 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
       const gamesIds = orderedGames.map((orderedGame) => orderedGame.gameId);
       const userGames = games.filter((el) => gamesIds.includes(el.id));
 
-      setUser(user);
+      const ordersForUI: IOrderForUI[] = orders.map((order) => {
+        const gamesIds = orderedGames
+          .filter((el) => +el.orderId === +order.id)
+          .map((el) => el.gameId);
+        const gamePhysicalDublicates: IGameForOrder[] = [];
+        const gamesForOrder: IGameForOrder[] = games
+          .filter((game) => gamesIds.includes(game.id))
+          .map((game) => {
+            const doesGameHavePhysicalDublicate =
+              orderedGames.filter(
+                (el) => el.gameId === game.id && el.orderId === order.id
+              ).length > 1;
+            if (doesGameHavePhysicalDublicate) {
+              gamePhysicalDublicates.push({ ...game, isPhysical: true });
+              return {
+                ...game,
+                isPhysical: false,
+              };
+            }
+            return {
+              ...game,
+              isPhysical: orderedGames.filter(
+                (el) => el.gameId === game.id && el.orderId === order.id
+              )[0].isPhysical,
+            };
+          });
 
-      setOrders(
-        orders.map((order) => {
-          const orderGamesIds = orderedGames
-            .filter((el) => el.orderId === order.id)
-            .map((el) => el.gameId);
-          const orderGames = userGames.filter((el) =>
-            orderGamesIds.includes(el.id)
-          );
-          return { ...order, orderedGames: orderGames };
-        })
-      );
-      setIsLoading(false);
-    };
-    const processAchievements = async () => {
+        gamesForOrder.push(...gamePhysicalDublicates);
+        const userId = orderedGames.filter(
+          (orderedGame) => orderedGame.orderId === order.id
+        )[0].userId;
+        return {
+          ...order,
+          orderedGames: gamesForOrder,
+          userId,
+        };
+      });
+
       const { achievements, error } = await getUserAchievements();
       if (error) setError(error);
-      else setAchievements(achievements);
+
+      setUser(user);
+
+      setOrders(ordersForUI);
+
+      setAchievements(achievements);
+      setIsLoading(false);
     };
-    processOrders();
-    processAchievements();
+    processAsync();
   }, []);
 
   return (

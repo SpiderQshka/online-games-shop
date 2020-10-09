@@ -3,13 +3,14 @@ import { IGameForUI } from "interfaces/app";
 import _ from "lodash";
 import { SortType } from "pages/Store";
 
-export const setUserSessionData = (gamesIds: number[]) =>
-  localStorage.setItem("gamesIds", JSON.stringify(gamesIds));
+export const setUserSessionData = (
+  games: { id: number; isPhysical: boolean }[]
+) => localStorage.setItem("games", JSON.stringify(games));
 
-export const getUserSessionData = (): number[] =>
-  JSON.parse(localStorage.getItem("gamesIds") as string) || [];
+export const getUserSessionData = (): { id: number; isPhysical: boolean }[] =>
+  JSON.parse(localStorage.getItem("games") as string) || [];
 
-export const removeUserSessionData = () => localStorage.removeItem("gamesIds");
+export const removeUserSessionData = () => localStorage.removeItem("games");
 
 export const getAuthToken = () => localStorage.getItem("token");
 

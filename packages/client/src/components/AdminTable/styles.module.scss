@@ -34,6 +34,13 @@
         }
         &.list {
           list-style: none;
+          .listItem {
+            .accent {
+              color: $accent-color;
+              font-weight: bold;
+              margin-left: 10px;
+            }
+          }
         }
         &.imgContainer {
           min-width: 400px;

@@ -259,19 +259,11 @@ export const API: IApi = {
       }),
   postOrderAdmin: (order) =>
     axios
-      .post(
-        `${config.apiUrl}/admin/orders`,
-        {
-          gamesIds: order.gamesIds,
-          status: order.status,
-          userId: order.userId,
+      .post(`${config.apiUrl}/admin/orders`, order, {
+        headers: {
+          token: getAuthToken(),
         },
-        {
-          headers: {
-            token: getAuthToken(),
-          },
-        }
-      )
+      })
       .then((response) => {
         return { order: response.data };
       })

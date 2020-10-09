@@ -8,9 +8,10 @@ import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
 
 interface OrderFormValues {
-  gamesIds: number[];
+  gamesIds: string[];
   status: OrderStatus;
   userId: number;
+  physicalGamesCopiesIds: string[];
 }
 
 interface AddOrderProps {
@@ -30,15 +31,21 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
     initialValues: {
       status: "pending",
       gamesIds: [],
+      physicalGamesCopiesIds: [],
       userId: 1,
     } as OrderFormValues,
     validationSchema: Yup.object({
       status: Yup.string().required("Required"),
-      gamesIds: Yup.array().of(Yup.number().min(1)).min(1).required("Required"),
+      gamesIds: Yup.array().of(Yup.string().min(1)).min(1).required("Required"),
+      physicalGamesCopiesIds: Yup.array().of(Yup.string().min(1)).min(0),
       userId: Yup.number().min(1).required("Required"),
     }),
     onSubmit: (data) => {
-      postOrderAdmin(data).then(({ order, error }) => {
+      postOrderAdmin({
+        ...data,
+        gamesIds: data.gamesIds.map((id) => +id),
+        physicalGamesCopiesIds: data.physicalGamesCopiesIds.map((id) => +id),
+      }).then(({ order, error }) => {
         if (error) setError(error);
         else history.push("/admin/orders");
       });
@@ -83,9 +90,10 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
           <p className={styles.errorMsg}>{formik.errors.status}</p>
         )}
         <label className={styles.label}>
-          <span className={styles.labelText}>Games</span>
+          <span className={styles.labelText}>Digital copies</span>
           <select
             name="gamesIds"
+            required={formik.values.physicalGamesCopiesIds.length === 0}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             className={`${styles.input} ${styles.gamesInpu}`}
@@ -103,6 +111,33 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
         {!!formik.touched.gamesIds && !!formik.errors.gamesIds && (
           <p className={styles.errorMsg}>{formik.errors.gamesIds}</p>
         )}
+
+        <label className={styles.label}>
+          <span className={styles.labelText}>Physical copies</span>
+          <select
+            name="physicalGamesCopiesIds"
+            required={formik.values.gamesIds.length === 0}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            className={`${styles.input} ${styles.gamesInput}`}
+            value={formik.values.physicalGamesCopiesIds.map((id) => `${id}`)}
+            multiple
+          >
+            {games.map((game) => (
+              <option value={game.id} key={game.id}>
+                {game.name}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        {!!formik.touched.physicalGamesCopiesIds &&
+          !!formik.errors.physicalGamesCopiesIds && (
+            <p className={styles.errorMsg}>
+              {formik.errors.physicalGamesCopiesIds}
+            </p>
+          )}
+
         <button
           type="submit"
           className={`${styles.button} ${styles.submitButton} ${

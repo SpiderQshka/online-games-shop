@@ -9,6 +9,7 @@ export async function seed(knex: Knex): Promise<void> {
       userId: 1,
       gameId: 1,
       price: faker.random.number({ min: 0 }),
+      isPhysical: false,
     },
   ]);
 }

@@ -30,10 +30,17 @@
         .gameName {
           display: block;
           margin-bottom: 5px;
-          color: $accent-color;
+          color: $primary-color-light;
           text-decoration: none;
+
           &:last-of-type {
             margin-bottom: 0;
+          }
+          .accent {
+            font-weight: bold;
+            margin-left: 10px;
+            color: $accent-color;
+            font-style: italic;
           }
         }
       }

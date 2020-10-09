@@ -7,6 +7,7 @@ import {
   IApiError,
   IDiscountFromApi,
   IGameCreatorFromApi,
+  IGameForOrder,
   IGenreFromApi,
   IUser,
 } from "interfaces/api";
@@ -145,9 +146,30 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         const gamesIds = orderedGames
           .filter((el) => +el.orderId === +order.id)
           .map((el) => el.gameId);
-        const gamesForOrder = games.filter((game) =>
-          gamesIds.includes(game.id)
-        );
+        const gamePhysicalDublicates: IGameForOrder[] = [];
+        const gamesForOrder: IGameForOrder[] = games
+          .filter((game) => gamesIds.includes(game.id))
+          .map((game) => {
+            const doesGameHavePhysicalDublicate =
+              orderedGames.filter(
+                (el) => el.gameId === game.id && el.orderId === order.id
+              ).length > 1;
+            if (doesGameHavePhysicalDublicate) {
+              gamePhysicalDublicates.push({ ...game, isPhysical: true });
+              return {
+                ...game,
+                isPhysical: false,
+              };
+            }
+            return {
+              ...game,
+              isPhysical: orderedGames.filter(
+                (el) => el.gameId === game.id && el.orderId === order.id
+              )[0].isPhysical,
+            };
+          });
+
+        gamesForOrder.push(...gamePhysicalDublicates);
         const userId = orderedGames.filter(
           (orderedGame) => orderedGame.orderId === order.id
         )[0].userId;
@@ -157,6 +179,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
           userId,
         };
       });
+
       const discountsForUI = discounts.map((discount) => {
         const gamesIds = usedDiscounts
           .filter((el) => el.discountId === discount.id)

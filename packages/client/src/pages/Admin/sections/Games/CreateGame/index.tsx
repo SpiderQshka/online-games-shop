@@ -34,6 +34,7 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = () => {
       createdAt: moment(new Date()).format("YYYY-MM-DD"),
       genresIds: [],
       gameCreatorId: 1,
+      physicalCopyPrice: 1,
     } as IGame,
     validationSchema: Yup.object({
       name: Yup.string()
@@ -52,6 +53,7 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = () => {
         .of(Yup.number().min(1))
         .min(1)
         .required("Required"),
+      physicalCopyPrice: Yup.number().min(1).required("Required"),
     }),
     onSubmit: (data) =>
       postGame(data).then(({ game, error }) => {
@@ -176,6 +178,24 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = () => {
           {!!formik.touched.price && !!formik.errors.price && (
             <p className={styles.errorMsg}>{formik.errors.price}</p>
           )}
+          <label className={styles.label}>
+            <span className={styles.labelText}>Price for physical copy</span>
+            <input
+              name="physicalCopyPrice"
+              type="number"
+              min="1"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              className={`${styles.input} ${styles.priceInput}`}
+              value={formik.values.physicalCopyPrice}
+            />
+          </label>
+          {!!formik.touched.physicalCopyPrice &&
+            !!formik.errors.physicalCopyPrice && (
+              <p className={styles.errorMsg}>
+                {formik.errors.physicalCopyPrice}
+              </p>
+            )}
           <label className={styles.label}>
             <span className={styles.labelText}>Number of physical copies</span>
             <input

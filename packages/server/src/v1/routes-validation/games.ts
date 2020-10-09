@@ -18,6 +18,7 @@ export const gamesRoutesValidation: IGamesRoutesValidation = {
     gameCreatorId: Joi.number().required(),
     createdAt: Joi.date().iso().required(),
     genresIds: Joi.array().items(Joi.number().min(0).required()).required(),
+    physicalCopyPrice: Joi.number().min(0).required(),
   },
   put: {
     name: Joi.string().min(5),
@@ -29,5 +30,6 @@ export const gamesRoutesValidation: IGamesRoutesValidation = {
     gameCreatorId: Joi.number(),
     createdAt: Joi.date().iso(),
     genresIds: Joi.array().items(Joi.number().min(0).required()),
+    physicalCopyPrice: Joi.number().min(0).required(),
   },
 };

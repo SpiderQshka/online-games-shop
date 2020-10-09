@@ -5,10 +5,15 @@ import { Order } from "models/Order";
 import { OrderedGame } from "models/OrderedGame";
 import { verifyJwtToken } from "v1/auth";
 import { doesOrderRelateToUser } from "models/helpers";
-import { IOrderedGame, IGame, IOrder } from "models/types";
+import { IOrderedGame, IGame } from "models/types";
 import { Game } from "models/Game";
 import _ from "lodash";
 import Aigle from "aigle";
+import {
+  getGamePriceWithDiscount,
+  doesCurrentDateSuitDiscount,
+  getHightestGameDiscount,
+} from "v1/helpers";
 
 Aigle.mixin(_, {});
 
@@ -92,22 +97,88 @@ export const ordersController: IOrdersController = {
 
       if (!doesOrderRelateToCurrrentUser && !user.isAdmin) ctx.throw(403);
 
-      const gamesIds = ctx.request.body.gamesIds as number[];
+      const gamesIds: number[] = ctx.request.body.gamesIds;
+      const physicalGamesIds: number[] =
+        ctx.request.body.physicalGamesCopiesIds;
 
-      const games: IGame[] = await Aigle.map(gamesIds, (id) =>
+      const physicalGamesForChangeIds = (
+        await OrderedGame.query()
+          .where("orderId", ctx.params.id)
+          .where("isPhysical", true)
+      ).map((el) => el.id);
+
+      await Aigle.map(physicalGamesForChangeIds, async (gameId) => {
+        const game = await Game.query().findById(gameId);
+        game &&
+          (await Game.query().patchAndFetchById(gameId, {
+            numberOfPhysicalCopies: +game.numberOfPhysicalCopies + 1,
+          }));
+      });
+
+      await Aigle.map(physicalGamesIds, async (id) => {
+        const game = await Game.query().findById(id);
+        if (+game.numberOfPhysicalCopies === 0) ctx.throw(404);
+        await Game.query().patchAndFetchById(id, {
+          numberOfPhysicalCopies: +game.numberOfPhysicalCopies - 1,
+        });
+      });
+
+      const digitalGames: IGame[] = await Aigle.map(gamesIds, (id) =>
+        Game.query().findById(id)
+      );
+      const physicalGames: IGame[] = await Aigle.map(physicalGamesIds, (id) =>
         Game.query().findById(id)
       );
 
-      const price = games.reduce((prev, curr) => prev + +curr.price, 0);
+      const digitalGamesWithDiscounts = await Aigle.map(
+        digitalGames,
+        async (game) => {
+          const gameHightestDiscount = await getHightestGameDiscount(game);
+          const discount =
+            gameHightestDiscount &&
+            doesCurrentDateSuitDiscount(gameHightestDiscount)
+              ? gameHightestDiscount
+              : null;
+          return {
+            ...game,
+            price: getGamePriceWithDiscount(game, discount, false),
+          };
+        }
+      );
 
+      const physicalGamesWithDiscounts = await Aigle.map(
+        physicalGames,
+        async (game) => {
+          const gameHightestDiscount = await getHightestGameDiscount(game);
+          const discount =
+            gameHightestDiscount &&
+            doesCurrentDateSuitDiscount(gameHightestDiscount)
+              ? gameHightestDiscount
+              : null;
+          return {
+            ...game,
+            price: getGamePriceWithDiscount(game, discount, true),
+          };
+        }
+      );
+
+      const digitalGamesPrice = digitalGamesWithDiscounts.reduce(
+        (prev, curr) => prev + +curr.price,
+        0
+      );
+
+      const physicalGamesPrice = physicalGamesWithDiscounts.reduce(
+        (prev, curr) => prev + +curr.price,
+        0
+      );
       const updatedOrder = {
-        price,
+        price: digitalGamesPrice + physicalGamesPrice,
         status: ctx.request.body.status,
       };
 
       const order = await Order.query().patchAndFetchById(
         ctx.params.id,
-        games.length > 0 ? updatedOrder : {}
+        updatedOrder
       );
 
       const userId = (await OrderedGame.query().where("orderId", order.id))[0]
@@ -115,16 +186,37 @@ export const ordersController: IOrdersController = {
 
       await OrderedGame.query().delete().where("orderId", order.id);
 
-      const orderedGames = await Aigle.map(games, (game) =>
-        OrderedGame.query().insert({
-          gameId: game.id,
-          orderId: order.id,
-          price,
-          userId,
-        })
+      const orderedDigitalGames: IOrderedGame[] = await Aigle.map(
+        digitalGamesWithDiscounts,
+        (game) =>
+          OrderedGame.query().insert({
+            gameId: game.id,
+            orderId: order.id,
+            userId,
+            price: +game.price,
+            isPhysical: false,
+          })
       );
-      ctx.body = orderedGames;
+
+      const orderedPhysicalGames: IOrderedGame[] = await Aigle.map(
+        physicalGamesWithDiscounts,
+        (game) =>
+          OrderedGame.query().insert({
+            gameId: game.id,
+            orderId: order.id,
+            userId,
+            price: +game.price,
+            isPhysical: true,
+          })
+      );
+
+      ctx.body = {
+        ...order,
+        orderedGames: [...orderedDigitalGames, ...orderedPhysicalGames],
+      };
     } catch (e) {
+      console.log(e);
+
       switch (e.status) {
         case 404:
           ctx.throw(404, `Order with id '${ctx.params.id}' was not found`);
@@ -141,69 +233,223 @@ export const ordersController: IOrdersController = {
     const user = verifyJwtToken(ctx);
 
     try {
-      const gamesIds: number[] = [...ctx.request.body.gamesIds];
+      const gamesIds: number[] = ctx.request.body.gamesIds;
+      const physicalGamesIds: number[] =
+        ctx.request.body.physicalGamesCopiesIds;
 
-      const games: IGame[] = _.uniqBy(
-        await Aigle.map(gamesIds, (id) => Game.query().findById(id)),
-        (game: IGame) => game.id
+      await Aigle.map(physicalGamesIds, async (id) => {
+        const game = await Game.query().findById(id);
+        if (+game.numberOfPhysicalCopies === 0) ctx.throw(404);
+        await Game.query().patchAndFetchById(id, {
+          numberOfPhysicalCopies: +game.numberOfPhysicalCopies - 1,
+        });
+      });
+
+      const digitalGames: IGame[] = await Aigle.map(gamesIds, (id) =>
+        Game.query().findById(id)
+      );
+      const physicalGames: IGame[] = await Aigle.map(physicalGamesIds, (id) =>
+        Game.query().findById(id)
       );
 
-      const price = games.reduce((prev, curr) => prev + +curr.price, 0);
+      const digitalGamesWithDiscounts = await Aigle.map(
+        digitalGames,
+        async (game) => {
+          const gameHightestDiscount = await getHightestGameDiscount(game);
+          const discount =
+            gameHightestDiscount &&
+            doesCurrentDateSuitDiscount(gameHightestDiscount)
+              ? gameHightestDiscount
+              : null;
+          return {
+            ...game,
+            price: getGamePriceWithDiscount(game, discount, false),
+          };
+        }
+      );
+
+      const physicalGamesWithDiscounts = await Aigle.map(
+        physicalGames,
+        async (game) => {
+          const gameHightestDiscount = await getHightestGameDiscount(game);
+          const discount =
+            gameHightestDiscount &&
+            doesCurrentDateSuitDiscount(gameHightestDiscount)
+              ? gameHightestDiscount
+              : null;
+          return {
+            ...game,
+            price: getGamePriceWithDiscount(game, discount, true),
+          };
+        }
+      );
+
+      const digitalGamesPrice = digitalGamesWithDiscounts.reduce(
+        (prev, curr) => prev + +curr.price,
+        0
+      );
+
+      const physicalGamesPrice = physicalGamesWithDiscounts.reduce(
+        (prev, curr) => prev + +curr.price,
+        0
+      );
 
       const order = await Order.query().insert({
         createdAt: new Date(),
-        price,
+        price: digitalGamesPrice + physicalGamesPrice,
         status: ctx.request.body.status,
       });
 
-      const orderedGames: IOrderedGame[] = await Aigle.map(games, (game) =>
-        OrderedGame.query().insert({
-          gameId: game.id,
-          orderId: order.id,
-          userId: user.id,
-          price: +game.price,
-        })
+      const orderedDigitalGames: IOrderedGame[] = await Aigle.map(
+        digitalGamesWithDiscounts,
+        (game) =>
+          OrderedGame.query().insert({
+            gameId: game.id,
+            orderId: order.id,
+            userId: user.id,
+            price: +game.price,
+            isPhysical: false,
+          })
       );
-      ctx.body = { ...order, orderedGames };
-    } catch (e) {
-      console.log(e);
 
-      ctx.throw(400, "Bad request");
+      const orderedPhysicalGames: IOrderedGame[] = await Aigle.map(
+        physicalGamesWithDiscounts,
+        (game) =>
+          OrderedGame.query().insert({
+            gameId: game.id,
+            orderId: order.id,
+            userId: user.id,
+            price: +game.price,
+            isPhysical: true,
+          })
+      );
+
+      ctx.body = {
+        ...order,
+        orderedGames: [...orderedDigitalGames, ...orderedPhysicalGames],
+      };
+    } catch (e) {
+      switch (e.status) {
+        case 404:
+          ctx.throw(
+            404,
+            `One of ordered games doesn't have any physical copies left`
+          );
+
+        default:
+          ctx.throw(400, "Bad request");
+      }
     }
   },
   postAdmin: async (ctx) => {
     try {
       const gamesIds: number[] = ctx.request.body.gamesIds;
-      const userId = ctx.request.body.userId;
+      const physicalGamesIds: number[] =
+        ctx.request.body.physicalGamesCopiesIds;
+      const userId: number = ctx.request.body.userId;
 
-      const games: IGame[] = _.uniqBy(
-        await Aigle.map(gamesIds, (id) => Game.query().findById(id)),
-        (game: IGame) => game.id
+      await Aigle.map(physicalGamesIds, async (id) => {
+        const game = await Game.query().findById(id);
+        if (+game.numberOfPhysicalCopies === 0) ctx.throw(404);
+        await Game.query().patchAndFetchById(id, {
+          numberOfPhysicalCopies: +game.numberOfPhysicalCopies - 1,
+        });
+      });
+
+      const digitalGames: IGame[] = await Aigle.map(gamesIds, (id) =>
+        Game.query().findById(id)
+      );
+      const physicalGames: IGame[] = await Aigle.map(physicalGamesIds, (id) =>
+        Game.query().findById(id)
       );
 
-      const price = games.reduce((prev, curr) => prev + +curr.price, 0);
+      const digitalGamesWithDiscounts = await Aigle.map(
+        digitalGames,
+        async (game) => {
+          const gameHightestDiscount = await getHightestGameDiscount(game);
+          const discount =
+            gameHightestDiscount &&
+            doesCurrentDateSuitDiscount(gameHightestDiscount)
+              ? gameHightestDiscount
+              : null;
+          return {
+            ...game,
+            price: getGamePriceWithDiscount(game, discount, false),
+          };
+        }
+      );
+
+      const physicalGamesWithDiscounts = await Aigle.map(
+        physicalGames,
+        async (game) => {
+          const gameHightestDiscount = await getHightestGameDiscount(game);
+          const discount =
+            gameHightestDiscount &&
+            doesCurrentDateSuitDiscount(gameHightestDiscount)
+              ? gameHightestDiscount
+              : null;
+          return {
+            ...game,
+            price: getGamePriceWithDiscount(game, discount, true),
+          };
+        }
+      );
+
+      const digitalGamesPrice = digitalGamesWithDiscounts.reduce(
+        (prev, curr) => prev + +curr.price,
+        0
+      );
+
+      const physicalGamesPrice = physicalGamesWithDiscounts.reduce(
+        (prev, curr) => prev + +curr.price,
+        0
+      );
 
       const order = await Order.query().insert({
         createdAt: new Date(),
-        price,
+        price: digitalGamesPrice + physicalGamesPrice,
         status: ctx.request.body.status,
       });
 
-      const orderedGames: IOrderedGame[] = await Aigle.map(
-        games,
-        async (game) =>
-          await OrderedGame.query().insert({
+      const orderedDigitalGames: IOrderedGame[] = await Aigle.map(
+        digitalGamesWithDiscounts,
+        (game) =>
+          OrderedGame.query().insert({
             gameId: game.id,
             orderId: order.id,
             userId,
             price: +game.price,
+            isPhysical: false,
           })
       );
-      ctx.body = { ...order, orderedGames };
-    } catch (e) {
-      console.log(e);
 
-      ctx.throw(400, "Bad request");
+      const orderedPhysicalGames: IOrderedGame[] = await Aigle.map(
+        physicalGamesWithDiscounts,
+        (game) =>
+          OrderedGame.query().insert({
+            gameId: game.id,
+            orderId: order.id,
+            userId,
+            price: +game.price,
+            isPhysical: true,
+          })
+      );
+
+      ctx.body = {
+        ...order,
+        orderedGames: [...orderedDigitalGames, ...orderedPhysicalGames],
+      };
+    } catch (e) {
+      switch (e.status) {
+        case 404:
+          ctx.throw(
+            404,
+            `One of ordered games doesn't have any physical copies left`
+          );
+
+        default:
+          ctx.throw(400, "Bad request");
+      }
     }
   },
 };

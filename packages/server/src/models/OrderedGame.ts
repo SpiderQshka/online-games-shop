@@ -6,6 +6,7 @@ export class OrderedGame extends Model {
   userId!: number;
   gameId!: number;
   price!: number;
+  isPhysical!: boolean;
   static tableName = "ordered_games";
   static get jsonSchema() {
     return {

@@ -48,6 +48,9 @@ export const Orders: React.FunctionComponent<OrdersProps> = ({ orders }) => {
                 {order.orderedGames.map((el) => (
                   <li className={styles.listItem} key={el.id}>
                     {el.name}
+                    {el.isPhysical && (
+                      <span className={styles.accent}>Physical copy</span>
+                    )}
                   </li>
                 ))}
               </td>
