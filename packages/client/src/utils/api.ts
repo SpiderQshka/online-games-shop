@@ -465,4 +465,44 @@ export const API: IApi = {
           error: { msg: error.request.response, status: error.request.status },
         };
       }),
+  blockGame: (gameId) =>
+    axios
+      .post(
+        `${config.apiUrl}/games/block`,
+        { gameId },
+        {
+          headers: {
+            token: getAuthToken(),
+          },
+        }
+      )
+      .then((response) => {
+        return { game: response.data };
+      })
+      .catch((error) => {
+        return {
+          game: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
+  unblockGame: (gameId) =>
+    axios
+      .post(
+        `${config.apiUrl}/games/unblock`,
+        { gameId },
+        {
+          headers: {
+            token: getAuthToken(),
+          },
+        }
+      )
+      .then((response) => {
+        return { game: response.data };
+      })
+      .catch((error) => {
+        return {
+          game: null,
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
 };

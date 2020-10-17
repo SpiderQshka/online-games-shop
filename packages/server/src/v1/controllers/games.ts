@@ -5,7 +5,6 @@ import { Game } from "models/Game";
 import _ from "lodash";
 import Aigle from "aigle";
 import { UsedGenre } from "models/UsedGenre";
-import { Genre } from "models/Genre";
 
 Aigle.mixin(_, {});
 
@@ -16,6 +15,8 @@ interface IGamesController {
   getAll: Middleware;
   put: Middleware;
   post: Middleware;
+  block: Middleware;
+  unblock: Middleware;
 }
 
 export const gamesController: IGamesController = {
@@ -96,7 +97,7 @@ export const gamesController: IGamesController = {
 
       const game = await Game.query().insert(ctx.request.body);
 
-      Aigle.map(genresIds, (genreId) =>
+      await Aigle.map(genresIds, (genreId) =>
         UsedGenre.query().insert({
           gameId: game.id,
           genreId: genreId,
@@ -108,6 +109,46 @@ export const gamesController: IGamesController = {
       console.log(e);
 
       ctx.throw(400, "Bad request");
+    }
+  },
+  block: async (ctx) => {
+    try {
+      const gameId = ctx.request.body.gameId as number;
+
+      const game = await Game.query().findById(gameId);
+      if (game.numberOfPhysicalCopies === 0) ctx.throw(400);
+
+      const updatedGame = await Game.query().patchAndFetchById(gameId, {
+        numberOfPhysicalCopies: +game.numberOfPhysicalCopies - 1,
+      });
+
+      ctx.body = updatedGame;
+    } catch (e) {
+      switch (e.status) {
+        case 404:
+          ctx.throw(404, `Game with id '${ctx.params.id}' was not found`);
+
+        default:
+          ctx.throw(400, "Bad request");
+      }
+    }
+  },
+  unblock: async (ctx) => {
+    try {
+      const gameId = ctx.request.body.gameId as number;
+
+      const game = await Game.query().findById(gameId);
+
+      const updatedGame = await Game.query().patchAndFetchById(gameId, {
+        numberOfPhysicalCopies: +game.numberOfPhysicalCopies + 1,
+      });
+
+      ctx.body = updatedGame;
+    } catch (e) {
+      switch (e.status) {
+        default:
+          ctx.throw(400, "Bad request");
+      }
     }
   },
 };

@@ -94,5 +94,6 @@ export const getFilterOptions = (checkedFormInputs: HTMLInputElement[]) =>
             : [+curr.value],
         };
     }
+    const a = setTimeout(() => {}, 1);
     return {};
   }, {} as any);

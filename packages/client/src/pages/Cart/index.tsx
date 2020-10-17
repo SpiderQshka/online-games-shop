@@ -15,7 +15,7 @@ Aigle.mixin(_, {});
 
 export const Cart = () => {
   const history = useHistory();
-  const { getGame, postOrder } = useApi();
+  const { getGame, postOrder, unblockGame } = useApi();
   const [games, setGames] = useState<IGameForOrder[]>([]);
   const [error, setError] = useState<IApiError | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -38,7 +38,10 @@ export const Cart = () => {
     processGames();
   }, []);
 
-  const submitHandler = useCallback(() => {
+  const submitHandler = useCallback(async () => {
+    await Aigle.map(games, (game) =>
+      unblockGame(game.id).then(({ error }) => error && setError(error))
+    );
     postOrder({
       gamesIds: games
         .filter((game) => !game.isPhysical)

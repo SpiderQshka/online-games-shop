@@ -29,6 +29,7 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
     getGameCreator,
     getDiscounts,
     getUsedDiscounts,
+    blockGame,
   } = useApi();
   const [error, setError] = useState<IApiError | null>(null);
   const [game, setGame] = useState<IGameForUI | null>(null);
@@ -47,6 +48,10 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
 
         setUserSessionData(games);
         setSessionData(games);
+        if (isPhysical)
+          blockGame(game.id).then(({ game, error }) => {
+            if (error) setError(error);
+          });
       } else history.push("/login");
     },
     [game, token]

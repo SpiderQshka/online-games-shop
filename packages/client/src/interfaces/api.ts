@@ -108,6 +108,12 @@ export interface IApi {
     id: number,
     genre: IGenre
   ) => Promise<{ genre: IGenreFromApi | null; error?: IApiError }>;
+  blockGame: (
+    id: number
+  ) => Promise<{ game: IGameFromApi | null; error?: IApiError }>;
+  unblockGame: (
+    id: number
+  ) => Promise<{ game: IGameFromApi | null; error?: IApiError }>;
 }
 
 export interface IApiError {

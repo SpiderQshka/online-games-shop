@@ -40,4 +40,26 @@ router.route({
   handler: gamesController.put,
 });
 
+router.route({
+  method: "post",
+  path: "/api/v1/games/block",
+  validate: {
+    type: "json",
+    body: gamesRoutesValidation.block,
+  },
+  pre: checkAdmin,
+  handler: gamesController.block,
+});
+
+router.route({
+  method: "post",
+  path: "/api/v1/games/unblock",
+  validate: {
+    type: "json",
+    body: gamesRoutesValidation.unblock,
+  },
+  pre: checkAdmin,
+  handler: gamesController.unblock,
+});
+
 export default router.middleware();

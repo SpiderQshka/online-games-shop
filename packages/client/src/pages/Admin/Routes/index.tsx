@@ -170,6 +170,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
           });
 
         gamesForOrder.push(...gamePhysicalDublicates);
+
         const userId = orderedGames.filter(
           (orderedGame) => orderedGame.orderId === order.id
         )[0].userId;
@@ -200,7 +201,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
     };
     processAsync();
   }, [history.location.pathname, updateTrigger]);
-  return isLoading ? (
+  return isLoading || error ? (
     <div className={styles.loaderContainer}>
       <Loader />
     </div>
