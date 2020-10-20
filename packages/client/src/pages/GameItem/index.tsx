@@ -7,11 +7,17 @@ import {
   IApiError,
   IDiscountFromApi,
   IGameCreatorFromApi,
+  IGameFromApi,
 } from "interfaces/api";
 import moment from "moment";
 import { IGameForUI } from "interfaces/app";
 import { Loader } from "components/Loader";
-import { getUserSessionData, setUserSessionData } from "utils/helpers";
+import {
+  doesCurrentDateSuitDiscount,
+  getGameHightestDiscount,
+  getUserSessionData,
+  setUserSessionData,
+} from "utils/helpers";
 import { FaShoppingCart } from "react-icons/fa";
 import { useAuth } from "context/auth";
 import { isInteger, uniq } from "lodash";
@@ -100,33 +106,20 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
         .filter((el) => el.gameId === game?.id)
         .map((el) => el.discountId);
 
-      const gameHightestDiscount = game
-        ? discounts
-            .filter((el) => gameDiscountsIds.includes(el.id))
-            .reduce((prev, curr) => {
-              const prevDisountInPercents =
-                prev.type === "%"
-                  ? prev.amount
-                  : ((game.price - (game.price - prev.amount)) / game.price) *
-                    100;
-              const currDisountInPercents =
-                curr.type === "%"
-                  ? curr.amount
-                  : ((game.price - (game.price - curr.amount)) / game.price) *
-                    100;
-
-              return prevDisountInPercents > currDisountInPercents
-                ? prev
-                : curr;
-            }, {} as IDiscountFromApi)
-        : null;
+      const gameHightestDiscount = getGameHightestDiscount({
+        gameDiscountsIds,
+        game: game as IGameFromApi,
+        discounts,
+      });
 
       setGame({
         ...game,
         gameCreator: gameCreator as IGameCreatorFromApi,
         genres: gameGenres,
         discount:
-          gameHightestDiscount && gameHightestDiscount.amount
+          gameHightestDiscount &&
+          gameHightestDiscount.amount &&
+          doesCurrentDateSuitDiscount(gameHightestDiscount)
             ? gameHightestDiscount
             : null,
       } as IGameForUI);

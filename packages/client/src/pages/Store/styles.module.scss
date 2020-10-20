@@ -111,7 +111,6 @@ $filters-menu-width: 160px;
       }
     }
     .filtersContainer {
-      z-index: 1;
       .header {
         @include primaryFont;
         color: $primary-color;

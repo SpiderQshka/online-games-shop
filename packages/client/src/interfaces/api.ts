@@ -166,6 +166,7 @@ export interface IGameFromApi extends IGame {
 
 export interface IGameForOrder extends IGameFromApi {
   isPhysical: boolean;
+  discount: IDiscountFromApi | null;
 }
 
 export interface IGameCreator {

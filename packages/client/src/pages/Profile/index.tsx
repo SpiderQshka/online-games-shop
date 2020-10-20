@@ -13,9 +13,9 @@ import {
   IGameForOrder,
 } from "interfaces/api";
 import { useApi } from "context/api";
-import { IOrderForUI } from "interfaces/app";
+import { IOrderForUI, OrderWithUserId } from "interfaces/app";
 import { useAuth } from "context/auth";
-import { removeUserSessionData } from "utils/helpers";
+import { getGameHightestDiscount, removeUserSessionData } from "utils/helpers";
 
 interface IProfileProps {}
 
@@ -31,6 +31,8 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
     getGames,
     getUserAchievements,
     getUser,
+    getDiscounts,
+    getUsedDiscounts,
   } = useApi();
   const { removeToken } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -53,26 +55,52 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
       const { user, error: userError } = await getUser();
       if (userError) setError(userError);
 
+      const { discounts, error: discountsError } = await getDiscounts();
+      if (discountsError) setError(discountsError);
+
+      const {
+        usedDiscounts,
+        error: usedDiscountsError,
+      } = await getUsedDiscounts();
+      if (usedDiscountsError) setError(usedDiscountsError);
+
       const gamesIds = orderedGames.map((orderedGame) => orderedGame.gameId);
       const userGames = games.filter((el) => gamesIds.includes(el.id));
 
-      const ordersForUI: IOrderForUI[] = orders.map((order) => {
+      const ordersForUI: OrderWithUserId[] = orders.map((order) => {
         const gamesIds = orderedGames
           .filter((el) => +el.orderId === +order.id)
           .map((el) => el.gameId);
         const gamePhysicalDublicates: IGameForOrder[] = [];
-        const gamesForOrder: IGameForOrder[] = games
+
+        const gamesForOrder: IGameForOrder[] = userGames
           .filter((game) => gamesIds.includes(game.id))
           .map((game) => {
+            const gameDiscountsIds = usedDiscounts
+              .filter((el) => el.gameId === game?.id)
+              .map((el) => el.discountId);
             const doesGameHavePhysicalDublicate =
               orderedGames.filter(
                 (el) => el.gameId === game.id && el.orderId === order.id
               ).length > 1;
             if (doesGameHavePhysicalDublicate) {
-              gamePhysicalDublicates.push({ ...game, isPhysical: true });
+              gamePhysicalDublicates.push({
+                ...game,
+                isPhysical: true,
+                discount: getGameHightestDiscount({
+                  discounts,
+                  game,
+                  gameDiscountsIds,
+                }),
+              });
               return {
                 ...game,
                 isPhysical: false,
+                discount: getGameHightestDiscount({
+                  discounts,
+                  game,
+                  gameDiscountsIds,
+                }),
               };
             }
             return {
@@ -80,10 +108,16 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
               isPhysical: orderedGames.filter(
                 (el) => el.gameId === game.id && el.orderId === order.id
               )[0].isPhysical,
+              discount: getGameHightestDiscount({
+                discounts,
+                game,
+                gameDiscountsIds,
+              }),
             };
           });
 
         gamesForOrder.push(...gamePhysicalDublicates);
+
         const userId = orderedGames.filter(
           (orderedGame) => orderedGame.orderId === order.id
         )[0].userId;

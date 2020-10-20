@@ -32,6 +32,7 @@ import styles from "./styles.module.scss";
 import { Genres } from "../sections/Genres";
 import { CreateGenre } from "../sections/Genres/CreateGenre";
 import { UpdateGenre } from "../sections/Genres/UpdateGenre";
+import { getGameHightestDiscount } from "utils/helpers";
 
 interface RoutesProps {
   isLoading: boolean;
@@ -147,18 +148,35 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
           .filter((el) => +el.orderId === +order.id)
           .map((el) => el.gameId);
         const gamePhysicalDublicates: IGameForOrder[] = [];
+
         const gamesForOrder: IGameForOrder[] = games
           .filter((game) => gamesIds.includes(game.id))
           .map((game) => {
+            const gameDiscountsIds = usedDiscounts
+              .filter((el) => el.gameId === game?.id)
+              .map((el) => el.discountId);
             const doesGameHavePhysicalDublicate =
               orderedGames.filter(
                 (el) => el.gameId === game.id && el.orderId === order.id
               ).length > 1;
             if (doesGameHavePhysicalDublicate) {
-              gamePhysicalDublicates.push({ ...game, isPhysical: true });
+              gamePhysicalDublicates.push({
+                ...game,
+                isPhysical: true,
+                discount: getGameHightestDiscount({
+                  discounts,
+                  game,
+                  gameDiscountsIds,
+                }),
+              });
               return {
                 ...game,
                 isPhysical: false,
+                discount: getGameHightestDiscount({
+                  discounts,
+                  game,
+                  gameDiscountsIds,
+                }),
               };
             }
             return {
@@ -166,6 +184,11 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
               isPhysical: orderedGames.filter(
                 (el) => el.gameId === game.id && el.orderId === order.id
               )[0].isPhysical,
+              discount: getGameHightestDiscount({
+                discounts,
+                game,
+                gameDiscountsIds,
+              }),
             };
           });
 

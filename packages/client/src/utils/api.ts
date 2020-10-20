@@ -2,14 +2,14 @@ import axios from "axios";
 import { config } from "config";
 import { IOrder, IApi } from "interfaces/api";
 
-import { getAuthToken } from "./helpers";
+import { getTokenFromLocalStorage } from "./helpers";
 
 export const API: IApi = {
   postOrder: (order: IOrder) =>
     axios
       .post(`${config.apiUrl}/orders`, order, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -149,7 +149,7 @@ export const API: IApi = {
     axios
       .get(`${config.apiUrl}/my/orders`, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -165,7 +165,7 @@ export const API: IApi = {
     axios
       .get(`${config.apiUrl}/my/orderedGames`, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -181,7 +181,7 @@ export const API: IApi = {
     axios
       .get(`${config.apiUrl}/my/achievements`, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -197,7 +197,7 @@ export const API: IApi = {
     axios
       .get(`${config.apiUrl}/my/users`, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -213,7 +213,7 @@ export const API: IApi = {
     axios
       .get(`${config.apiUrl}/orders`, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -229,7 +229,7 @@ export const API: IApi = {
     axios
       .get(`${config.apiUrl}/orderedGames`, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -261,7 +261,7 @@ export const API: IApi = {
     axios
       .post(`${config.apiUrl}/admin/orders`, order, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -277,7 +277,7 @@ export const API: IApi = {
     axios
       .get(`${config.apiUrl}/users`, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -293,7 +293,7 @@ export const API: IApi = {
     axios
       .post(`${config.apiUrl}/games`, game, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -309,7 +309,7 @@ export const API: IApi = {
     axios
       .put(`${config.apiUrl}/games/${id}`, game, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -325,7 +325,7 @@ export const API: IApi = {
     axios
       .post(`${config.apiUrl}/gameCreators`, gameCreator, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -341,7 +341,7 @@ export const API: IApi = {
     axios
       .put(`${config.apiUrl}/gameCreators/${id}`, gameCreator, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -357,7 +357,7 @@ export const API: IApi = {
     axios
       .get(`${config.apiUrl}/achievements`, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -373,7 +373,7 @@ export const API: IApi = {
     axios
       .post(`${config.apiUrl}/achievements`, achievement, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -389,7 +389,7 @@ export const API: IApi = {
     axios
       .put(`${config.apiUrl}/achievements/${id}`, achievement, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -405,7 +405,7 @@ export const API: IApi = {
     axios
       .post(`${config.apiUrl}/discounts`, discount, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -421,7 +421,7 @@ export const API: IApi = {
     axios
       .put(`${config.apiUrl}/discounts/${id}`, discount, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -437,7 +437,7 @@ export const API: IApi = {
     axios
       .post(`${config.apiUrl}/genres`, genre, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -453,7 +453,7 @@ export const API: IApi = {
     axios
       .put(`${config.apiUrl}/genres/${id}`, genre, {
         headers: {
-          token: getAuthToken(),
+          token: getTokenFromLocalStorage(),
         },
       })
       .then((response) => {
@@ -472,7 +472,7 @@ export const API: IApi = {
         { gameId },
         {
           headers: {
-            token: getAuthToken(),
+            token: getTokenFromLocalStorage(),
           },
         }
       )
@@ -492,7 +492,7 @@ export const API: IApi = {
         { gameId },
         {
           headers: {
-            token: getAuthToken(),
+            token: getTokenFromLocalStorage(),
           },
         }
       )

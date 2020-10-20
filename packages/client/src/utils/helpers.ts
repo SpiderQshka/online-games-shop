@@ -1,4 +1,13 @@
-import { IGameCreator } from "interfaces/api";
+import {
+  IDiscount,
+  IDiscountFromApi,
+  IGameCreator,
+  IGameCreatorFromApi,
+  IGameFromApi,
+  IGenreFromApi,
+  IUsedDiscount,
+  IUsedGenre,
+} from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
 import _ from "lodash";
 import { SortType } from "pages/Store";
@@ -12,7 +21,13 @@ export const getUserSessionData = (): { id: number; isPhysical: boolean }[] =>
 
 export const removeUserSessionData = () => localStorage.removeItem("games");
 
-export const getAuthToken = () => localStorage.getItem("token");
+export const getTokenFromLocalStorage = () => localStorage.getItem("token");
+
+export const setTokenToLocalStorage = (token: string) =>
+  localStorage.setItem("token", token);
+
+export const removeTokenFromLocalStorage = () =>
+  localStorage.removeItem("token");
 
 export const filterGames = (
   games: IGameForUI[],
@@ -97,3 +112,95 @@ export const getFilterOptions = (checkedFormInputs: HTMLInputElement[]) =>
     const a = setTimeout(() => {}, 1);
     return {};
   }, {} as any);
+
+export const doesCurrentDateSuitDiscount = (
+  discount: IDiscountFromApi | IDiscount
+) => {
+  return (
+    !!discount.amount &&
+    new Date(discount.startDate) < new Date() &&
+    new Date(discount.endDate) > new Date()
+  );
+};
+
+interface FormatGamesForUIConfig {
+  games: IGameFromApi[];
+  gameCreators: IGameCreatorFromApi[];
+  usedGenres: IUsedGenre[];
+  genres: IGenreFromApi[];
+  usedDiscounts: IUsedDiscount[];
+  discounts: IDiscountFromApi[];
+}
+
+export const formatGamesForUI: (
+  config: FormatGamesForUIConfig
+) => IGameForUI[] = ({
+  discounts,
+  gameCreators,
+  games,
+  genres,
+  usedDiscounts,
+  usedGenres,
+}) =>
+  games.map((game) => {
+    const gameCreator = gameCreators.filter(
+      (el) => el.id === game.gameCreatorId
+    )[0];
+    const gameGenresIds = [
+      ...new Set(
+        usedGenres.filter((el) => el.gameId === game.id).map((el) => el.genreId)
+      ),
+    ];
+    const gameGenres = genres.filter((genre) =>
+      gameGenresIds.includes(genre.id)
+    );
+    const gameDiscountsIds = usedDiscounts
+      .filter((el) => el.gameId === game.id)
+      .map((el) => el.discountId);
+    const gameHightestDiscount = discounts
+      .filter((el) => gameDiscountsIds.includes(el.id))
+      .reduce((prev, curr) => {
+        const prevDisountInPercents =
+          prev.type === "%"
+            ? prev.amount
+            : ((game.price - (game.price - prev.amount)) / game.price) * 100;
+        const currDisountInPercents =
+          curr.type === "%"
+            ? curr.amount
+            : ((game.price - (game.price - curr.amount)) / game.price) * 100;
+
+        return prevDisountInPercents > currDisountInPercents ? prev : curr;
+      }, {} as IDiscountFromApi);
+    return {
+      ...game,
+      gameCreator,
+      genres: gameGenres,
+      discount:
+        gameHightestDiscount.amount &&
+        doesCurrentDateSuitDiscount(gameHightestDiscount)
+          ? gameHightestDiscount
+          : null,
+    };
+  });
+
+export const getGameHightestDiscount: (config: {
+  game: IGameFromApi;
+  discounts: IDiscountFromApi[];
+  gameDiscountsIds: number[];
+}) => IDiscountFromApi | null = ({ discounts, game, gameDiscountsIds }) =>
+  game
+    ? discounts
+        .filter((el) => gameDiscountsIds.includes(el.id))
+        .reduce((prev, curr) => {
+          const prevDisountInPercents =
+            prev.type === "%"
+              ? prev.amount
+              : ((game.price - (game.price - prev.amount)) / game.price) * 100;
+          const currDisountInPercents =
+            curr.type === "%"
+              ? curr.amount
+              : ((game.price - (game.price - curr.amount)) / game.price) * 100;
+
+          return prevDisountInPercents > currDisountInPercents ? prev : curr;
+        }, {} as IDiscountFromApi)
+    : null;

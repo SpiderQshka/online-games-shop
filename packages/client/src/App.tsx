@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useState } from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -12,7 +12,12 @@ import { ApiContext } from "context/api";
 import { API } from "utils/api";
 import { IconContext } from "react-icons";
 import { PageLoader } from "components/Loader";
-import { SuccessPage } from "pages/Store/SuccessPage";
+import {
+  getTokenFromLocalStorage,
+  setTokenToLocalStorage,
+  removeTokenFromLocalStorage,
+} from "utils/helpers";
+const SuccessPage = lazy(() => import("pages/Store/SuccessPage"));
 const SignUp = lazy(() => import("pages/SignUp"));
 const Profile = lazy(() => import("pages/Profile"));
 const NotFound = lazy(() => import("pages/NotFound"));
@@ -22,9 +27,29 @@ const GameItem = lazy(() => import("pages/GameItem"));
 const Cart = lazy(() => import("pages/Cart"));
 const Admin = lazy(() => import("pages/Admin"));
 function App() {
+  const [token, setTokenToContext] = useState<string | null>(
+    getTokenFromLocalStorage()
+  );
+
+  const setTokenHandler = (token: string) => {
+    setTokenToLocalStorage(token);
+    setTokenToContext(token);
+  };
+
+  const removeTokenHandler = () => {
+    removeTokenFromLocalStorage();
+    setTokenToContext(null);
+  };
+
   return (
     <IconContext.Provider value={{ color: "#f4f4f4" }}>
-      <AuthContext.Provider value={useAuth()}>
+      <AuthContext.Provider
+        value={{
+          token,
+          setToken: setTokenHandler,
+          removeToken: removeTokenHandler,
+        }}
+      >
         <ApiContext.Provider value={API}>
           <Router>
             <Suspense fallback={<PageLoader />}>

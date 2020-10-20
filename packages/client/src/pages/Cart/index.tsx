@@ -1,7 +1,6 @@
 import { useApi } from "context/api";
 import { IApiError, IGameForOrder } from "interfaces/api";
 import React, { useCallback, useEffect, useState } from "react";
-
 import { getUserSessionData, setUserSessionData } from "utils/helpers";
 import styles from "./styles.module.scss";
 import _ from "lodash";
@@ -15,7 +14,13 @@ Aigle.mixin(_, {});
 
 export const Cart = () => {
   const history = useHistory();
-  const { getGame, postOrder, unblockGame } = useApi();
+  const {
+    getGame,
+    postOrder,
+    unblockGame,
+    getDiscounts,
+    getUsedDiscounts,
+  } = useApi();
   const [games, setGames] = useState<IGameForOrder[]>([]);
   const [error, setError] = useState<IApiError | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -24,11 +29,20 @@ export const Cart = () => {
     setIsLoading(true);
     const processGames = async () => {
       const gamesFromSessionData = getUserSessionData();
+      const { discounts, error: discountsError } = await getDiscounts();
+      if (discountsError) setError(discountsError);
+
+      const {
+        usedDiscounts,
+        error: usedDiscountsError,
+      } = await getUsedDiscounts();
+      if (usedDiscountsError) setError(usedDiscountsError);
       const games = await Aigle.map(gamesFromSessionData, (game, i) =>
         getGame(game.id).then(({ game, error }) => {
           if (error) setError(error);
-          else
+          else {
             return { ...game, isPhysical: gamesFromSessionData[i].isPhysical };
+          }
         })
       );
 

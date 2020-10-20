@@ -36,3 +36,5 @@ export const SuccessPage: React.FunctionComponent = () => {
     </>
   );
 };
+
+export default SuccessPage;

@@ -8,7 +8,11 @@ import {
 } from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { getFilterOptions } from "utils/helpers";
+import {
+  doesCurrentDateSuitDiscount,
+  formatGamesForUI,
+  getFilterOptions,
+} from "utils/helpers";
 import { filterGames, sortGames } from "utils/helpers";
 import { FaWindowClose, FaSadTear, FaFilter } from "react-icons/fa";
 import styles from "./styles.module.scss";
@@ -99,45 +103,13 @@ export const Store = () => {
       const { usedGenres, error: useGenresError } = await getUsedGenres();
       if (useGenresError) setError(useGenresError);
 
-      const storeGames = games.map((game) => {
-        const gameCreator = gameCreators.filter(
-          (el) => el.id === game.gameCreatorId
-        )[0];
-        const gameGenresIds = [
-          ...new Set(
-            usedGenres
-              .filter((el) => el.gameId === game.id)
-              .map((el) => el.genreId)
-          ),
-        ];
-        const gameGenres = genres.filter((genre) =>
-          gameGenresIds.includes(genre.id)
-        );
-        const gameDiscountsIds = usedDiscounts
-          .filter((el) => el.gameId === game.id)
-          .map((el) => el.discountId);
-        const gameHightestDiscount = discounts
-          .filter((el) => gameDiscountsIds.includes(el.id))
-          .reduce((prev, curr) => {
-            const prevDisountInPercents =
-              prev.type === "%"
-                ? prev.amount
-                : ((game.price - (game.price - prev.amount)) / game.price) *
-                  100;
-            const currDisountInPercents =
-              curr.type === "%"
-                ? curr.amount
-                : ((game.price - (game.price - curr.amount)) / game.price) *
-                  100;
-
-            return prevDisountInPercents > currDisountInPercents ? prev : curr;
-          }, {} as IDiscountFromApi);
-        return {
-          ...game,
-          gameCreator,
-          genres: gameGenres,
-          discount: gameHightestDiscount.amount ? gameHightestDiscount : null,
-        };
+      const storeGames = formatGamesForUI({
+        discounts,
+        gameCreators,
+        games,
+        genres,
+        usedDiscounts,
+        usedGenres,
       });
       setGames(sortGames(storeGames, sortType));
       setFilteredGames(sortGames(storeGames, sortType));
@@ -263,10 +235,7 @@ export const Store = () => {
               <span className={styles.filtersAmount}>
                 {!!filtersAmount && filtersAmount}
               </span>
-              <span
-                className={styles.closeIcon}
-                onClick={() => removeFilters()}
-              >
+              <span className={styles.closeIcon} onClick={removeFilters}>
                 <FaWindowClose />
               </span>
             </h5>
