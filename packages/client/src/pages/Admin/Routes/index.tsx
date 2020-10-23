@@ -32,7 +32,7 @@ import styles from "./styles.module.scss";
 import { Genres } from "../sections/Genres";
 import { CreateGenre } from "../sections/Genres/CreateGenre";
 import { UpdateGenre } from "../sections/Genres/UpdateGenre";
-import { getGameHightestDiscount } from "utils/helpers";
+import { formatGamesForUI, getGameHightestDiscount } from "utils/helpers";
 
 interface RoutesProps {
   isLoading: boolean;
@@ -58,6 +58,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
     getOrderedGames,
     getAchievements,
     getUsers,
+    getUserAchievements,
   } = useApi();
   const [error, setError] = useState<IApiError | null>(null);
   const [games, setGames] = useState<IGameForUI[]>([]);
@@ -113,36 +114,15 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
       } = await getAchievements();
       if (achievementsError) setError(achievementsError);
 
-      const gamesForUI = games.map((game) => {
-        const gameCreator = gameCreators.filter(
-          (el) => el.id === game.gameCreatorId
-        )[0];
-        const gameGenresIds = [
-          ...new Set(
-            usedGenres
-              .filter((el) => el.gameId === game.id)
-              .map((el) => el.genreId)
-          ),
-        ];
-        const gameGenres = genres.filter((genre) =>
-          gameGenresIds.includes(genre.id)
-        );
-        const gameDiscountsIds = usedDiscounts
-          .filter((el) => el.gameId === game.id)
-          .map((el) => el.discountId);
-        const gameHightestDiscount = discounts
-          .filter((el) => gameDiscountsIds.includes(el.id))
-          .reduce(
-            (prev, curr) => (prev.amount > curr.amount ? prev : curr),
-            {} as IDiscountFromApi
-          );
-        return {
-          ...game,
-          gameCreator,
-          genres: gameGenres,
-          discount: gameHightestDiscount.amount ? gameHightestDiscount : null,
-        };
+      const gamesForUI = formatGamesForUI({
+        usedGenres,
+        usedDiscounts,
+        genres,
+        discounts,
+        gameCreators,
+        games,
       });
+
       const ordersForUI: OrderWithUserId[] = orders.map((order) => {
         const gamesIds = orderedGames
           .filter((el) => +el.orderId === +order.id)
@@ -159,24 +139,21 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
               orderedGames.filter(
                 (el) => el.gameId === game.id && el.orderId === order.id
               ).length > 1;
+            const discount = getGameHightestDiscount({
+              discounts,
+              game,
+              gameDiscountsIds,
+            });
             if (doesGameHavePhysicalDublicate) {
               gamePhysicalDublicates.push({
                 ...game,
                 isPhysical: true,
-                discount: getGameHightestDiscount({
-                  discounts,
-                  game,
-                  gameDiscountsIds,
-                }),
+                discount,
               });
               return {
                 ...game,
                 isPhysical: false,
-                discount: getGameHightestDiscount({
-                  discounts,
-                  game,
-                  gameDiscountsIds,
-                }),
+                discount,
               };
             }
             return {
@@ -184,11 +161,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
               isPhysical: orderedGames.filter(
                 (el) => el.gameId === game.id && el.orderId === order.id
               )[0].isPhysical,
-              discount: getGameHightestDiscount({
-                discounts,
-                game,
-                gameDiscountsIds,
-              }),
+              discount,
             };
           });
 

@@ -10,9 +10,10 @@ import { Game } from "models/Game";
 import _ from "lodash";
 import Aigle from "aigle";
 import {
-  getGamePriceWithDiscount,
+  getOptimalGamePrice,
   doesCurrentDateSuitDiscount,
   getHightestGameDiscount,
+  getAchievementDiscount,
 } from "v1/helpers";
 
 Aigle.mixin(_, {});
@@ -134,14 +135,21 @@ export const ordersController: IOrdersController = {
         digitalGames,
         async (game) => {
           const gameHightestDiscount = await getHightestGameDiscount(game);
-          const discount =
+          const gameDiscount =
             gameHightestDiscount &&
             doesCurrentDateSuitDiscount(gameHightestDiscount)
               ? gameHightestDiscount
               : null;
+
+          const achievementDiscountSize = await getAchievementDiscount(user.id);
           return {
             ...game,
-            price: getGamePriceWithDiscount(game, discount, false),
+            price: getOptimalGamePrice({
+              game,
+              achievementDiscountSize,
+              gameDiscount,
+              isPhysical: false,
+            }),
           };
         }
       );
@@ -150,14 +158,21 @@ export const ordersController: IOrdersController = {
         physicalGames,
         async (game) => {
           const gameHightestDiscount = await getHightestGameDiscount(game);
-          const discount =
+          const gameDiscount =
             gameHightestDiscount &&
             doesCurrentDateSuitDiscount(gameHightestDiscount)
               ? gameHightestDiscount
               : null;
+
+          const achievementDiscountSize = await getAchievementDiscount(user.id);
           return {
             ...game,
-            price: getGamePriceWithDiscount(game, discount, true),
+            price: getOptimalGamePrice({
+              game,
+              achievementDiscountSize,
+              gameDiscount,
+              isPhysical: true,
+            }),
           };
         }
       );
@@ -256,14 +271,21 @@ export const ordersController: IOrdersController = {
         digitalGames,
         async (game) => {
           const gameHightestDiscount = await getHightestGameDiscount(game);
-          const discount =
+          const gameDiscount =
             gameHightestDiscount &&
             doesCurrentDateSuitDiscount(gameHightestDiscount)
               ? gameHightestDiscount
               : null;
+
+          const achievementDiscountSize = await getAchievementDiscount(user.id);
           return {
             ...game,
-            price: getGamePriceWithDiscount(game, discount, false),
+            price: getOptimalGamePrice({
+              game,
+              achievementDiscountSize,
+              gameDiscount,
+              isPhysical: false,
+            }),
           };
         }
       );
@@ -272,14 +294,21 @@ export const ordersController: IOrdersController = {
         physicalGames,
         async (game) => {
           const gameHightestDiscount = await getHightestGameDiscount(game);
-          const discount =
+          const gameDiscount =
             gameHightestDiscount &&
             doesCurrentDateSuitDiscount(gameHightestDiscount)
               ? gameHightestDiscount
               : null;
+
+          const achievementDiscountSize = await getAchievementDiscount(user.id);
           return {
             ...game,
-            price: getGamePriceWithDiscount(game, discount, true),
+            price: getOptimalGamePrice({
+              game,
+              achievementDiscountSize,
+              gameDiscount,
+              isPhysical: true,
+            }),
           };
         }
       );
@@ -294,11 +323,15 @@ export const ordersController: IOrdersController = {
         0
       );
 
+      console.log(digitalGamesPrice + physicalGamesPrice);
+
       const order = await Order.query().insert({
-        createdAt: new Date(),
+        createdAt: new Date().toUTCString(),
         price: digitalGamesPrice + physicalGamesPrice,
         status: ctx.request.body.status,
       });
+
+      console.log(order);
 
       const orderedDigitalGames: IOrderedGame[] = await Aigle.map(
         digitalGamesWithDiscounts,
@@ -329,6 +362,8 @@ export const ordersController: IOrdersController = {
         orderedGames: [...orderedDigitalGames, ...orderedPhysicalGames],
       };
     } catch (e) {
+      console.log(e);
+
       switch (e.status) {
         case 404:
           ctx.throw(
@@ -367,14 +402,21 @@ export const ordersController: IOrdersController = {
         digitalGames,
         async (game) => {
           const gameHightestDiscount = await getHightestGameDiscount(game);
-          const discount =
+          const gameDiscount =
             gameHightestDiscount &&
             doesCurrentDateSuitDiscount(gameHightestDiscount)
               ? gameHightestDiscount
               : null;
+
+          const achievementDiscountSize = await getAchievementDiscount(userId);
           return {
             ...game,
-            price: getGamePriceWithDiscount(game, discount, false),
+            price: getOptimalGamePrice({
+              game,
+              achievementDiscountSize,
+              gameDiscount,
+              isPhysical: false,
+            }),
           };
         }
       );
@@ -383,14 +425,21 @@ export const ordersController: IOrdersController = {
         physicalGames,
         async (game) => {
           const gameHightestDiscount = await getHightestGameDiscount(game);
-          const discount =
+          const gameDiscount =
             gameHightestDiscount &&
             doesCurrentDateSuitDiscount(gameHightestDiscount)
               ? gameHightestDiscount
               : null;
+
+          const achievementDiscountSize = await getAchievementDiscount(userId);
           return {
             ...game,
-            price: getGamePriceWithDiscount(game, discount, true),
+            price: getOptimalGamePrice({
+              game,
+              achievementDiscountSize,
+              gameDiscount,
+              isPhysical: true,
+            }),
           };
         }
       );
@@ -406,7 +455,7 @@ export const ordersController: IOrdersController = {
       );
 
       const order = await Order.query().insert({
-        createdAt: new Date(),
+        createdAt: new Date().toUTCString(),
         price: digitalGamesPrice + physicalGamesPrice,
         status: ctx.request.body.status,
       });

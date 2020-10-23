@@ -1,10 +1,13 @@
 import {
+  IAchievementFromApi,
   IDiscount,
   IDiscountFromApi,
   IGameCreator,
   IGameCreatorFromApi,
+  IGameForOrder,
   IGameFromApi,
   IGenreFromApi,
+  IUnlockedAchievement,
   IUsedDiscount,
   IUsedGenre,
 } from "interfaces/api";
@@ -141,8 +144,9 @@ export const formatGamesForUI: (
   genres,
   usedDiscounts,
   usedGenres,
-}) =>
-  games.map((game) => {
+}) => {
+  const gamesFromSessionData = getUserSessionData();
+  return games.map((game) => {
     const gameCreator = gameCreators.filter(
       (el) => el.id === game.gameCreatorId
     )[0];
@@ -182,25 +186,91 @@ export const formatGamesForUI: (
           : null,
     };
   });
+};
 
 export const getGameHightestDiscount: (config: {
   game: IGameFromApi;
   discounts: IDiscountFromApi[];
   gameDiscountsIds: number[];
-}) => IDiscountFromApi | null = ({ discounts, game, gameDiscountsIds }) =>
-  game
-    ? discounts
-        .filter((el) => gameDiscountsIds.includes(el.id))
-        .reduce((prev, curr) => {
-          const prevDisountInPercents =
-            prev.type === "%"
-              ? prev.amount
-              : ((game.price - (game.price - prev.amount)) / game.price) * 100;
-          const currDisountInPercents =
-            curr.type === "%"
-              ? curr.amount
-              : ((game.price - (game.price - curr.amount)) / game.price) * 100;
+}) => IDiscountFromApi | null = ({ discounts, game, gameDiscountsIds }) => {
+  const discount = discounts
+    .filter((el) => gameDiscountsIds.includes(el.id))
+    .reduce((prev, curr) => {
+      const prevDisountInPercents =
+        prev.type === "%"
+          ? prev.amount
+          : ((game.price - (game.price - prev.amount)) / game.price) * 100;
+      const currDisountInPercents =
+        curr.type === "%"
+          ? curr.amount
+          : ((game.price - (game.price - curr.amount)) / game.price) * 100;
 
-          return prevDisountInPercents > currDisountInPercents ? prev : curr;
-        }, {} as IDiscountFromApi)
-    : null;
+      return prevDisountInPercents > currDisountInPercents ? prev : curr;
+    }, {} as IDiscountFromApi);
+  return discount.amount ? discount : null;
+};
+
+export const getAchievementDiscountSize: (config: {
+  userAchievements: IAchievementFromApi[];
+}) => number = ({ userAchievements }) =>
+  userAchievements
+    .map((el) => el.discount)
+    .reduce((prev, curr) => prev + curr, 0);
+
+const getGamePriceWithDiscount: (config: {
+  gamePrice: number;
+  discountSize: number;
+  discountType: "%" | "$";
+}) => number = ({ discountSize, discountType, gamePrice }) => {
+  const discountIsPercents =
+    discountType === "%" ? discountSize : (discountSize / gamePrice) * 100;
+  return (gamePrice * (100 - discountIsPercents)) / 100;
+};
+
+interface IGetOptimalGamePrice {
+  achievementDiscount: number;
+  game: IGameForUI | IGameForOrder;
+  isPhysical?: boolean;
+}
+
+export const getOptimalGamePrice = ({
+  achievementDiscount,
+  game,
+  isPhysical,
+}: IGetOptimalGamePrice) => {
+  if (!isPhysical) {
+    const gamePriceWithGameDiscount = game.discount
+      ? getGamePriceWithDiscount({
+          discountSize: game.discount.amount,
+          discountType: game.discount.type,
+          gamePrice: game.price,
+        })
+      : game.price;
+    const gamePriceWithAchievement = getGamePriceWithDiscount({
+      discountSize: achievementDiscount,
+      gamePrice: game.price,
+      discountType: "%",
+    });
+
+    return gamePriceWithAchievement < gamePriceWithGameDiscount
+      ? gamePriceWithAchievement
+      : gamePriceWithGameDiscount;
+  } else {
+    const gamePriceWithGameDiscount = game.discount
+      ? getGamePriceWithDiscount({
+          discountSize: game.discount.amount,
+          discountType: game.discount.type,
+          gamePrice: game.physicalCopyPrice,
+        })
+      : game.physicalCopyPrice;
+    const gamePriceWithAchievement = getGamePriceWithDiscount({
+      discountSize: achievementDiscount,
+      gamePrice: game.physicalCopyPrice,
+      discountType: "%",
+    });
+
+    return gamePriceWithAchievement < gamePriceWithGameDiscount
+      ? gamePriceWithAchievement
+      : gamePriceWithGameDiscount;
+  }
+};

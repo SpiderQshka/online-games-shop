@@ -2,10 +2,10 @@ import { Model } from "objection";
 
 export class Discount extends Model {
   id!: number;
-  startDate!: Date;
-  endDate!: Date;
+  startDate!: string;
+  endDate!: string;
   amount!: number;
-  type!: string;
+  type!: "%" | "$";
   static tableName = "discounts";
   static get jsonSchema() {
     return {

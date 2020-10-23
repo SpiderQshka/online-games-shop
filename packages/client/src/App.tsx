@@ -65,7 +65,7 @@ function App() {
                 <Route exact path="/store" component={Store} />
                 <Route path="/store/item/:id" component={GameItem} />
                 <PrivateRoute exact path="/cart" component={Cart} />
-                <Route path="/cart/success" component={SuccessPage} />
+                <PrivateRoute path="/cart/success" component={SuccessPage} />
                 <PrivateRoute path="/admin" component={Admin} />
                 <Route component={NotFound} />
               </Switch>

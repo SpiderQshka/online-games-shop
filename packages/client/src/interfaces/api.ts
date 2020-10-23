@@ -175,10 +175,6 @@ export interface IGameCreator {
   yearOfFoundation: number;
 }
 
-export interface IGameCreatorPut extends IGameCreator {
-  id: number;
-}
-
 export interface IGameCreatorFromApi extends IGameCreator {
   id: number;
 }
@@ -234,5 +230,14 @@ export interface IAchievement {
 }
 
 export interface IAchievementFromApi extends IAchievement {
+  id: number;
+}
+
+export interface IUnlockedAchievement {
+  achievementId: number;
+  userId: number;
+}
+
+export interface IUnlockedAchievementFromApi extends IUnlockedAchievement {
   id: number;
 }

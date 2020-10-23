@@ -2,7 +2,7 @@ import { Model } from "objection";
 
 export class Order extends Model {
   id!: number;
-  createdAt!: Date;
+  createdAt!: string;
   price!: number;
   status!: "pending" | "cancelled" | "received";
   static tableName = "orders";

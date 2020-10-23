@@ -64,6 +64,12 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
       } = await getUsedDiscounts();
       if (usedDiscountsError) setError(usedDiscountsError);
 
+      const {
+        achievements: userAchievements,
+        error: userAchievementsError,
+      } = await getUserAchievements();
+      if (userAchievementsError) setError(userAchievementsError);
+
       const gamesIds = orderedGames.map((orderedGame) => orderedGame.gameId);
       const userGames = games.filter((el) => gamesIds.includes(el.id));
 
@@ -83,24 +89,21 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
               orderedGames.filter(
                 (el) => el.gameId === game.id && el.orderId === order.id
               ).length > 1;
+            const discount = getGameHightestDiscount({
+              discounts,
+              game,
+              gameDiscountsIds,
+            });
             if (doesGameHavePhysicalDublicate) {
               gamePhysicalDublicates.push({
                 ...game,
                 isPhysical: true,
-                discount: getGameHightestDiscount({
-                  discounts,
-                  game,
-                  gameDiscountsIds,
-                }),
+                discount,
               });
               return {
                 ...game,
                 isPhysical: false,
-                discount: getGameHightestDiscount({
-                  discounts,
-                  game,
-                  gameDiscountsIds,
-                }),
+                discount,
               };
             }
             return {
@@ -108,11 +111,7 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
               isPhysical: orderedGames.filter(
                 (el) => el.gameId === game.id && el.orderId === order.id
               )[0].isPhysical,
-              discount: getGameHightestDiscount({
-                discounts,
-                game,
-                gameDiscountsIds,
-              }),
+              discount,
             };
           });
 

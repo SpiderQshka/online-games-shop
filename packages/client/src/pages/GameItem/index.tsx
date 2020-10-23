@@ -3,20 +3,17 @@ import { Header } from "components/Header";
 import styles from "./styles.module.scss";
 import { useParams, useHistory } from "react-router-dom";
 import { useApi } from "context/api";
-import {
-  IApiError,
-  IDiscountFromApi,
-  IGameCreatorFromApi,
-  IGameFromApi,
-} from "interfaces/api";
+import { IApiError, IGameCreatorFromApi, IGameFromApi } from "interfaces/api";
 import moment from "moment";
 import { IGameForUI } from "interfaces/app";
 import { Loader } from "components/Loader";
 import {
   doesCurrentDateSuitDiscount,
   getGameHightestDiscount,
+  getAchievementDiscountSize,
   getUserSessionData,
   setUserSessionData,
+  getOptimalGamePrice,
 } from "utils/helpers";
 import { FaShoppingCart } from "react-icons/fa";
 import { useAuth } from "context/auth";
@@ -36,9 +33,11 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
     getDiscounts,
     getUsedDiscounts,
     blockGame,
+    getUserAchievements,
   } = useApi();
   const [error, setError] = useState<IApiError | null>(null);
   const [game, setGame] = useState<IGameForUI | null>(null);
+  const [achievementDiscount, setAchievementDiscount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [sessionData, setSessionData] = useState<
     { id: number; isPhysical: boolean }[]
@@ -90,6 +89,12 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
       } = await getUsedDiscounts();
       if (usedDiscountsError) setError(usedDiscountsError);
 
+      const {
+        achievements: userAchievements,
+        error: userAchievementsError,
+      } = await getUserAchievements();
+      if (userAchievementsError) setError(userAchievementsError);
+
       const usedGenresIds = [
         ...new Set(
           usedGenres
@@ -112,17 +117,23 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
         discounts,
       });
 
+      const discount =
+        gameHightestDiscount &&
+        doesCurrentDateSuitDiscount(gameHightestDiscount)
+          ? gameHightestDiscount
+          : null;
+
       setGame({
         ...game,
         gameCreator: gameCreator as IGameCreatorFromApi,
         genres: gameGenres,
-        discount:
-          gameHightestDiscount &&
-          gameHightestDiscount.amount &&
-          doesCurrentDateSuitDiscount(gameHightestDiscount)
-            ? gameHightestDiscount
-            : null,
+        discount,
       } as IGameForUI);
+      setAchievementDiscount(
+        getAchievementDiscountSize({
+          userAchievements,
+        })
+      );
       setIsLoading(false);
     };
     processGame();
@@ -148,16 +159,13 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
       .map((el) => el.isPhysical)
       .some((el) => !el);
 
-  const gamePriceWithDiscount =
+  const optimalDigitalGamePrice =
     game &&
-    (game.discount
-      ? game.discount.type === "%"
-        ? Math.trunc(
-            game.price *
-              (game.discount ? (100 - game.discount.amount) / 100 : 1)
-          )
-        : Math.trunc(game.price - game.discount.amount)
-      : game.price);
+    getOptimalGamePrice({ achievementDiscount, game, isPhysical: false });
+
+  const optimalPhysicalGamePrice =
+    game &&
+    getOptimalGamePrice({ achievementDiscount, game, isPhysical: true });
 
   return (
     <>
@@ -211,10 +219,14 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
             </div>
             <div className={styles.actionsBlock}>
               <div className={styles.priceBlock}>
-                {game?.discount && (
+                {(game?.discount || achievementDiscount > 0) && (
                   <>
                     <span className={styles.saleSize}>
-                      {`-${game.discount.amount}${game.discount.type}`}
+                      {`-${
+                        game?.discount
+                          ? game.discount.amount
+                          : achievementDiscount
+                      }${game?.discount ? game.discount.type : "%"}`}
                     </span>
                     {/* <span className={styles.previousPrice}>{game.price}$</span> */}
                   </>
@@ -231,7 +243,7 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
                   } ${isCopyDigital && styles.inCart}`}
                   onClick={() => !isCopyDigital && addToCartHandler(false)}
                 >
-                  Digital ({gamePriceWithDiscount}$)
+                  Digital ({optimalDigitalGamePrice}$)
                   <span className={styles.msg}>
                     <FaShoppingCart size="15px" />
                   </span>
@@ -242,7 +254,7 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
                   } ${isCopyPhysical && styles.inCart}`}
                   onClick={() => !isCopyPhysical && addToCartHandler(true)}
                 >
-                  Physical ({game?.physicalCopyPrice}$)
+                  Physical ({optimalPhysicalGamePrice}$)
                   <span className={styles.msg}>
                     <FaShoppingCart size="15px" />
                   </span>

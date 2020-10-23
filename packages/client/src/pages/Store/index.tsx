@@ -9,8 +9,9 @@ import {
 import { IGameForUI } from "interfaces/app";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
-  doesCurrentDateSuitDiscount,
+  getOptimalGamePrice,
   formatGamesForUI,
+  getAchievementDiscountSize,
   getFilterOptions,
 } from "utils/helpers";
 import { filterGames, sortGames } from "utils/helpers";
@@ -29,6 +30,7 @@ export const Store = () => {
     getUsedDiscounts,
     getGenres,
     getUsedGenres,
+    getUserAchievements,
   } = useApi();
 
   const history = useHistory();
@@ -44,6 +46,7 @@ export const Store = () => {
   const [filteredGames, setFilteredGames] = useState<IGameForUI[]>([]);
   const [isFiltersMenuOpen, setIsFiltersMenuOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [achievementDiscount, setAchievementDiscount] = useState<number>(0);
 
   const removeFilters = useCallback(() => {
     if (formRef.current) {
@@ -103,6 +106,12 @@ export const Store = () => {
       const { usedGenres, error: useGenresError } = await getUsedGenres();
       if (useGenresError) setError(useGenresError);
 
+      const {
+        achievements: userAchievements,
+        error: userAchievementsError,
+      } = await getUserAchievements();
+      if (userAchievementsError) setError(userAchievementsError);
+
       const storeGames = formatGamesForUI({
         discounts,
         gameCreators,
@@ -111,6 +120,11 @@ export const Store = () => {
         usedDiscounts,
         usedGenres,
       });
+      setAchievementDiscount(
+        getAchievementDiscountSize({
+          userAchievements,
+        })
+      );
       setGames(sortGames(storeGames, sortType));
       setFilteredGames(sortGames(storeGames, sortType));
       setGenres(genres);
@@ -183,10 +197,14 @@ export const Store = () => {
                       {game.gameCreator.name}
                     </p>
                     <div className={styles.priceBlock}>
-                      {game.discount && (
+                      {(game.discount || achievementDiscount > 0) && (
                         <>
                           <span className={styles.saleSize}>
-                            {`-${game.discount.amount}${game.discount.type}`}
+                            {`-${
+                              game.discount
+                                ? game.discount.amount
+                                : achievementDiscount
+                            }${game.discount ? game.discount.type : "%"}`}
                           </span>
                           <span className={styles.previousPrice}>
                             {game.price} $
@@ -195,17 +213,7 @@ export const Store = () => {
                       )}
 
                       <span className={styles.currentPrice}>
-                        {game.discount
-                          ? game.discount.type === "%"
-                            ? Math.trunc(
-                                game.price *
-                                  (game.discount
-                                    ? (100 - game.discount.amount) / 100
-                                    : 1)
-                              )
-                            : Math.trunc(game.price - game.discount.amount)
-                          : game.price}
-                        $
+                        {getOptimalGamePrice({ achievementDiscount, game })}$
                       </span>
                     </div>
                   </li>

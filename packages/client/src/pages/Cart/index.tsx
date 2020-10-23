@@ -1,7 +1,13 @@
 import { useApi } from "context/api";
-import { IApiError, IGameForOrder } from "interfaces/api";
+import { IApiError, IGameForOrder, IGameFromApi } from "interfaces/api";
 import React, { useCallback, useEffect, useState } from "react";
-import { getUserSessionData, setUserSessionData } from "utils/helpers";
+import {
+  getOptimalGamePrice,
+  formatGamesForUI,
+  getAchievementDiscountSize,
+  getUserSessionData,
+  setUserSessionData,
+} from "utils/helpers";
 import styles from "./styles.module.scss";
 import _ from "lodash";
 import Aigle from "aigle";
@@ -20,15 +26,21 @@ export const Cart = () => {
     unblockGame,
     getDiscounts,
     getUsedDiscounts,
+    getUserAchievements,
+    getGameCreators,
+    getGenres,
+    getUsedGenres,
   } = useApi();
   const [games, setGames] = useState<IGameForOrder[]>([]);
   const [error, setError] = useState<IApiError | null>(null);
+  const [achievementDiscount, setAchievementDiscount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     setIsLoading(true);
     const processGames = async () => {
       const gamesFromSessionData = getUserSessionData();
+
       const { discounts, error: discountsError } = await getDiscounts();
       if (discountsError) setError(discountsError);
 
@@ -37,16 +49,52 @@ export const Cart = () => {
         error: usedDiscountsError,
       } = await getUsedDiscounts();
       if (usedDiscountsError) setError(usedDiscountsError);
+
+      const {
+        gameCreators,
+        error: gameCreatorsError,
+      } = await getGameCreators();
+      if (gameCreatorsError) setError(gameCreatorsError);
+
+      const { genres, error: genresError } = await getGenres();
+      if (genresError) setError(genresError);
+
+      const { usedGenres, error: useGenresError } = await getUsedGenres();
+      if (useGenresError) setError(useGenresError);
+
       const games = await Aigle.map(gamesFromSessionData, (game, i) =>
         getGame(game.id).then(({ game, error }) => {
           if (error) setError(error);
-          else {
-            return { ...game, isPhysical: gamesFromSessionData[i].isPhysical };
-          }
+          else return game;
         })
       );
 
-      setGames(games.filter((game) => !!game) as IGameForOrder[]);
+      const formattedGames = formatGamesForUI({
+        discounts,
+        gameCreators,
+        genres,
+        usedDiscounts,
+        usedGenres,
+        games: games.filter((game) => game !== undefined) as IGameFromApi[],
+      });
+
+      const {
+        achievements: userAchievements,
+        error: userAchievementsError,
+      } = await getUserAchievements();
+      if (userAchievementsError) setError(userAchievementsError);
+
+      setGames(
+        formattedGames.map((game, i) => ({
+          ...game,
+          isPhysical: gamesFromSessionData[i].isPhysical,
+        }))
+      );
+      setAchievementDiscount(
+        getAchievementDiscountSize({
+          userAchievements,
+        })
+      );
       setIsLoading(false);
     };
     processGames();
@@ -74,6 +122,7 @@ export const Cart = () => {
       }
     });
   }, [games]);
+
   return (
     <>
       <Header />
@@ -101,7 +150,12 @@ export const Cart = () => {
                       )}
                     </span>
                     <span className={`${styles.row} ${styles.price}`}>
-                      {!game.isPhysical ? game.price : game.physicalCopyPrice} $
+                      {getOptimalGamePrice({
+                        achievementDiscount,
+                        game,
+                        isPhysical: game.isPhysical,
+                      })}
+                      $
                     </span>
                   </li>
                 ))}
@@ -112,7 +166,17 @@ export const Cart = () => {
               <p className={styles.totalPrice}>
                 <span>Sub-total</span>
                 <span className={styles.price}>
-                  {games.reduce((prev, curr) => prev + +curr.price, 0)} $
+                  {games.reduce(
+                    (prev, curr) =>
+                      prev +
+                      getOptimalGamePrice({
+                        achievementDiscount,
+                        game: curr,
+                        isPhysical: curr.isPhysical,
+                      }),
+                    0
+                  )}
+                  $
                 </span>
               </p>
               <div className={styles.actionsBlock}>

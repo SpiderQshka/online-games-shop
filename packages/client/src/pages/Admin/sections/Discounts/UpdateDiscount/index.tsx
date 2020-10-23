@@ -42,7 +42,7 @@ export const UpdateDiscount: React.FunctionComponent<UpdateDiscountProps> = ({
       endDate: Yup.string().required("Required"),
       startDate: Yup.string().required("Required"),
       gamesIds: Yup.array().of(Yup.number().min(1)).min(1).required("Required"),
-      amount: Yup.number().min(1).max(100).required("Required"),
+      amount: Yup.number().min(1).required("Required"),
       type: Yup.string().required("Required").oneOf(["%", "$"]),
     }),
     onSubmit: (data) => {
@@ -112,7 +112,11 @@ export const UpdateDiscount: React.FunctionComponent<UpdateDiscountProps> = ({
             name="amount"
             type="number"
             min={1}
-            max={100}
+            max={
+              formik.values.type === "%"
+                ? 100
+                : games.map((game) => +game.price).sort((a, b) => a - b)[0]
+            }
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             className={`${styles.input} ${styles.amountInput}`}

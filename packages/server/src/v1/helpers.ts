@@ -1,5 +1,7 @@
+import { Achievement } from "models/Achievement";
 import { Discount } from "models/Discount";
-import { IGame } from "models/types";
+import { IDiscount, IGame } from "models/types";
+import { UnlockedAchievement } from "models/UnlockedAchievement";
 import { UsedDiscount } from "models/UsedDiscount";
 
 export const doesCurrentDateSuitDiscount = (discount: Discount) => {
@@ -32,23 +34,75 @@ export const getHightestGameDiscount = async (game: IGame) => {
   return hightestDiscount.amount ? hightestDiscount : null;
 };
 
-export const getGamePriceWithDiscount = (
-  game: IGame,
-  discount: Discount | null,
-  isPhysical: boolean
-) => {
-  return discount
-    ? isPhysical
-      ? discount.type === "%"
-        ? Math.trunc(
-            game.physicalCopyPrice *
-              (discount ? (100 - discount.amount) / 100 : 1)
-          )
-        : Math.trunc(game.physicalCopyPrice - discount.amount)
-      : discount.type === "%"
-      ? Math.trunc(game.price * (discount ? (100 - discount.amount) / 100 : 1))
-      : Math.trunc(game.price - discount.amount)
-    : isPhysical
-    ? game.physicalCopyPrice
-    : game.price;
+export const getAchievementDiscount = async (userId: number) => {
+  const achievements = await Achievement.query();
+  const achievementsIds = achievements.map((el) => el.id);
+  const unlockedAchievements = await UnlockedAchievement.query().where(
+    "userId",
+    userId
+  );
+  const userAchievements = unlockedAchievements
+    .filter((el) => achievementsIds.includes(el.achievementId))
+    .map((el) => achievements.filter((ach) => ach.id === el.achievementId)[0]);
+  return userAchievements.reduce((prev, curr) => prev + +curr.discount, 0);
+};
+
+const getGamePriceWithDiscount: (config: {
+  gamePrice: number;
+  discountSize: number;
+  discountType: "%" | "$";
+}) => number = ({ discountSize, discountType, gamePrice }) => {
+  const discountIsPercents =
+    discountType === "%" ? discountSize : (discountSize / gamePrice) * 100;
+  return (gamePrice * (100 - discountIsPercents)) / 100;
+};
+
+interface IGetOptimalGamePrice {
+  achievementDiscountSize: number;
+  gameDiscount: IDiscount | null;
+  game: IGame;
+  isPhysical?: boolean;
+}
+
+export const getOptimalGamePrice = ({
+  achievementDiscountSize,
+  gameDiscount,
+  game,
+  isPhysical,
+}: IGetOptimalGamePrice) => {
+  if (!isPhysical) {
+    const gamePriceWithGameDiscount = gameDiscount
+      ? getGamePriceWithDiscount({
+          discountSize: gameDiscount.amount,
+          discountType: gameDiscount.type,
+          gamePrice: game.price,
+        })
+      : game.price;
+    const gamePriceWithAchievement = getGamePriceWithDiscount({
+      discountSize: achievementDiscountSize,
+      gamePrice: game.price,
+      discountType: "%",
+    });
+
+    return gamePriceWithAchievement < gamePriceWithGameDiscount
+      ? gamePriceWithAchievement
+      : gamePriceWithGameDiscount;
+  } else {
+    const gamePriceWithGameDiscount = gameDiscount
+      ? getGamePriceWithDiscount({
+          discountSize: gameDiscount.amount,
+          discountType: gameDiscount.type,
+          gamePrice: game.physicalCopyPrice,
+        })
+      : game.physicalCopyPrice;
+    const gamePriceWithAchievement = getGamePriceWithDiscount({
+      discountSize: achievementDiscountSize,
+      gamePrice: game.physicalCopyPrice,
+      discountType: "%",
+    });
+
+    return gamePriceWithAchievement < gamePriceWithGameDiscount
+      ? gamePriceWithAchievement
+      : gamePriceWithGameDiscount;
+  }
 };
