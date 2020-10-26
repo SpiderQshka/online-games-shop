@@ -33,6 +33,7 @@ import { Genres } from "../sections/Genres";
 import { CreateGenre } from "../sections/Genres/CreateGenre";
 import { UpdateGenre } from "../sections/Genres/UpdateGenre";
 import { formatGamesForUI, getGameHightestDiscount } from "utils/helpers";
+import { usePopup } from "context/popup";
 
 interface RoutesProps {
   isLoading: boolean;
@@ -46,7 +47,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
   updateTrigger,
 }) => {
   const history = useHistory();
-
+  const { showPopup} = usePopup()
   const {
     getGames,
     getGameCreators,
@@ -58,7 +59,6 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
     getOrderedGames,
     getAchievements,
     getUsers,
-    getUserAchievements,
   } = useApi();
   const [error, setError] = useState<IApiError | null>(null);
   const [games, setGames] = useState<IGameForUI[]>([]);
@@ -197,6 +197,11 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
     };
     processAsync();
   }, [history.location.pathname, updateTrigger]);
+
+  useEffect(() => {
+    if (error) showPopup({ type: "error", msg: error.msg, code: error.status });
+  }, [error]);
+
   return isLoading || error ? (
     <div className={styles.loaderContainer}>
       <Loader />

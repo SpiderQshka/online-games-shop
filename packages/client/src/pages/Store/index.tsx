@@ -1,11 +1,6 @@
 import { Header } from "components/Header";
 import { useApi } from "context/api";
-import {
-  IApiError,
-  IDiscountFromApi,
-  IGameCreatorFromApi,
-  IGenreFromApi,
-} from "interfaces/api";
+import { IApiError, IGameCreatorFromApi, IGenreFromApi } from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -19,6 +14,7 @@ import { FaWindowClose, FaSadTear, FaFilter } from "react-icons/fa";
 import styles from "./styles.module.scss";
 import { useHistory } from "react-router-dom";
 import { Loader } from "components/Loader";
+import { usePopup } from "context/popup";
 
 export type SortType = "creationDate" | "alphabet" | "discount";
 
@@ -35,6 +31,7 @@ export const Store = () => {
 
   const history = useHistory();
   const formRef = useRef(null);
+  const { showPopup, isOpen } = usePopup();
 
   const [games, setGames] = useState<IGameForUI[]>([]);
   const [gameCreators, setGameCreators] = useState<IGameCreatorFromApi[]>([]);
@@ -120,6 +117,7 @@ export const Store = () => {
         usedDiscounts,
         usedGenres,
       });
+
       setAchievementDiscount(
         getAchievementDiscountSize({
           userAchievements,
@@ -133,6 +131,10 @@ export const Store = () => {
     };
     processAsync();
   }, []);
+
+  useEffect(() => {
+    if (error) showPopup({ type: "error", msg: error.msg, code: error.status });
+  }, [error]);
 
   return (
     <>
@@ -176,7 +178,7 @@ export const Store = () => {
                 <FaFilter size="20px" />
               </button>
             </div>
-            {isLoading ? (
+            {isLoading || error ? (
               <div className={styles.loaderContainer}>
                 <Loader />
               </div>
@@ -254,7 +256,7 @@ export const Store = () => {
             >
               <h4 className={styles.inputGroupHeader}>Genres</h4>
               <ul className={styles.inputGroup}>
-                {isLoading ? (
+                {isLoading || error ? (
                   <li
                     className={`${styles.inputGroupItem} ${styles.loadingItem}`}
                   >
@@ -279,7 +281,7 @@ export const Store = () => {
               </ul>
               <h4 className={styles.inputGroupHeader}>Game creators</h4>
               <ul className={styles.inputGroup}>
-                {isLoading ? (
+                {isLoading || error ? (
                   <li
                     className={`${styles.inputGroupItem} ${styles.loadingItem}`}
                   >

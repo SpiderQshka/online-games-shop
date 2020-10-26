@@ -18,12 +18,14 @@ import {
 import { FaShoppingCart } from "react-icons/fa";
 import { useAuth } from "context/auth";
 import { isInteger, uniq } from "lodash";
+import { usePopup } from "context/popup";
 
 interface GameItemProps {}
 
 export const GameItem: React.FunctionComponent<GameItemProps> = () => {
   const { id } = useParams<{ id: string }>();
   const { token } = useAuth();
+  const { showPopup } = usePopup();
   const history = useHistory();
   const {
     getGame,
@@ -167,10 +169,14 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
     game &&
     getOptimalGamePrice({ achievementDiscount, game, isPhysical: true });
 
+  useEffect(() => {
+    if (error) showPopup({ type: "error", msg: error.msg, code: error.status });
+  }, [error]);
+
   return (
     <>
       <Header />
-      {isLoading ? (
+      {isLoading || error ? (
         <div className={styles.loaderContainer}>
           <Loader />
         </div>

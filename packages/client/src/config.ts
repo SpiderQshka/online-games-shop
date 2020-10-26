@@ -4,4 +4,5 @@ export const config = {
     accent: "#f0810f",
     primary: "#3a3a3a",
   },
+  popupTimeout: 5000,
 };

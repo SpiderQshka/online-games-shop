@@ -4,11 +4,6 @@
   padding: $header-height $default-gap 0;
   background-color: $secondary-color-dark;
   min-height: calc(100vh - #{$header-height});
-  .loaderContainer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
   .emptyCartContent {
     margin: 40px auto 0;
     padding: 30px;
@@ -133,6 +128,15 @@
       }
     }
   }
+}
+
+.loaderContainer {
+  display: flex;
+  padding-top: $header-height;
+  min-height: calc(100vh - #{$header-height});
+  background-color: $secondary-color-dark;
+  align-items: center;
+  justify-content: center;
 }
 
 @import "./media.module.scss";

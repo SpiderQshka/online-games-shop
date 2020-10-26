@@ -16,11 +16,13 @@ import { useApi } from "context/api";
 import { IOrderForUI, OrderWithUserId } from "interfaces/app";
 import { useAuth } from "context/auth";
 import { getGameHightestDiscount, removeUserSessionData } from "utils/helpers";
+import { usePopup } from "context/popup";
 
 interface IProfileProps {}
 
 export const Profile: React.FunctionComponent<IProfileProps> = () => {
   const history = useHistory();
+  const { showPopup } = usePopup();
   const [error, setError] = useState<IApiError | null>(null);
   const [orders, setOrders] = useState<IOrderForUI[]>([]);
   const [user, setUser] = useState<IUser | null>(null);
@@ -63,12 +65,6 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
         error: usedDiscountsError,
       } = await getUsedDiscounts();
       if (usedDiscountsError) setError(usedDiscountsError);
-
-      const {
-        achievements: userAchievements,
-        error: userAchievementsError,
-      } = await getUserAchievements();
-      if (userAchievementsError) setError(userAchievementsError);
 
       const gamesIds = orderedGames.map((orderedGame) => orderedGame.gameId);
       const userGames = games.filter((el) => gamesIds.includes(el.id));
@@ -139,6 +135,10 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
     };
     processAsync();
   }, []);
+
+  useEffect(() => {
+    if (error) showPopup({ type: "error", msg: error.msg, code: error.status });
+  }, [error]);
 
   return (
     <>
