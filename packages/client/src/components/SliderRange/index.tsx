@@ -1,5 +1,5 @@
 import { Range } from "rc-slider";
-import React, { useState } from "react";
+import React from "react";
 import styles from "./styles.module.scss";
 import "./rc-slider.scss";
 
@@ -17,18 +17,18 @@ export const SliderRange: React.FunctionComponent<SliderRangeProps> = ({
   handleChange,
 }) => {
   const onLowerBoundChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // setBounds({ ...bounds, lowerBound: +e.target.value });
     handleChange({ ...bounds, lowerBound: +e.target.value });
   };
 
   const onUpperBoundChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // setBounds({ ...bounds, upperBound: +e.target.value });
     handleChange({ ...bounds, upperBound: +e.target.value });
   };
 
   const onSliderChange = (value: number[]) => {
     handleChange({ lowerBound: value[0], upperBound: value[1] });
   };
+
+  const step = 0.05;
 
   return (
     <div className={styles.sliderRangeContainer}>
@@ -39,27 +39,32 @@ export const SliderRange: React.FunctionComponent<SliderRangeProps> = ({
         max={max}
         className={styles.range}
         onChange={onSliderChange}
-        step={0.05}
+        step={step}
       />
       <div className={styles.inputsContainer}>
-        <div className={styles.inputContainer}>
+        <label className={styles.inputLabel}>
+          From
           <input
             type="number"
             value={bounds.lowerBound}
             className={`${styles.input} ${styles.lower}`}
             onChange={onLowerBoundChange}
             max={bounds.upperBound}
+            step={step}
           />
-        </div>
-        <div className={styles.inputContainer}>
+        </label>
+
+        <label className={styles.inputLabel}>
+          To
           <input
             type="number"
             value={bounds.upperBound}
             className={`${styles.input} ${styles.upper}`}
             onChange={onUpperBoundChange}
             min={bounds.lowerBound}
+            step={step}
           />
-        </div>
+        </label>
       </div>
     </div>
   );

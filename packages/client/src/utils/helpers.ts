@@ -48,8 +48,8 @@ export const filterGames = (games: IGameForUI[], config: IFilterConfig) =>
         return false;
     }
     if (
-      +game.price < config.priceBounds.min ||
-      +game.price > config.priceBounds.max
+      +game.optimalPrice < config.priceBounds.min ||
+      +game.optimalPrice > config.priceBounds.max
     )
       return false;
     return true;
@@ -106,6 +106,7 @@ interface FormatGamesForUIConfig {
   genres: IGenreFromApi[];
   usedDiscounts: IUsedDiscount[];
   discounts: IDiscountFromApi[];
+  userAchievements: IAchievementFromApi[];
 }
 
 export const formatGamesForUI: (
@@ -117,38 +118,50 @@ export const formatGamesForUI: (
   genres,
   usedDiscounts,
   usedGenres,
+  userAchievements,
 }) => {
-  return games.map((game) => {
-    const gameCreator = gameCreators.filter(
-      (el) => el.id === game.gameCreatorId
-    )[0];
-    const gameGenresIds = [
-      ...new Set(
-        usedGenres.filter((el) => el.gameId === game.id).map((el) => el.genreId)
-      ),
-    ];
-    const gameGenres = genres.filter((genre) =>
-      gameGenresIds.includes(genre.id)
-    );
-    const gameDiscountsIds = usedDiscounts
-      .filter((el) => el.gameId === game.id)
-      .map((el) => el.discountId);
-    const gameHightestDiscount = getGameHightestDiscount({
-      game,
-      discounts,
-      gameDiscountsIds,
-    });
-    return {
+  const achievementDiscount = getAchievementDiscountSize({ userAchievements });
+  return games
+    .map((game) => {
+      const gameCreator = gameCreators.filter(
+        (el) => el.id === game.gameCreatorId
+      )[0];
+      const gameGenresIds = [
+        ...new Set(
+          usedGenres
+            .filter((el) => el.gameId === game.id)
+            .map((el) => el.genreId)
+        ),
+      ];
+      const gameGenres = genres.filter((genre) =>
+        gameGenresIds.includes(genre.id)
+      );
+      const gameDiscountsIds = usedDiscounts
+        .filter((el) => el.gameId === game.id)
+        .map((el) => el.discountId);
+      const gameHightestDiscount = getGameHightestDiscount({
+        game,
+        discounts,
+        gameDiscountsIds,
+      });
+      return {
+        ...game,
+        gameCreator,
+        genres: gameGenres,
+        discount:
+          gameHightestDiscount &&
+          doesCurrentDateSuitDiscount(gameHightestDiscount)
+            ? gameHightestDiscount
+            : null,
+      };
+    })
+    .map((game) => ({
       ...game,
-      gameCreator,
-      genres: gameGenres,
-      discount:
-        gameHightestDiscount &&
-        doesCurrentDateSuitDiscount(gameHightestDiscount)
-          ? gameHightestDiscount
-          : null,
-    };
-  });
+      optimalPrice: getOptimalGamePrice({
+        achievementDiscount,
+        game: { ...game, optimalPrice: game.price },
+      }),
+    }));
 };
 
 export const getGameHightestDiscount: (config: {

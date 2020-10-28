@@ -140,6 +140,7 @@ $filters-menu-width: 250px;
         }
         .inputGroup {
           @include primaryFont;
+
           .inputGroupItem {
             .label {
               display: block;

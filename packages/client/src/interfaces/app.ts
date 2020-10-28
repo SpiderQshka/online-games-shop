@@ -11,6 +11,7 @@ export interface IGameForUI extends IGameFromApi {
   gameCreator: IGameCreatorFromApi;
   genres: IGenreFromApi[];
   discount: IDiscountFromApi | null;
+  optimalPrice: number;
 }
 
 export interface IOrderForUI extends IOrderFromApi {

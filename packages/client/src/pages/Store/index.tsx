@@ -3,11 +3,7 @@ import { useApi } from "context/api";
 import { IApiError, IGameCreatorFromApi, IGenreFromApi } from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  getOptimalGamePrice,
-  formatGamesForUI,
-  getAchievementDiscountSize,
-} from "utils/helpers";
+import { formatGamesForUI, getAchievementDiscountSize } from "utils/helpers";
 import { filterGames, sortGames } from "utils/helpers";
 import { FaWindowClose, FaSadTear, FaFilter } from "react-icons/fa";
 import styles from "./styles.module.scss";
@@ -60,9 +56,9 @@ export const Store = () => {
 
   const hightestGamePrice =
     games.length > 0
-      ? games.map((game) => +game.price).sort((a, b) => b - a)[0]
+      ? games.map((game) => +game.optimalPrice).sort((a, b) => b - a)[0]
       : 0;
-  // getOptimalGamePrice({ game, achievementDiscount })
+
   const removeFilters = useCallback(() => {
     setFilterConfig({
       gameCreatorId: null,
@@ -130,6 +126,7 @@ export const Store = () => {
         genres,
         usedDiscounts,
         usedGenres,
+        userAchievements,
       });
 
       setAchievementDiscount(
@@ -228,7 +225,7 @@ export const Store = () => {
                       )}
 
                       <span className={styles.currentPrice}>
-                        {getOptimalGamePrice({ achievementDiscount, game })}$
+                        {game.optimalPrice}$
                       </span>
                     </div>
                   </li>
@@ -275,7 +272,6 @@ export const Store = () => {
                   });
                 }}
               />
-              {/* isPhysical checkbox */}
               <h4 className={styles.inputGroupHeader}>Genres</h4>
               <ul className={styles.inputGroup}>
                 {isLoading || error ? (
@@ -345,16 +341,12 @@ export const Store = () => {
                           }
                           onClick={(e) => {
                             const input = e.target as HTMLInputElement;
-                            if (input.checked)
-                              setFilterConfig({
-                                ...filterConfig,
-                                gameCreatorId: gameCreator.id,
-                              });
-                            else
-                              setFilterConfig({
-                                ...filterConfig,
-                                gameCreatorId: null,
-                              });
+                            setFilterConfig({
+                              ...filterConfig,
+                              gameCreatorId: input.checked
+                                ? gameCreator.id
+                                : null,
+                            });
                           }}
                         />
                         {gameCreator.name}

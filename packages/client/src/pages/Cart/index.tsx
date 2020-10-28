@@ -71,6 +71,12 @@ export const Cart = () => {
         })
       );
 
+      const {
+        achievements: userAchievements,
+        error: userAchievementsError,
+      } = await getUserAchievements();
+      if (userAchievementsError) setError(userAchievementsError);
+
       const formattedGames = formatGamesForUI({
         discounts,
         gameCreators,
@@ -78,13 +84,8 @@ export const Cart = () => {
         usedDiscounts,
         usedGenres,
         games: games.filter((game) => game !== undefined) as IGameFromApi[],
+        userAchievements,
       });
-
-      const {
-        achievements: userAchievements,
-        error: userAchievementsError,
-      } = await getUserAchievements();
-      if (userAchievementsError) setError(userAchievementsError);
 
       setGames(
         formattedGames.map((game, i) => ({

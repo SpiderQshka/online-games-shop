@@ -47,7 +47,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
   updateTrigger,
 }) => {
   const history = useHistory();
-  const { showPopup} = usePopup()
+  const { showPopup } = usePopup();
   const {
     getGames,
     getGameCreators,
@@ -59,6 +59,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
     getOrderedGames,
     getAchievements,
     getUsers,
+    getUserAchievements,
   } = useApi();
   const [error, setError] = useState<IApiError | null>(null);
   const [games, setGames] = useState<IGameForUI[]>([]);
@@ -114,6 +115,12 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
       } = await getAchievements();
       if (achievementsError) setError(achievementsError);
 
+      const {
+        achievements: userAchievements,
+        error: userAchievementsError,
+      } = await getUserAchievements();
+      if (userAchievementsError) setError(userAchievementsError);
+
       const gamesForUI = formatGamesForUI({
         usedGenres,
         usedDiscounts,
@@ -121,6 +128,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         discounts,
         gameCreators,
         games,
+        userAchievements,
       });
 
       const ordersForUI: OrderWithUserId[] = orders.map((order) => {

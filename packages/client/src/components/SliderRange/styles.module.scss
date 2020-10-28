@@ -7,21 +7,22 @@
   .inputsContainer {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-column-gap: 10px;
     max-width: 100%;
-    .inputContainer {
+    .inputLabel {
+      text-align: center;
+      color: $primary-color;
+      @include primaryFont;
       .input {
         width: 100%;
         box-sizing: border-box;
-        padding: 10px 7px;
+        padding: 10px;
         border: none;
-        border: 1px solid $secondary-color;
-        &.lower {
-          grid-area: lower;
-          border-right: none;
-        }
-        &.upper {
-          grid-area: upper;
-        }
+        background-color: $secondary-color-light;
+        @include primaryFont;
+        color: $primary-color-light;
+        -moz-appearance: textfield;
+        margin-top: 7px;
       }
     }
   }
