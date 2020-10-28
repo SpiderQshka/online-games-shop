@@ -2,18 +2,16 @@ import {
   IAchievementFromApi,
   IDiscount,
   IDiscountFromApi,
-  IGameCreator,
   IGameCreatorFromApi,
   IGameForOrder,
   IGameFromApi,
   IGenreFromApi,
-  IUnlockedAchievement,
   IUsedDiscount,
   IUsedGenre,
 } from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
 import _ from "lodash";
-import { SortType } from "pages/Store";
+import { IFilterConfig, SortType } from "pages/Store";
 
 export const setUserSessionData = (
   games: { id: number; isPhysical: boolean }[]
@@ -32,33 +30,28 @@ export const setTokenToLocalStorage = (token: string) =>
 export const removeTokenFromLocalStorage = () =>
   localStorage.removeItem("token");
 
-export const filterGames = (
-  games: IGameForUI[],
-  filterBy: {
-    name?: string;
-    ageRating?: number;
-    price?: number;
-    gameCreator?: IGameCreator;
-    creationDate?: Date;
-    genresIds?: number[];
-  }
-) =>
-  games.filter((game: any) => {
-    const anyFilteredBy = filterBy as any;
-
-    for (let key in filterBy) {
-      if (key === "genresIds") {
-        const gameGenresIds = game.genres?.map((el: any) => el.id);
-        if (
-          !_.isEqual(
-            _.intersection(gameGenresIds, filterBy.genresIds),
-            filterBy.genresIds?.sort()
-          )
+export const filterGames = (games: IGameForUI[], config: IFilterConfig) =>
+  games.filter((game) => {
+    if (
+      config.gameCreatorId !== null &&
+      game.gameCreatorId !== config.gameCreatorId
+    )
+      return false;
+    if (config.genresIds.length !== 0) {
+      const gameGenresIds = game.genres.map((el) => el.id);
+      if (
+        !_.isEqual(
+          _.intersection(gameGenresIds, config.genresIds),
+          config.genresIds.sort()
         )
-          return false;
-      } else if (!_.isEqual(game[key], anyFilteredBy[key])) return false;
+      )
+        return false;
     }
-
+    if (
+      +game.price < config.priceBounds.min ||
+      +game.price > config.priceBounds.max
+    )
+      return false;
     return true;
   });
 
@@ -96,26 +89,6 @@ export const sortGames = (games: IGameForUI[], sortBy: SortType) => {
   }
 };
 
-export const getFilterOptions = (checkedFormInputs: HTMLInputElement[]) =>
-  checkedFormInputs.reduce((prev, curr) => {
-    switch (curr.type) {
-      case "radio":
-        return {
-          ...prev,
-          [curr.name]: +curr.value,
-        };
-      case "checkbox":
-        return {
-          ...prev,
-          [curr.name]: prev[curr.name]
-            ? [...prev[curr.name], +curr.value]
-            : [+curr.value],
-        };
-    }
-    const a = setTimeout(() => {}, 1);
-    return {};
-  }, {} as any);
-
 export const doesCurrentDateSuitDiscount = (
   discount: IDiscountFromApi | IDiscount
 ) => {
@@ -145,7 +118,6 @@ export const formatGamesForUI: (
   usedDiscounts,
   usedGenres,
 }) => {
-  const gamesFromSessionData = getUserSessionData();
   return games.map((game) => {
     const gameCreator = gameCreators.filter(
       (el) => el.id === game.gameCreatorId
@@ -161,26 +133,17 @@ export const formatGamesForUI: (
     const gameDiscountsIds = usedDiscounts
       .filter((el) => el.gameId === game.id)
       .map((el) => el.discountId);
-    const gameHightestDiscount = discounts
-      .filter((el) => gameDiscountsIds.includes(el.id))
-      .reduce((prev, curr) => {
-        const prevDisountInPercents =
-          prev.type === "%"
-            ? prev.amount
-            : ((game.price - (game.price - prev.amount)) / game.price) * 100;
-        const currDisountInPercents =
-          curr.type === "%"
-            ? curr.amount
-            : ((game.price - (game.price - curr.amount)) / game.price) * 100;
-
-        return prevDisountInPercents > currDisountInPercents ? prev : curr;
-      }, {} as IDiscountFromApi);
+    const gameHightestDiscount = getGameHightestDiscount({
+      game,
+      discounts,
+      gameDiscountsIds,
+    });
     return {
       ...game,
       gameCreator,
       genres: gameGenres,
       discount:
-        gameHightestDiscount.amount &&
+        gameHightestDiscount &&
         doesCurrentDateSuitDiscount(gameHightestDiscount)
           ? gameHightestDiscount
           : null,

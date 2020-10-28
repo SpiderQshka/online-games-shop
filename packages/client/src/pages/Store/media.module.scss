@@ -50,7 +50,7 @@
         top: 0;
         bottom: 0;
         right: calc(-#{$filters-menu-width} - 60px);
-        min-width: $filters-menu-width;
+        max-width: $filters-menu-width;
         transition: 0.7s;
         z-index: 3;
         &.open {

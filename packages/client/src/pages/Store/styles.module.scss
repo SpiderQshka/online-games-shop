@@ -1,6 +1,6 @@
 @import "../../styles/config.scss";
 
-$filters-menu-width: 160px;
+$filters-menu-width: 250px;
 
 .storeContainer {
   background-color: $secondary-color-dark;
@@ -25,19 +25,12 @@ $filters-menu-width: 160px;
         justify-content: space-between;
         align-items: center;
         .sortByContainer {
+          display: flex;
+          align-items: center;
           .text {
             @include primaryFont;
             color: $primary-color;
             margin-right: 7px;
-          }
-          .sortBySelect {
-            border: none;
-            background-color: inherit;
-            color: $primary-color-light;
-            .sortByItem {
-              @include primaryFont;
-              background-color: $secondary-color-light;
-            }
           }
         }
         .openFiltersBtn {
@@ -147,7 +140,6 @@ $filters-menu-width: 160px;
         }
         .inputGroup {
           @include primaryFont;
-          padding: 15px 0;
           .inputGroupItem {
             .label {
               display: block;
@@ -162,8 +154,6 @@ $filters-menu-width: 160px;
                   display: block;
                 }
               }
-            }
-            &.loadingItem {
             }
           }
         }

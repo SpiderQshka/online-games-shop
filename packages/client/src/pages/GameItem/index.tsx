@@ -224,7 +224,7 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
               <p className={styles.description}>{game?.description}</p>
             </div>
             <div className={styles.actionsBlock}>
-              <div className={styles.priceBlock}>
+              {/* <div className={styles.priceBlock}>
                 {(game?.discount || achievementDiscount > 0) && (
                   <>
                     <span className={styles.saleSize}>
@@ -234,14 +234,14 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
                           : achievementDiscount
                       }${game?.discount ? game.discount.type : "%"}`}
                     </span>
-                    {/* <span className={styles.previousPrice}>{game.price}$</span> */}
+                    <span className={styles.previousPrice}>{game?.price}$</span>
                   </>
                 )}
 
-                {/* <span className={styles.currentPrice}>
-                  {gamePriceWithDiscount}$
-                </span> */}
-              </div>
+                <span className={styles.currentPrice}>
+                  {optimalDigitalGamePrice}$
+                </span>
+              </div> */}
               <div className={styles.buttonsBlock}>
                 <button
                   className={`${styles.actionBtn} ${styles.digital} ${

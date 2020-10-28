@@ -1,0 +1,28 @@
+@import "../../styles/config.scss";
+
+.sliderRangeContainer {
+  .range {
+    margin-bottom: 15px;
+  }
+  .inputsContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    max-width: 100%;
+    .inputContainer {
+      .input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 7px;
+        border: none;
+        border: 1px solid $secondary-color;
+        &.lower {
+          grid-area: lower;
+          border-right: none;
+        }
+        &.upper {
+          grid-area: upper;
+        }
+      }
+    }
+  }
+}

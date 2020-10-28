@@ -2,12 +2,11 @@ import { Header } from "components/Header";
 import { useApi } from "context/api";
 import { IApiError, IGameCreatorFromApi, IGenreFromApi } from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   getOptimalGamePrice,
   formatGamesForUI,
   getAchievementDiscountSize,
-  getFilterOptions,
 } from "utils/helpers";
 import { filterGames, sortGames } from "utils/helpers";
 import { FaWindowClose, FaSadTear, FaFilter } from "react-icons/fa";
@@ -15,8 +14,18 @@ import styles from "./styles.module.scss";
 import { useHistory } from "react-router-dom";
 import { Loader } from "components/Loader";
 import { usePopup } from "context/popup";
+import { Select } from "components/Select";
+import { SliderRange } from "components/SliderRange";
 
 export type SortType = "creationDate" | "alphabet" | "discount";
+export interface IFilterConfig {
+  genresIds: number[];
+  gameCreatorId: number | null;
+  priceBounds: {
+    min: number;
+    max: number;
+  };
+}
 
 export const Store = () => {
   const {
@@ -28,10 +37,9 @@ export const Store = () => {
     getUsedGenres,
     getUserAchievements,
   } = useApi();
+  const { showPopup } = usePopup();
 
   const history = useHistory();
-  const formRef = useRef(null);
-  const { showPopup, isOpen } = usePopup();
 
   const [games, setGames] = useState<IGameForUI[]>([]);
   const [gameCreators, setGameCreators] = useState<IGameCreatorFromApi[]>([]);
@@ -39,37 +47,43 @@ export const Store = () => {
 
   const [error, setError] = useState<IApiError | null>(null);
   const [sortType, setSortType] = useState<SortType>("alphabet");
-  const [filtersAmount, setFiltersAmount] = useState<number>(0);
   const [filteredGames, setFilteredGames] = useState<IGameForUI[]>([]);
   const [isFiltersMenuOpen, setIsFiltersMenuOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [achievementDiscount, setAchievementDiscount] = useState<number>(0);
 
+  const [filterConfig, setFilterConfig] = useState<IFilterConfig>({
+    gameCreatorId: null,
+    genresIds: [],
+    priceBounds: { min: 0, max: 0 },
+  });
+
+  const hightestGamePrice =
+    games.length > 0
+      ? games.map((game) => +game.price).sort((a, b) => b - a)[0]
+      : 0;
+  // getOptimalGamePrice({ game, achievementDiscount })
   const removeFilters = useCallback(() => {
-    if (formRef.current) {
-      const form = (formRef.current as any) as HTMLFormElement;
-      const formInputs = [...form.elements] as HTMLInputElement[];
-      formInputs.forEach((input) => input.checked && (input.checked = false));
-    }
-    setFilteredGames(sortGames(games, sortType));
-    setFiltersAmount(0);
-  }, [formRef.current, games, sortType]);
+    setFilterConfig({
+      gameCreatorId: null,
+      priceBounds: { min: 0, max: hightestGamePrice },
+      genresIds: [],
+    });
+  }, [games, sortType, hightestGamePrice]);
 
-  const handleFilterTypeChange = useCallback(
-    (e: React.FormEvent) => {
-      const form = e.currentTarget as HTMLFormElement;
-      const formInputs = [...form.elements] as HTMLInputElement[];
-      const checkedFormInputs = formInputs.filter((input) => input.checked);
+  useEffect(
+    () =>
+      setFilteredGames(sortGames(filterGames(games, filterConfig), sortType)),
+    [games, sortType, filterConfig]
+  );
 
-      if (checkedFormInputs.length) {
-        const filterOptions = getFilterOptions(checkedFormInputs);
-        setFilteredGames(
-          sortGames(filterGames(games, filterOptions), sortType)
-        );
-        setFiltersAmount(checkedFormInputs.length);
-      } else removeFilters();
-    },
-    [games, sortType]
+  useEffect(
+    () =>
+      setFilterConfig({
+        ...filterConfig,
+        priceBounds: { ...filterConfig.priceBounds, max: hightestGamePrice },
+      }),
+    [games.length]
   );
 
   useEffect(() => setFilteredGames(sortGames(filteredGames, sortType)), [
@@ -136,6 +150,12 @@ export const Store = () => {
     if (error) showPopup({ type: "error", msg: error.msg, code: error.status });
   }, [error]);
 
+  const isFiltersActive =
+    filterConfig.gameCreatorId ||
+    filterConfig.genresIds.length > 0 ||
+    filterConfig.priceBounds.min !== 0 ||
+    filterConfig.priceBounds.max !== hightestGamePrice;
+
   return (
     <>
       <Header />
@@ -151,23 +171,16 @@ export const Store = () => {
           <div className={styles.gamesContainer}>
             <div className={styles.infoContainer}>
               <div className={styles.sortByContainer}>
-                <span className={styles.text}>Sort by</span>
-                <select
-                  name="sortBy"
-                  className={styles.sortBySelect}
-                  onChange={(e) => setSortType(e.target.value as SortType)}
-                  value={sortType}
-                >
-                  <option value="creationDate" className={styles.sortByItem}>
-                    Creation date
-                  </option>
-                  <option value="alphabet" className={styles.sortByItem}>
-                    Alphabet
-                  </option>
-                  <option value="discount" className={styles.sortByItem}>
-                    Discount
-                  </option>
-                </select>
+                <p className={styles.text}>Sort by</p>
+                <Select
+                  handleChange={(value) => setSortType(value as SortType)}
+                  selectedValue={sortType}
+                  valuesList={[
+                    { label: "Creation date", value: "creationDate" },
+                    { label: "Alphabet", value: "alphabet" },
+                    { label: "Discount", value: "discount" },
+                  ]}
+                />
               </div>
 
               <button
@@ -239,21 +252,30 @@ export const Store = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <h5
-              className={`${styles.header} ${!!filtersAmount && styles.active}`}
+              className={`${styles.header} ${isFiltersActive && styles.active}`}
             >
               Filters
-              <span className={styles.filtersAmount}>
-                {!!filtersAmount && filtersAmount}
-              </span>
               <span className={styles.closeIcon} onClick={removeFilters}>
                 <FaWindowClose />
               </span>
             </h5>
-            <form
-              className={styles.filtersForm}
-              onChange={handleFilterTypeChange}
-              ref={formRef}
-            >
+            <form className={styles.filtersForm}>
+              <h4 className={styles.inputGroupHeader}>Price</h4>
+              <SliderRange
+                max={hightestGamePrice}
+                min={0}
+                bounds={{
+                  upperBound: filterConfig.priceBounds.max,
+                  lowerBound: filterConfig.priceBounds.min,
+                }}
+                handleChange={({ lowerBound: min, upperBound: max }) => {
+                  setFilterConfig({
+                    ...filterConfig,
+                    priceBounds: { min, max },
+                  });
+                }}
+              />
+              {/* isPhysical checkbox */}
               <h4 className={styles.inputGroupHeader}>Genres</h4>
               <ul className={styles.inputGroup}>
                 {isLoading || error ? (
@@ -271,7 +293,28 @@ export const Store = () => {
                           type="checkbox"
                           name="genresIds"
                           value={genre.id}
+                          checked={filterConfig.genresIds.includes(genre.id)}
                           className={styles.input}
+                          onClick={(e) => {
+                            const input = e.target as HTMLInputElement;
+                            if (input.checked)
+                              setFilterConfig({
+                                ...filterConfig,
+                                genresIds: [
+                                  ...filterConfig.genresIds,
+                                  genre.id,
+                                ],
+                              });
+                            else
+                              setFilterConfig({
+                                ...filterConfig,
+                                genresIds: [
+                                  ...filterConfig.genresIds.filter(
+                                    (id) => genre.id !== id
+                                  ),
+                                ],
+                              });
+                          }}
                         />
                         {genre.name}
                       </label>
@@ -297,6 +340,22 @@ export const Store = () => {
                           name="gameCreatorId"
                           value={gameCreator.id}
                           className={styles.input}
+                          checked={
+                            filterConfig.gameCreatorId === gameCreator.id
+                          }
+                          onClick={(e) => {
+                            const input = e.target as HTMLInputElement;
+                            if (input.checked)
+                              setFilterConfig({
+                                ...filterConfig,
+                                gameCreatorId: gameCreator.id,
+                              });
+                            else
+                              setFilterConfig({
+                                ...filterConfig,
+                                gameCreatorId: null,
+                              });
+                          }}
                         />
                         {gameCreator.name}
                       </label>
