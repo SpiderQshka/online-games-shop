@@ -230,8 +230,6 @@ export const ordersController: IOrdersController = {
         orderedGames: [...orderedDigitalGames, ...orderedPhysicalGames],
       };
     } catch (e) {
-      console.log(e);
-
       switch (e.status) {
         case 404:
           ctx.throw(404, `Order with id '${ctx.params.id}' was not found`);
@@ -251,6 +249,12 @@ export const ordersController: IOrdersController = {
       const gamesIds: number[] = ctx.request.body.gamesIds;
       const physicalGamesIds: number[] =
         ctx.request.body.physicalGamesCopiesIds;
+
+      const userGamesIds = (
+        await OrderedGame.query().where("userId", user.id)
+      ).map((el) => +el.gameId);
+
+      if (_.intersection(gamesIds, userGamesIds)) ctx.throw(409);
 
       await Aigle.map(physicalGamesIds, async (id) => {
         const game = await Game.query().findById(id);
@@ -329,8 +333,6 @@ export const ordersController: IOrdersController = {
         status: ctx.request.body.status,
       });
 
-      console.log(order);
-
       const orderedDigitalGames: IOrderedGame[] = await Aigle.map(
         digitalGamesWithDiscounts,
         (game) =>
@@ -366,6 +368,8 @@ export const ordersController: IOrdersController = {
             404,
             `One of ordered games doesn't have any physical copies left`
           );
+        case 409:
+          ctx.throw(409, `Some of games are already ordered on this account`);
 
         default:
           ctx.throw(400, "Bad request");

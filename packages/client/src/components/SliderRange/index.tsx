@@ -28,7 +28,7 @@ export const SliderRange: React.FunctionComponent<SliderRangeProps> = ({
     handleChange({ lowerBound: value[0], upperBound: value[1] });
   };
 
-  const step = 0.05;
+  const step = 0.01;
 
   return (
     <div className={styles.sliderRangeContainer}>

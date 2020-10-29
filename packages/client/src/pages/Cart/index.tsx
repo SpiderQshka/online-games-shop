@@ -16,6 +16,7 @@ import { useHistory } from "react-router-dom";
 import { GiTumbleweed } from "react-icons/gi";
 import { Loader } from "components/Loader";
 import { usePopup } from "context/popup";
+import { Error } from "components/Error";
 
 Aigle.mixin(_, {});
 
@@ -138,9 +139,13 @@ export const Cart = () => {
     <>
       <Header />
       {isLoading || error ? (
-        <div className={styles.loaderContainer}>
-          <Loader />
-        </div>
+        !error ? (
+          <div className={styles.loaderContainer}>
+            <Loader />
+          </div>
+        ) : (
+          <Error error={error} />
+        )
       ) : (
         <div className={styles.cartContainer}>
           {games.length ? (
