@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./styles.module.scss";
 import { Loader } from "components/Loader";
-import { IGameForOrder, IMyGameFromApi } from "interfaces/api";
+import { IMyGameFromApi } from "interfaces/api";
 import { useHistory } from "react-router-dom";
 
 interface GamesProps {

@@ -8,7 +8,7 @@ import { filterGames, sortGames } from "utils/helpers";
 import { FaWindowClose, FaSadTear, FaFilter } from "react-icons/fa";
 import styles from "./styles.module.scss";
 import { useHistory } from "react-router-dom";
-import { Loader } from "components/Loader";
+import { CenteredLoader } from "components/Loader";
 import { usePopup } from "context/popup";
 import { Select } from "components/Select";
 import { SliderRange } from "components/SliderRange";
@@ -33,7 +33,6 @@ export const Store = () => {
     getUsedGenres,
     getUserAchievements,
   } = useApi();
-  const { showPopup } = usePopup();
 
   const history = useHistory();
 
@@ -144,7 +143,7 @@ export const Store = () => {
   }, []);
 
   useEffect(() => {
-    if (error) showPopup({ type: "error", msg: error.msg, code: error.status });
+    if (error) history.push("/error", error);
   }, [error]);
 
   const isFiltersActive =
@@ -188,10 +187,8 @@ export const Store = () => {
                 <FaFilter size="20px" />
               </button>
             </div>
-            {isLoading || error ? (
-              <div className={styles.loaderContainer}>
-                <Loader />
-              </div>
+            {isLoading ? (
+              <CenteredLoader />
             ) : filteredGames.length > 0 ? (
               <ul className={styles.gamesList}>
                 {filteredGames.map((game) => (
@@ -278,7 +275,9 @@ export const Store = () => {
               <ul className={styles.inputGroup}>
                 {isLoading || error ? (
                   <li
-                    className={`${styles.inputGroupItem} ${styles.loadingItem}`}
+                    className={`${styles.inputGroupItem} ${
+                      error ? styles.errorItem : styles.loadingItem
+                    }`}
                   >
                     Loading...
                   </li>
@@ -329,7 +328,9 @@ export const Store = () => {
               <ul className={styles.inputGroup}>
                 {isLoading || error ? (
                   <li
-                    className={`${styles.inputGroupItem} ${styles.loadingItem}`}
+                    className={`${styles.inputGroupItem} ${
+                      error ? styles.errorItem : styles.loadingItem
+                    }`}
                   >
                     Loading...
                   </li>

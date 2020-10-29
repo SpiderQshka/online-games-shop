@@ -165,12 +165,22 @@
     }
   }
 }
-.loaderContainer {
-  padding-top: $header-height;
+// .loaderContainer {
+//   padding: $header-height $default-gap $default-gap;
+//   background-color: $secondary-color-dark;
+//   min-height: calc(100vh - #{$header-height});
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+// }
+
+.container {
+  padding: calc(#{$header-height} + 150px) $default-gap $default-gap;
   background-color: $secondary-color-dark;
-  min-height: calc(100vh - #{$header-height});
+  min-height: calc(100vh - #{$header-height} - 150px - #{$default-gap});
+  padding-right: $default-gap;
+  padding-left: $default-gap;
   display: flex;
-  align-items: center;
   justify-content: center;
 }
 

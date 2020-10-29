@@ -7,6 +7,7 @@ export const config = {
     primaryDark: "#3a3a3a",
     secondary: "#191919",
     secondaryDark: "#121212",
+    error: "#e32b2b",
   },
   popupTimeout: 5000,
 };

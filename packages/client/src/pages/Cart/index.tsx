@@ -16,7 +16,6 @@ import { useHistory } from "react-router-dom";
 import { GiTumbleweed } from "react-icons/gi";
 import { Loader } from "components/Loader";
 import { usePopup } from "context/popup";
-import { Error } from "components/Error";
 
 Aigle.mixin(_, {});
 
@@ -131,21 +130,21 @@ export const Cart = () => {
     });
   }, [games]);
 
+  // useEffect(() => {
+  //   if (error) showPopup({ type: "error", msg: error.msg, code: error.status });
+  // }, [error]);
+
   useEffect(() => {
-    if (error) showPopup({ type: "error", msg: error.msg, code: error.status });
+    if (error) history.push("/error", error);
   }, [error]);
 
   return (
     <>
       <Header />
-      {isLoading || error ? (
-        !error ? (
-          <div className={styles.loaderContainer}>
-            <Loader />
-          </div>
-        ) : (
-          <Error error={error} />
-        )
+      {isLoading ? (
+        <div className={styles.loaderContainer}>
+          <Loader />
+        </div>
       ) : (
         <div className={styles.cartContainer}>
           {games.length ? (

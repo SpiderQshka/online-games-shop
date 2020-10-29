@@ -90,7 +90,8 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
   }, []);
 
   useEffect(() => {
-    if (error) showPopup({ type: "error", msg: error.msg, code: error.status });
+    // if (error) showPopup({ type: "error", msg: error.msg, code: error.status });
+    if (error) history.push("/error", error);
   }, [error]);
 
   return (

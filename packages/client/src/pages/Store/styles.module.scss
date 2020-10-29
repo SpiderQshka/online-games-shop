@@ -15,7 +15,7 @@ $filters-menu-gap: 13px;
     grid-template-columns: 1fr $filters-menu-width;
     grid-column-gap: 30px;
     .gamesContainer {
-      .loaderContainer {
+      .infoContainer {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -146,6 +146,10 @@ $filters-menu-gap: 13px;
           @include primaryFont;
 
           .inputGroupItem {
+            &.loadingItem,
+            &.errorItem {
+              padding: $filters-menu-gap;
+            }
             .label {
               display: block;
               cursor: pointer;
@@ -160,9 +164,6 @@ $filters-menu-gap: 13px;
                 position: absolute;
                 right: 5px;
                 display: none;
-                // &:checked {
-                //   display: block;
-                // }
               }
             }
           }

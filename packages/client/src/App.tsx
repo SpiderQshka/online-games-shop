@@ -20,6 +20,7 @@ import {
 } from "utils/helpers";
 import { PopupType } from "context/popup";
 import { Popup } from "components/Popup";
+import { Error } from "pages/Error";
 const SuccessPage = lazy(() => import("pages/Store/SuccessPage"));
 const SignUp = lazy(() => import("pages/SignUp"));
 const Profile = lazy(() => import("pages/Profile"));
@@ -97,6 +98,7 @@ function App() {
                   <PrivateRoute exact path="/cart" component={Cart} />
                   <PrivateRoute path="/cart/success" component={SuccessPage} />
                   <PrivateRoute path="/admin" component={Admin} />
+                  <Route path="/error" component={Error} />
                   <Route component={NotFound} />
                 </Switch>
               </Suspense>

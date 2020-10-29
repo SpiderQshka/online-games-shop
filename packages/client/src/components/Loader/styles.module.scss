@@ -21,6 +21,14 @@
   }
 }
 
+.centered {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: inherit;
+}
+
 .container {
   background-color: $secondary-color-dark;
   min-height: 100vh;
