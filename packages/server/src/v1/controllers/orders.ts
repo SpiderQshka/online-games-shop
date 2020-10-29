@@ -323,8 +323,6 @@ export const ordersController: IOrdersController = {
         0
       );
 
-      console.log(digitalGamesPrice + physicalGamesPrice);
-
       const order = await Order.query().insert({
         createdAt: new Date().toUTCString(),
         price: digitalGamesPrice + physicalGamesPrice,
@@ -362,8 +360,6 @@ export const ordersController: IOrdersController = {
         orderedGames: [...orderedDigitalGames, ...orderedPhysicalGames],
       };
     } catch (e) {
-      console.log(e);
-
       switch (e.status) {
         case 404:
           ctx.throw(

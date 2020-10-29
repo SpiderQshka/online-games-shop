@@ -258,20 +258,22 @@ export const Store = () => {
             </h5>
             <form className={styles.filtersForm}>
               <h4 className={styles.inputGroupHeader}>Price</h4>
-              <SliderRange
-                max={hightestGamePrice}
-                min={0}
-                bounds={{
-                  upperBound: filterConfig.priceBounds.max,
-                  lowerBound: filterConfig.priceBounds.min,
-                }}
-                handleChange={({ lowerBound: min, upperBound: max }) => {
-                  setFilterConfig({
-                    ...filterConfig,
-                    priceBounds: { min, max },
-                  });
-                }}
-              />
+              <div className={styles.sliderRangeContainer}>
+                <SliderRange
+                  max={hightestGamePrice}
+                  min={0}
+                  bounds={{
+                    upperBound: filterConfig.priceBounds.max,
+                    lowerBound: filterConfig.priceBounds.min,
+                  }}
+                  handleChange={({ lowerBound: min, upperBound: max }) => {
+                    setFilterConfig({
+                      ...filterConfig,
+                      priceBounds: { min, max },
+                    });
+                  }}
+                />
+              </div>
               <h4 className={styles.inputGroupHeader}>Genres</h4>
               <ul className={styles.inputGroup}>
                 {isLoading || error ? (
@@ -283,14 +285,19 @@ export const Store = () => {
                 ) : (
                   genres.map((genre) => (
                     <li className={styles.inputGroupItem} key={genre.id}>
-                      <label className={styles.label}>
+                      <label
+                        className={`${styles.label} ${
+                          filterConfig.genresIds.includes(genre.id) &&
+                          styles.active
+                        }`}
+                      >
                         <input
                           key={genre.id}
                           type="checkbox"
                           name="genresIds"
                           value={genre.id}
                           checked={filterConfig.genresIds.includes(genre.id)}
-                          className={styles.input}
+                          className={`${styles.input}`}
                           onClick={(e) => {
                             const input = e.target as HTMLInputElement;
                             if (input.checked)
@@ -329,7 +336,12 @@ export const Store = () => {
                 ) : (
                   gameCreators.map((gameCreator) => (
                     <li className={styles.inputGroupItem} key={gameCreator.id}>
-                      <label className={styles.label}>
+                      <label
+                        className={`${styles.label} ${
+                          filterConfig.gameCreatorId === gameCreator.id &&
+                          styles.active
+                        }`}
+                      >
                         <input
                           key={gameCreator.id}
                           type="radio"

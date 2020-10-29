@@ -12,13 +12,14 @@ export interface IGameForUI extends IGameFromApi {
   genres: IGenreFromApi[];
   discount: IDiscountFromApi | null;
   optimalPrice: number;
+  physicalCopyOptimalPrice: number;
 }
 
 export interface IOrderForUI extends IOrderFromApi {
   orderedGames: IGameForOrder[];
 }
 
-export interface OrderWithUserId extends IOrderForUI {
+export interface IOrderWithUserId extends IOrderForUI {
   userId: number;
 }
 

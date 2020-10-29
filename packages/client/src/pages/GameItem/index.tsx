@@ -3,17 +3,19 @@ import { Header } from "components/Header";
 import styles from "./styles.module.scss";
 import { useParams, useHistory } from "react-router-dom";
 import { useApi } from "context/api";
-import { IApiError, IGameCreatorFromApi, IGameFromApi } from "interfaces/api";
+import {
+  IApiError,
+  IGameCreatorFromApi,
+  IGameFromApi,
+  IMyGameFromApi,
+} from "interfaces/api";
 import moment from "moment";
 import { IGameForUI } from "interfaces/app";
 import { Loader } from "components/Loader";
 import {
-  doesCurrentDateSuitDiscount,
-  getGameHightestDiscount,
-  getAchievementDiscountSize,
   getUserSessionData,
   setUserSessionData,
-  getOptimalGamePrice,
+  formatGamesForUI,
 } from "utils/helpers";
 import { FaShoppingCart } from "react-icons/fa";
 import { useAuth } from "context/auth";
@@ -36,10 +38,11 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
     getUsedDiscounts,
     blockGame,
     getUserAchievements,
+    getUserGames,
   } = useApi();
   const [error, setError] = useState<IApiError | null>(null);
   const [game, setGame] = useState<IGameForUI | null>(null);
-  const [achievementDiscount, setAchievementDiscount] = useState<number>(0);
+  const [userGames, setUserGames] = useState<IMyGameFromApi[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [sessionData, setSessionData] = useState<
     { id: number; isPhysical: boolean }[]
@@ -97,45 +100,21 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
       } = await getUserAchievements();
       if (userAchievementsError) setError(userAchievementsError);
 
-      const usedGenresIds = [
-        ...new Set(
-          usedGenres
-            .filter((el) => el.gameId === game?.id)
-            .map((el) => el.genreId)
-        ),
-      ];
+      const { games: userGames, error: userGamesError } = await getUserGames();
+      if (userGamesError) setError(userGamesError);
 
-      const gameGenres = genres.filter((genre) =>
-        usedGenresIds.includes(genre.id)
-      );
-
-      const gameDiscountsIds = usedDiscounts
-        .filter((el) => el.gameId === game?.id)
-        .map((el) => el.discountId);
-
-      const gameHightestDiscount = getGameHightestDiscount({
-        gameDiscountsIds,
-        game: game as IGameFromApi,
+      const gameForUI = formatGamesForUI({
+        games: [game as IGameFromApi],
         discounts,
-      });
+        usedDiscounts,
+        userAchievements,
+        gameCreators: [gameCreator as IGameCreatorFromApi],
+        genres,
+        usedGenres,
+      })[0];
 
-      const discount =
-        gameHightestDiscount &&
-        doesCurrentDateSuitDiscount(gameHightestDiscount)
-          ? gameHightestDiscount
-          : null;
-
-      setGame({
-        ...game,
-        gameCreator: gameCreator as IGameCreatorFromApi,
-        genres: gameGenres,
-        discount,
-      } as IGameForUI);
-      setAchievementDiscount(
-        getAchievementDiscountSize({
-          userAchievements,
-        })
-      );
+      setGame(gameForUI);
+      setUserGames(userGames);
       setIsLoading(false);
     };
     processGame();
@@ -146,6 +125,15 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
     getUserSessionData()
       .map((game) => game.id)
       .includes(game.id);
+
+  const isDigitalCopyBought =
+    userGames
+      .filter((userGame) => userGame.id === game?.id)
+      .filter((userGame) => !userGame.isPhysical).length !== 0;
+  const isPhysicalCopyBought =
+    userGames
+      .filter((userGame) => userGame.id === game?.id)
+      .filter((userGame) => userGame.isPhysical).length !== 0;
 
   const isCopyPhysical =
     game &&
@@ -160,14 +148,6 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
       .filter((gameFromUserData) => gameFromUserData.id === game.id)
       .map((el) => el.isPhysical)
       .some((el) => !el);
-
-  const optimalDigitalGamePrice =
-    game &&
-    getOptimalGamePrice({ achievementDiscount, game, isPhysical: false });
-
-  const optimalPhysicalGamePrice =
-    game &&
-    getOptimalGamePrice({ achievementDiscount, game, isPhysical: true });
 
   useEffect(() => {
     if (error) showPopup({ type: "error", msg: error.msg, code: error.status });
@@ -246,10 +226,16 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
                 <button
                   className={`${styles.actionBtn} ${styles.digital} ${
                     isGameInCart && styles.active
-                  } ${isCopyDigital && styles.inCart}`}
-                  onClick={() => !isCopyDigital && addToCartHandler(false)}
+                  } ${isCopyDigital && styles.inCart} ${
+                    isDigitalCopyBought && styles.bought
+                  }`}
+                  onClick={() =>
+                    !isCopyDigital &&
+                    !isDigitalCopyBought &&
+                    addToCartHandler(false)
+                  }
                 >
-                  Digital ({optimalDigitalGamePrice}$)
+                  Digital ({game?.optimalPrice}$)
                   <span className={styles.msg}>
                     <FaShoppingCart size="15px" />
                   </span>
@@ -257,10 +243,16 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
                 <button
                   className={`${styles.actionBtn} ${styles.physical} ${
                     isGameInCart && styles.active
-                  } ${isCopyPhysical && styles.inCart}`}
-                  onClick={() => !isCopyPhysical && addToCartHandler(true)}
+                  } ${isCopyPhysical && styles.inCart} ${
+                    isPhysicalCopyBought && styles.bought
+                  }`}
+                  onClick={() =>
+                    !isCopyPhysical &&
+                    !isPhysicalCopyBought &&
+                    addToCartHandler(true)
+                  }
                 >
-                  Physical ({optimalPhysicalGamePrice}$)
+                  Physical ({game?.physicalCopyOptimalPrice}$)
                   <span className={styles.msg}>
                     <FaShoppingCart size="15px" />
                   </span>

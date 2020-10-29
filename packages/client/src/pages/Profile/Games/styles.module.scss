@@ -7,13 +7,34 @@
   font-size: 25px;
   margin-bottom: 25px;
 }
-.achievementsList {
-  .achievementItem {
+
+.loaderContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gamesList {
+  .gameItem {
     @include primaryFont;
     display: flex;
+    align-items: center;
     justify-content: space-between;
     margin-top: 20px;
     color: $primary-color-light;
+    cursor: pointer;
+    .row {
+      padding-right: 7px;
+      &.date {
+        word-break: break-all;
+      }
+      .accent {
+        font-weight: bold;
+        margin-left: 10px;
+        color: $accent-color;
+        font-style: italic;
+      }
+    }
     &.headerItem {
       font-weight: bold;
       padding-bottom: 20px;

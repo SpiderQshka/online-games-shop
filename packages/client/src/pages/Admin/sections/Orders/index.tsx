@@ -1,4 +1,4 @@
-import { OrderWithUserId } from "interfaces/app";
+import { IOrderWithUserId } from "interfaces/app";
 import React from "react";
 import { useHistory } from "react-router-dom";
 import styles from "components/AdminTable/styles.module.scss";
@@ -7,7 +7,7 @@ import { FaPlus } from "react-icons/fa";
 import { BsThreeDots } from "react-icons/bs";
 
 interface OrdersProps {
-  orders: OrderWithUserId[];
+  orders: IOrderWithUserId[];
 }
 
 export const Orders: React.FunctionComponent<OrdersProps> = ({ orders }) => {

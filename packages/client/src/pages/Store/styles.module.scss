@@ -1,6 +1,7 @@
 @import "../../styles/config.scss";
 
 $filters-menu-width: 250px;
+$filters-menu-gap: 13px;
 
 .storeContainer {
   background-color: $secondary-color-dark;
@@ -12,7 +13,7 @@ $filters-menu-width: 250px;
     padding: 0 $default-gap;
     display: grid;
     grid-template-columns: 1fr $filters-menu-width;
-    grid-column-gap: 40px;
+    grid-column-gap: 30px;
     .gamesContainer {
       .loaderContainer {
         display: flex;
@@ -107,7 +108,7 @@ $filters-menu-width: 250px;
       .header {
         @include primaryFont;
         color: $primary-color;
-        padding: $default-gap 0;
+        padding: $default-gap 10px;
         position: relative;
         &.active {
           .closeIcon {
@@ -134,9 +135,12 @@ $filters-menu-width: 250px;
         color: $primary-color;
         .inputGroupHeader {
           @include primaryFont;
-          padding: 20px 0;
+          padding: 20px $filters-menu-gap;
           font-size: 1.2em;
           color: $primary-color-light;
+        }
+        .sliderRangeContainer {
+          padding: 0 $filters-menu-gap;
         }
         .inputGroup {
           @include primaryFont;
@@ -145,15 +149,20 @@ $filters-menu-width: 250px;
             .label {
               display: block;
               cursor: pointer;
-              padding: 15px 0;
+              padding: $filters-menu-gap;
+              border-top: 3px solid $secondary-color-dark;
               position: relative;
+              &.active {
+                background-color: $secondary-color-light;
+                color: $primary-color-light;
+              }
               .input {
                 position: absolute;
                 right: 5px;
                 display: none;
-                &:checked {
-                  display: block;
-                }
+                // &:checked {
+                //   display: block;
+                // }
               }
             }
           }

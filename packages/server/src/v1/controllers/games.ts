@@ -5,6 +5,8 @@ import { Game } from "models/Game";
 import _ from "lodash";
 import Aigle from "aigle";
 import { UsedGenre } from "models/UsedGenre";
+import { verifyJwtToken } from "v1/auth";
+import { OrderedGame } from "models/OrderedGame";
 
 Aigle.mixin(_, {});
 
@@ -13,6 +15,7 @@ Model.knex(knex);
 interface IGamesController {
   get: Middleware;
   getAll: Middleware;
+  getMy: Middleware;
   put: Middleware;
   post: Middleware;
   block: Middleware;
@@ -43,6 +46,26 @@ export const gamesController: IGamesController = {
     if (!response) ctx.throw(404, `No games found`);
 
     ctx.body = response;
+  },
+  getMy: async (ctx) => {
+    const user = verifyJwtToken(ctx);
+
+    try {
+      const myOrderedGames = await OrderedGame.query().where("userId", user.id);
+      const myGames = await Aigle.map(myOrderedGames, async (el) => {
+        const game = await Game.query().findById(el.gameId);
+        return { ...game, isPhysical: el.isPhysical };
+      });
+      ctx.body = myGames;
+    } catch (e) {
+      switch (e.status) {
+        case 404:
+          ctx.throw(404, `No games found`);
+
+        default:
+          ctx.throw(400, "Bad request");
+      }
+    }
   },
   put: async (ctx) => {
     try {

@@ -114,6 +114,10 @@ export interface IApi {
   unblockGame: (
     id: number
   ) => Promise<{ game: IGameFromApi | null; error?: IApiError }>;
+  getUserGames: () => Promise<{
+    games: IMyGameFromApi[];
+    error?: IApiError;
+  }>;
 }
 
 export interface IApiError {
@@ -164,8 +168,11 @@ export interface IGameFromApi extends IGame {
   id: number;
 }
 
-export interface IGameForOrder extends IGameFromApi {
+export interface IMyGameFromApi extends IGameFromApi {
   isPhysical: boolean;
+}
+
+export interface IGameForOrder extends IMyGameFromApi {
   discount: IDiscountFromApi | null;
 }
 

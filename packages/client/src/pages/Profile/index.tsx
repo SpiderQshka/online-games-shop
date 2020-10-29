@@ -2,7 +2,7 @@ import { Header } from "components/Header";
 import React, { useEffect, useState } from "react";
 import { Switch, Route, Link, Redirect, useHistory } from "react-router-dom";
 import styles from "./styles.module.scss";
-import { FaStar, FaShoppingCart } from "react-icons/fa";
+import { FaStar, FaShoppingCart, FaGamepad } from "react-icons/fa";
 import { RiAdminLine, RiLogoutBoxRLine } from "react-icons/ri";
 import { Achievements } from "./Achievements";
 import { Orders } from "./Orders";
@@ -10,13 +10,14 @@ import {
   IApiError,
   IUser,
   IAchievementFromApi,
-  IGameForOrder,
+  IMyGameFromApi,
 } from "interfaces/api";
 import { useApi } from "context/api";
-import { IOrderForUI, OrderWithUserId } from "interfaces/app";
+import { IOrderWithUserId } from "interfaces/app";
 import { useAuth } from "context/auth";
-import { getGameHightestDiscount, removeUserSessionData } from "utils/helpers";
+import { formatOrdersForUI, removeUserSessionData } from "utils/helpers";
 import { usePopup } from "context/popup";
+import { Games } from "./Games";
 
 interface IProfileProps {}
 
@@ -24,17 +25,18 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
   const history = useHistory();
   const { showPopup } = usePopup();
   const [error, setError] = useState<IApiError | null>(null);
-  const [orders, setOrders] = useState<IOrderForUI[]>([]);
+  const [orders, setOrders] = useState<IOrderWithUserId[]>([]);
+  const [userGames, setUserGames] = useState<IMyGameFromApi[]>([]);
   const [user, setUser] = useState<IUser | null>(null);
   const [achievements, setAchievements] = useState<IAchievementFromApi[]>([]);
   const {
     getUserOrders,
     getUserOrderedGames,
-    getGames,
     getUserAchievements,
     getUser,
     getDiscounts,
     getUsedDiscounts,
+    getUserGames,
   } = useApi();
   const { removeToken } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -51,14 +53,14 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
       } = await getUserOrderedGames();
       if (orderedGamesError) setError(orderedGamesError);
 
-      const { games, error: gamesError } = await getGames();
-      if (gamesError) setError(gamesError);
-
       const { user, error: userError } = await getUser();
       if (userError) setError(userError);
 
       const { discounts, error: discountsError } = await getDiscounts();
       if (discountsError) setError(discountsError);
+
+      const { games: userGames, error: userGamesError } = await getUserGames();
+      if (userGamesError) setError(userGamesError);
 
       const {
         usedDiscounts,
@@ -66,68 +68,19 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
       } = await getUsedDiscounts();
       if (usedDiscountsError) setError(usedDiscountsError);
 
-      const gamesIds = orderedGames.map((orderedGame) => orderedGame.gameId);
-      const userGames = games.filter((el) => gamesIds.includes(el.id));
-
-      const ordersForUI: OrderWithUserId[] = orders.map((order) => {
-        const gamesIds = orderedGames
-          .filter((el) => +el.orderId === +order.id)
-          .map((el) => el.gameId);
-        const gamePhysicalDublicates: IGameForOrder[] = [];
-
-        const gamesForOrder: IGameForOrder[] = userGames
-          .filter((game) => gamesIds.includes(game.id))
-          .map((game) => {
-            const gameDiscountsIds = usedDiscounts
-              .filter((el) => el.gameId === game?.id)
-              .map((el) => el.discountId);
-            const doesGameHavePhysicalDublicate =
-              orderedGames.filter(
-                (el) => el.gameId === game.id && el.orderId === order.id
-              ).length > 1;
-            const discount = getGameHightestDiscount({
-              discounts,
-              game,
-              gameDiscountsIds,
-            });
-            if (doesGameHavePhysicalDublicate) {
-              gamePhysicalDublicates.push({
-                ...game,
-                isPhysical: true,
-                discount,
-              });
-              return {
-                ...game,
-                isPhysical: false,
-                discount,
-              };
-            }
-            return {
-              ...game,
-              isPhysical: orderedGames.filter(
-                (el) => el.gameId === game.id && el.orderId === order.id
-              )[0].isPhysical,
-              discount,
-            };
-          });
-
-        gamesForOrder.push(...gamePhysicalDublicates);
-
-        const userId = orderedGames.filter(
-          (orderedGame) => orderedGame.orderId === order.id
-        )[0].userId;
-        return {
-          ...order,
-          orderedGames: gamesForOrder,
-          userId,
-        };
+      const ordersForUI = formatOrdersForUI({
+        discounts,
+        usedDiscounts,
+        orderedGames,
+        orders,
+        userGames,
       });
 
       const { achievements, error } = await getUserAchievements();
       if (error) setError(error);
 
       setUser(user);
-
+      setUserGames(userGames);
       setOrders(ordersForUI);
 
       setAchievements(achievements);
@@ -156,6 +109,12 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
               <Link to="/profile/achievements" className={styles.menuLink}>
                 <FaStar color="#f4f4f4" className={styles.icon} />
                 <span className={styles.menuText}>Achievements</span>
+              </Link>
+            </li>
+            <li className={`${styles.menuItem} ${styles.active}`}>
+              <Link to="/profile/games" className={styles.menuLink}>
+                <FaGamepad color="#f4f4f4" className={styles.icon} />
+                <span className={styles.menuText}>My games</span>
               </Link>
             </li>
             {user && user.isAdmin && (
@@ -197,6 +156,12 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
                     achievements={achievements}
                     isLoading={isLoading}
                   />
+                )}
+              />
+              <Route
+                path="/profile/games"
+                component={() => (
+                  <Games games={userGames} isLoading={isLoading} />
                 )}
               />
               <Route component={() => <Redirect to="/profile/orders" />} />

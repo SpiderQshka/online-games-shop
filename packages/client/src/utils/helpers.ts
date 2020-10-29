@@ -6,10 +6,12 @@ import {
   IGameForOrder,
   IGameFromApi,
   IGenreFromApi,
+  IOrderedGame,
+  IOrderFromApi,
   IUsedDiscount,
   IUsedGenre,
 } from "interfaces/api";
-import { IGameForUI } from "interfaces/app";
+import { IGameForUI, IOrderForUI, IOrderWithUserId } from "interfaces/app";
 import _ from "lodash";
 import { IFilterConfig, SortType } from "pages/Store";
 
@@ -159,10 +161,94 @@ export const formatGamesForUI: (
       ...game,
       optimalPrice: getOptimalGamePrice({
         achievementDiscount,
-        game: { ...game, optimalPrice: game.price },
+        game: {
+          ...game,
+          optimalPrice: game.price,
+          physicalCopyOptimalPrice: game.physicalCopyPrice,
+        },
+      }),
+      physicalCopyOptimalPrice: getOptimalGamePrice({
+        achievementDiscount,
+        game: {
+          ...game,
+          optimalPrice: game.price,
+          physicalCopyOptimalPrice: game.physicalCopyPrice,
+        },
+        isPhysical: true,
       }),
     }));
 };
+
+interface FormatOrdersForUIConfig {
+  orderedGames: IOrderedGame[];
+  orders: IOrderFromApi[];
+  userGames: IGameFromApi[];
+  usedDiscounts: IUsedDiscount[];
+  discounts: IDiscountFromApi[];
+}
+
+export const formatOrdersForUI: (
+  config: FormatOrdersForUIConfig
+) => IOrderWithUserId[] = ({
+  orderedGames,
+  orders,
+  userGames,
+  usedDiscounts,
+  discounts,
+}) =>
+  orders.map((order) => {
+    const gamesIds = orderedGames
+      .filter((el) => +el.orderId === +order.id)
+      .map((el) => el.gameId);
+    const gamePhysicalDublicates: IGameForOrder[] = [];
+
+    const gamesForOrder: IGameForOrder[] = userGames
+      .filter((game) => gamesIds.includes(game.id))
+      .map((game) => {
+        const gameDiscountsIds = usedDiscounts
+          .filter((el) => el.gameId === game?.id)
+          .map((el) => el.discountId);
+        const doesGameHavePhysicalDublicate =
+          orderedGames.filter(
+            (el) => el.gameId === game.id && el.orderId === order.id
+          ).length > 1;
+        const discount = getGameHightestDiscount({
+          discounts,
+          game,
+          gameDiscountsIds,
+        });
+        if (doesGameHavePhysicalDublicate) {
+          gamePhysicalDublicates.push({
+            ...game,
+            isPhysical: true,
+            discount,
+          });
+          return {
+            ...game,
+            isPhysical: false,
+            discount,
+          };
+        }
+        return {
+          ...game,
+          isPhysical: orderedGames.filter(
+            (el) => el.gameId === game.id && el.orderId === order.id
+          )[0].isPhysical,
+          discount,
+        };
+      });
+
+    gamesForOrder.push(...gamePhysicalDublicates);
+
+    const userId = orderedGames.filter(
+      (orderedGame) => orderedGame.orderId === order.id
+    )[0].userId;
+    return {
+      ...order,
+      orderedGames: gamesForOrder,
+      userId,
+    };
+  });
 
 export const getGameHightestDiscount: (config: {
   game: IGameFromApi;
@@ -250,3 +336,9 @@ export const getOptimalGamePrice = ({
       : gamePriceWithGameDiscount;
   }
 };
+
+export const getUserGames = (orders: IOrderForUI[]) =>
+  orders.reduce(
+    (prev, curr) => [...prev, ...curr.orderedGames],
+    [] as IGameForOrder[]
+  );

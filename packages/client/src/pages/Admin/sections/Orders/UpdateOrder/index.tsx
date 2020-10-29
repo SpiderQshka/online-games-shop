@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { useHistory, useParams } from "react-router-dom";
 import { IApiError, OrderStatus } from "interfaces/api";
 import { useApi } from "context/api";
-import { IGameForUI, OrderWithUserId } from "interfaces/app";
+import { IGameForUI, IOrderWithUserId } from "interfaces/app";
 
 interface OrderFormValues {
   gamesIds: string[];
@@ -14,7 +14,7 @@ interface OrderFormValues {
 }
 
 interface OrderItemProps {
-  orders: OrderWithUserId[];
+  orders: IOrderWithUserId[];
   games: IGameForUI[];
 }
 

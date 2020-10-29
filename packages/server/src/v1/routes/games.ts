@@ -1,7 +1,7 @@
 import koaRouter from "koa-joi-router";
 import { gamesController } from "../controllers/games";
 import { gamesRoutesValidation } from "../routes-validation/games";
-import { checkAdmin } from "v1/auth";
+import { checkAdmin, checkAuth } from "v1/auth";
 const router = koaRouter();
 
 router.route({
@@ -27,6 +27,14 @@ router.route({
   path: "/api/v1/games",
   validate: {},
   handler: gamesController.getAll,
+});
+
+router.route({
+  method: "get",
+  path: "/api/v1/my/games",
+  validate: {},
+  pre: checkAuth,
+  handler: gamesController.getMy,
 });
 
 router.route({

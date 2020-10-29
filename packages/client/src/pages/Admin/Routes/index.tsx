@@ -5,13 +5,12 @@ import { useApi } from "context/api";
 import {
   IAchievementFromApi,
   IApiError,
-  IDiscountFromApi,
   IGameCreatorFromApi,
   IGameForOrder,
   IGenreFromApi,
   IUser,
 } from "interfaces/api";
-import { IDiscountForUI, IGameForUI, OrderWithUserId } from "interfaces/app";
+import { IDiscountForUI, IGameForUI, IOrderWithUserId } from "interfaces/app";
 import { Orders } from "../sections/Orders";
 import { UpdateOrder } from "../sections/Orders/UpdateOrder";
 import { CreateOrder } from "../sections/Orders/CreateOrder";
@@ -64,7 +63,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
   const [error, setError] = useState<IApiError | null>(null);
   const [games, setGames] = useState<IGameForUI[]>([]);
   const [genres, setGenres] = useState<IGenreFromApi[]>([]);
-  const [orders, setOrders] = useState<OrderWithUserId[]>([]);
+  const [orders, setOrders] = useState<IOrderWithUserId[]>([]);
   const [users, setUsers] = useState<IUser[]>([]);
   const [discounts, setDiscounts] = useState<IDiscountForUI[]>([]);
   const [gameCreators, setGameCreators] = useState<IGameCreatorFromApi[]>([]);
@@ -131,7 +130,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         userAchievements,
       });
 
-      const ordersForUI: OrderWithUserId[] = orders.map((order) => {
+      const ordersForUI: IOrderWithUserId[] = orders.map((order) => {
         const gamesIds = orderedGames
           .filter((el) => +el.orderId === +order.id)
           .map((el) => el.gameId);

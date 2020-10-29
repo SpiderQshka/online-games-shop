@@ -5,12 +5,12 @@ import { IOrderForUI } from "interfaces/app";
 import moment from "moment";
 import { Loader } from "components/Loader";
 
-interface OredersProps {
+interface OrdersProps {
   orders: IOrderForUI[];
   isLoading: boolean;
 }
 
-export const Orders: React.FunctionComponent<OredersProps> = ({
+export const Orders: React.FunctionComponent<OrdersProps> = ({
   orders,
   isLoading,
 }) => {
