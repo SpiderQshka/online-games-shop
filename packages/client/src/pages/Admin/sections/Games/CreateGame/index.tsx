@@ -31,7 +31,7 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = () => {
       description: "",
       ageRating: 0,
       price: 1,
-      createdAt: moment(new Date()).format("YYYY-MM-DD"),
+      createdAt: moment().format("YYYY-MM-DD"),
       genresIds: [],
       gameCreatorId: 1,
       physicalCopyPrice: 1,

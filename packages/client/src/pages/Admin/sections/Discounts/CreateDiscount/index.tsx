@@ -30,9 +30,9 @@ export const CreateDiscount: React.FunctionComponent<CreateDiscountProps> = ({
   const formik = useFormik({
     initialValues: {
       amount: 1,
-      endDate: moment(new Date()).format("YYYY-MM-DD"),
+      endDate: moment().format("YYYY-MM-DD"),
       gamesIds: [],
-      startDate: moment(new Date()).format("YYYY-MM-DD"),
+      startDate: moment().format("YYYY-MM-DD"),
       type: "%",
     } as DiscountFormValues,
     validationSchema: Yup.object({
