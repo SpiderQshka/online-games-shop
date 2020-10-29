@@ -20,7 +20,9 @@ import {
 } from "utils/helpers";
 import { PopupType } from "context/popup";
 import { Popup } from "components/Popup";
-import { Error } from "pages/Error";
+import { YMaps } from "react-yandex-maps";
+const Error = lazy(() => import("pages/Error"));
+const Contacts = lazy(() => import("pages/Contacts"));
 const SuccessPage = lazy(() => import("pages/Store/SuccessPage"));
 const SignUp = lazy(() => import("pages/SignUp"));
 const Profile = lazy(() => import("pages/Profile"));
@@ -81,28 +83,34 @@ function App() {
               hidePopup,
             }}
           >
-            <Router>
-              <Suspense fallback={<PageLoader />}>
-                <Popup />
-                <Switch>
-                  <Route
-                    exact
-                    path="/"
-                    component={() => <Redirect to="/store" />}
-                  />
-                  <Route exact path="/login" component={Login} />
-                  <Route exact path="/signup" component={SignUp} />
-                  <PrivateRoute path="/profile" component={Profile} />
-                  <Route exact path="/store" component={Store} />
-                  <Route path="/store/item/:id" component={GameItem} />
-                  <PrivateRoute exact path="/cart" component={Cart} />
-                  <PrivateRoute path="/cart/success" component={SuccessPage} />
-                  <PrivateRoute path="/admin" component={Admin} />
-                  <Route path="/error" component={Error} />
-                  <Route component={NotFound} />
-                </Switch>
-              </Suspense>
-            </Router>
+            <YMaps>
+              <Router>
+                <Suspense fallback={<PageLoader />}>
+                  <Popup />
+                  <Switch>
+                    <Route
+                      exact
+                      path="/"
+                      component={() => <Redirect to="/store" />}
+                    />
+                    <Route exact path="/login" component={Login} />
+                    <Route exact path="/signup" component={SignUp} />
+                    <PrivateRoute path="/profile" component={Profile} />
+                    <Route exact path="/store" component={Store} />
+                    <Route exact path="/contacts" component={Contacts} />
+                    <Route path="/store/item/:id" component={GameItem} />
+                    <PrivateRoute exact path="/cart" component={Cart} />
+                    <PrivateRoute
+                      path="/cart/success"
+                      component={SuccessPage}
+                    />
+                    <PrivateRoute path="/admin" component={Admin} />
+                    <Route path="/error" component={Error} />
+                    <Route component={NotFound} />
+                  </Switch>
+                </Suspense>
+              </Router>
+            </YMaps>
           </PopupContext.Provider>
         </ApiContext.Provider>
       </AuthContext.Provider>

@@ -22,7 +22,7 @@
     }
     .logoContainer {
       width: 40px;
-      margin-right: 10px;
+      margin-right: 20px;
       cursor: pointer;
     }
     .navList {
@@ -42,12 +42,13 @@
           top: calc(100% - 5px);
           background-color: $accent-color;
         }
-        &:hover::after {
+        &:hover::after,
+        &.active::after {
           height: 5px;
         }
         .link {
           @include primaryFont;
-          color: $primary-color-light;
+          color: $primary-color;
           display: flex;
           height: $header-height;
           align-items: center;
@@ -55,6 +56,11 @@
           text-decoration: none;
           text-transform: uppercase;
           font-size: 14px;
+        }
+        &:hover {
+          .link {
+            color: $primary-color-light;
+          }
         }
       }
     }

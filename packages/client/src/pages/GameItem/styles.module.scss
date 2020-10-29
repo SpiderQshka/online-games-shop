@@ -165,14 +165,6 @@
     }
   }
 }
-// .loaderContainer {
-//   padding: $header-height $default-gap $default-gap;
-//   background-color: $secondary-color-dark;
-//   min-height: calc(100vh - #{$header-height});
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-// }
 
 .container {
   padding: calc(#{$header-height} + 150px) $default-gap $default-gap;

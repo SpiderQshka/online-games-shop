@@ -1,0 +1,13 @@
+@import "../../styles/config.scss";
+
+@media all and (max-width: 900px) {
+  .contactsContainer {
+    .contacts {
+      .contactsList {
+        grid-template-columns: 1fr;
+        grid-column-gap: 0;
+        grid-row-gap: 15px;
+      }
+    }
+  }
+}

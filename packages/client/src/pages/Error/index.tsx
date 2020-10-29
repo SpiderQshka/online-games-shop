@@ -29,10 +29,4 @@ export const Error = () => {
   );
 };
 
-// export const CenteredError: React.FunctionComponent<ErrorProps> = ({
-//   error,
-// }) => (
-//   <div className={styles.centered}>
-//     <Error error={error} />
-//   </div>
-// );
+export default Error;

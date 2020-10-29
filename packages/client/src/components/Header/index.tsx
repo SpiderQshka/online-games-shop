@@ -42,19 +42,22 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
           <FaGamepad size="100%" />
         </div>
         <ul className={`${styles.navList} ${isMenuOpen && styles.open}`}>
-          <li className={`${styles.navItem}`}>
+          <li
+            className={`${styles.navItem} ${
+              history.location.pathname === "/store" && styles.active
+            }`}
+          >
             <Link to="/store" className={styles.link}>
               Store
             </Link>
           </li>
-          <li className={`${styles.navItem}`}>
+          <li
+            className={`${styles.navItem} ${
+              history.location.pathname === "/contacts" && styles.active
+            }`}
+          >
             <Link to="/contacts" className={styles.link}>
               Contacts
-            </Link>
-          </li>
-          <li className={`${styles.navItem}`}>
-            <Link to="/delivery" className={styles.link}>
-              Delivery
             </Link>
           </li>
           {isLoading ? (
