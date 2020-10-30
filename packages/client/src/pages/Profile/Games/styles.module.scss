@@ -28,6 +28,9 @@
       &.date {
         word-break: break-all;
       }
+      &.name {
+        text-decoration: underline;
+      }
       .accent {
         font-weight: bold;
         margin-left: 10px;

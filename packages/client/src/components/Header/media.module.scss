@@ -24,7 +24,7 @@ $nav-list-width: 200px;
     }
     .navContainer {
       .openMenuBtn {
-        width: 60px;
+        margin-right: $default-gap;
         display: flex;
         align-items: center;
       }

@@ -12,11 +12,7 @@ import {
 import moment from "moment";
 import { IGameForUI } from "interfaces/app";
 import { Loader } from "components/Loader";
-import {
-  getUserSessionData,
-  setUserSessionData,
-  formatGamesForUI,
-} from "utils/helpers";
+import { getCartData, setCartData, formatGamesForUI } from "utils/helpers";
 import { FaShoppingCart } from "react-icons/fa";
 import { useAuth } from "context/auth";
 import { isInteger, uniq } from "lodash";
@@ -51,12 +47,9 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
   const addToCartHandler = useCallback(
     (isPhysical: boolean) => {
       if (game && token) {
-        const games = uniq([
-          ...getUserSessionData(),
-          { id: game.id, isPhysical },
-        ]);
+        const games = uniq([...getCartData(), { id: game.id, isPhysical }]);
 
-        setUserSessionData(games);
+        setCartData(games);
         setSessionData(games);
         if (isPhysical)
           blockGame(game.id).then(({ game, error }) => {
@@ -127,7 +120,7 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
 
   const isGameInCart =
     game &&
-    getUserSessionData()
+    getCartData()
       .map((game) => game.id)
       .includes(game.id);
 
@@ -142,14 +135,14 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
 
   const isCopyPhysical =
     game &&
-    getUserSessionData()
+    getCartData()
       .filter((gameFromUserData) => gameFromUserData.id === game.id)
       .map((el) => el.isPhysical)
       .some((el) => el);
 
   const isCopyDigital =
     game &&
-    getUserSessionData()
+    getCartData()
       .filter((gameFromUserData) => gameFromUserData.id === game.id)
       .map((el) => el.isPhysical)
       .some((el) => !el);

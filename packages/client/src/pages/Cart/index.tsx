@@ -5,8 +5,8 @@ import {
   getOptimalGamePrice,
   formatGamesForUI,
   getAchievementDiscountSize,
-  getUserSessionData,
-  setUserSessionData,
+  getCartData,
+  setCartData,
 } from "utils/helpers";
 import styles from "./styles.module.scss";
 import _ from "lodash";
@@ -41,7 +41,7 @@ export const Cart = () => {
   useEffect(() => {
     setIsLoading(true);
     const processGames = async () => {
-      const gamesFromSessionData = getUserSessionData();
+      const gamesFromSessionData = getCartData();
 
       const { discounts, error: discountsError } = await getDiscounts();
       if (discountsError) setError(discountsError);
@@ -123,7 +123,7 @@ export const Cart = () => {
       if (error) setError(error);
       else {
         setGames([]);
-        setUserSessionData([]);
+        setCartData([]);
         const orderForUI = { ...order, orderedGames: games };
         history.push("/cart/success", orderForUI);
       }
@@ -157,7 +157,10 @@ export const Cart = () => {
                   </li>
                   {games.map((game) => (
                     <li className={styles.cartItem} key={game.id}>
-                      <span className={`${styles.row} ${styles.name}`}>
+                      <span
+                        className={`${styles.row} ${styles.name}`}
+                        onClick={() => history.push(`/store/item/${game.id}`)}
+                      >
                         {game.name}
                         {game.isPhysical && (
                           <span className={styles.accent}>Physical copy</span>

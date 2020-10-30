@@ -15,7 +15,7 @@ import {
 import { useApi } from "context/api";
 import { IOrderWithUserId } from "interfaces/app";
 import { useAuth } from "context/auth";
-import { formatOrdersForUI, removeUserSessionData } from "utils/helpers";
+import { formatOrdersForUI, removeCartData } from "utils/helpers";
 import { usePopup } from "context/popup";
 import { Games } from "./Games";
 
@@ -130,7 +130,7 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
                   className={styles.menuLink}
                   onClick={() => {
                     removeToken();
-                    removeUserSessionData();
+                    removeCartData();
                     history.push("/");
                   }}
                 >

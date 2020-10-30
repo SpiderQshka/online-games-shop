@@ -9,7 +9,7 @@
   bottom: 0;
   z-index: 1;
   left: 0;
-  box-shadow: rgba(0, 0, 0, 0.5) 0px 2px 35px 0px;
+  box-shadow: $basic-shadow;
   .header {
     @include primaryFont;
     color: $primary-color-light;

@@ -11,13 +11,14 @@
   right: 0;
   left: 0;
   z-index: 1;
-  box-shadow: rgba(0, 0, 0, 0.5) 0px 2px 35px 0px;
+  box-shadow: $basic-shadow;
   .navContainer {
     display: flex;
     z-index: 2;
     margin-left: $default-gap;
     .openMenuBtn {
       @include basicBtn;
+      padding: 0;
       display: none;
     }
     .logoContainer {

@@ -2,8 +2,9 @@
 
 .searchBarContainer {
   position: relative;
-  display: inline-block;
   .input {
+    width: 100%;
+    min-width: 0;
     border: none;
     outline: none;
     box-sizing: border-box;
@@ -21,16 +22,18 @@
     top: 100%;
     left: 0;
     right: 0;
-    box-shadow: rgba(0, 0, 0, 0.5) 0px 2px 35px 0px;
+    box-shadow: $basic-shadow;
     .searchResultItem,
     .notFound {
       @include primaryFont;
       background-color: $primary-color-dark;
       padding: 15px;
       color: $primary-color-light;
-      cursor: pointer;
     }
     .searchResultItem {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       cursor: pointer;
     }
   }

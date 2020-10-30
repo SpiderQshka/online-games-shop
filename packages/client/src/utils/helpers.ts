@@ -16,14 +16,13 @@ import { IGameForUI, IOrderForUI, IOrderWithUserId } from "interfaces/app";
 import _ from "lodash";
 import { IFilterConfig, SortType } from "pages/Store";
 
-export const setUserSessionData = (
-  games: { id: number; isPhysical: boolean }[]
-) => localStorage.setItem("games", JSON.stringify(games));
+export const setCartData = (games: { id: number; isPhysical: boolean }[]) =>
+  localStorage.setItem("games", JSON.stringify(games));
 
-export const getUserSessionData = (): { id: number; isPhysical: boolean }[] =>
+export const getCartData = (): { id: number; isPhysical: boolean }[] =>
   JSON.parse(localStorage.getItem("games") as string) || [];
 
-export const removeUserSessionData = () => localStorage.removeItem("games");
+export const removeCartData = () => localStorage.removeItem("games");
 
 export const getTokenFromLocalStorage = () => localStorage.getItem("token");
 

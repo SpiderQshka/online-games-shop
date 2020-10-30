@@ -72,3 +72,25 @@
     }
   }
 }
+
+@media all and (max-width: 400px) {
+  .storeContainer {
+    .storeContent {
+      .gamesContainer {
+        .gamesList {
+          grid-template-columns: 1fr;
+        }
+      }
+      .infoContainer {
+        flex-direction: column;
+        .openFiltersBtn {
+          margin-top: 20px;
+          align-self: flex-end;
+        }
+        .sortByContainer {
+          align-self: flex-end;
+        }
+      }
+    }
+  }
+}

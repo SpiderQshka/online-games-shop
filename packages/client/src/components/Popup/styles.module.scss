@@ -16,7 +16,7 @@ $popup-width: 300px;
   justify-content: center;
   z-index: 9999;
   transition: 0.7s;
-  box-shadow: rgba(0, 0, 0, 0.5) 0px 2px 35px 0px;
+  box-shadow: $basic-shadow;
   &.open {
     bottom: 20px;
   }

@@ -1,7 +1,7 @@
 @import "../../styles/config.scss";
 
 $select-height: 40px;
-$select-min-width: 200px;
+$select-min-width: 160px;
 
 .selectContainer {
   @include primaryFont;
@@ -12,11 +12,14 @@ $select-min-width: 200px;
   position: relative;
   font-size: 0.95em;
   .selectedValue {
-    padding: 0 15px;
+    padding: 0 40px 0 15px;
     display: flex;
     align-items: center;
     height: $select-height;
     background-color: $secondary-color-light;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     cursor: pointer;
     .icon {
       position: absolute;
@@ -35,6 +38,9 @@ $select-min-width: 200px;
     left: 0;
     right: 0;
     cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     .selectOption {
       @include primaryFont;
       background-color: $secondary-color-light;

@@ -65,14 +65,21 @@
       .cartList {
         .cartItem {
           @include primaryFont;
-          display: flex;
-          justify-content: space-between;
+          display: grid;
+          grid-template-columns: 1fr 50px;
           margin-top: 20px;
           color: $primary-color-light;
           .row {
             padding-right: 7px;
             &:last-of-type {
               padding-right: 0;
+            }
+            &.name {
+              cursor: pointer;
+              text-decoration: underline;
+            }
+            &.price {
+              text-align: right;
             }
             .accent {
               color: $accent-color;
@@ -85,6 +92,9 @@
           font-weight: bold;
           padding-bottom: 20px;
           border-bottom: 2px solid $accent-color;
+          .row.name {
+            text-decoration: none;
+          }
         }
       }
     }
