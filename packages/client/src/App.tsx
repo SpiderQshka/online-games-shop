@@ -21,6 +21,7 @@ import {
 import { PopupType } from "context/popup";
 import { Popup } from "components/Popup";
 import { YMaps } from "react-yandex-maps";
+const FAQ = lazy(() => import("pages/FAQ"));
 const Error = lazy(() => import("pages/Error"));
 const Contacts = lazy(() => import("pages/Contacts"));
 const SuccessPage = lazy(() => import("pages/Store/SuccessPage"));
@@ -99,6 +100,7 @@ function App() {
                     <Route exact path="/store" component={Store} />
                     <Route exact path="/contacts" component={Contacts} />
                     <Route path="/store/item/:id" component={GameItem} />
+                    <Route path="/faq" component={FAQ} />
                     <PrivateRoute exact path="/cart" component={Cart} />
                     <PrivateRoute
                       path="/cart/success"

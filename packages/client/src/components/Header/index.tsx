@@ -60,6 +60,15 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
               Contacts
             </Link>
           </li>
+          <li
+            className={`${styles.navItem} ${
+              history.location.pathname === "/faq" && styles.active
+            }`}
+          >
+            <Link to="/faq" className={styles.link}>
+              FAQ
+            </Link>
+          </li>
           {isLoading ? (
             <></>
           ) : user ? (

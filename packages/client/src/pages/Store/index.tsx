@@ -9,7 +9,6 @@ import { FaWindowClose, FaSadTear, FaFilter } from "react-icons/fa";
 import styles from "./styles.module.scss";
 import { useHistory } from "react-router-dom";
 import { CenteredLoader } from "components/Loader";
-import { usePopup } from "context/popup";
 import { Select } from "components/Select";
 import { SliderRange } from "components/SliderRange";
 

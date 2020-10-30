@@ -23,7 +23,6 @@ interface IProfileProps {}
 
 export const Profile: React.FunctionComponent<IProfileProps> = () => {
   const history = useHistory();
-  const { showPopup } = usePopup();
   const [error, setError] = useState<IApiError | null>(null);
   const [orders, setOrders] = useState<IOrderWithUserId[]>([]);
   const [userGames, setUserGames] = useState<IMyGameFromApi[]>([]);
@@ -90,7 +89,6 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
   }, []);
 
   useEffect(() => {
-    // if (error) showPopup({ type: "error", msg: error.msg, code: error.status });
     if (error) history.push("/error", error);
   }, [error]);
 

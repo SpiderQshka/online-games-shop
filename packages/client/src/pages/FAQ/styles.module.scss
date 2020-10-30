@@ -1,0 +1,33 @@
+@import "../../styles/config.scss";
+
+.container {
+  padding-top: $header-height;
+  background-color: $secondary-color-dark;
+  min-height: calc(100vh - #{$header-height});
+  .content {
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 40px $default-gap $default-gap;
+    .header {
+      @include primaryFont;
+      color: $primary-color-light;
+      font-size: 30px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .list {
+      .item {
+        @include primaryFont;
+        line-height: 1.4;
+        .itemHeader {
+          color: $primary-color-light;
+          margin-top: 12px;
+          margin-bottom: 5px;
+        }
+        .itemContent {
+          color: $primary-color;
+        }
+      }
+    }
+  }
+}
