@@ -7,7 +7,13 @@
   .mapContainer {
     width: 100%;
     height: 400px;
-    background-color: $secondary-color-light;
+    background: linear-gradient(
+      -45deg,
+      $secondary-color-light,
+      $primary-color-dark
+    );
+    background-size: 400% 400%;
+    animation: gradient 2s ease infinite;
     .map {
       width: 100%;
       height: 100%;
@@ -53,6 +59,18 @@
         }
       }
     }
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
   }
 }
 

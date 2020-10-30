@@ -69,7 +69,7 @@ $filters-menu-gap: 13px;
             border-radius: 5px;
             min-height: 300px;
             background-color: #fff;
-            background: no-repeat center/cover $primary-color-light;
+            background: no-repeat center/cover $primary-color-dark;
           }
           .name {
             @include primaryFont;
