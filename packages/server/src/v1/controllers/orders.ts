@@ -254,7 +254,7 @@ export const ordersController: IOrdersController = {
         await OrderedGame.query().where("userId", user.id)
       ).map((el) => +el.gameId);
 
-      if (_.intersection(gamesIds, userGamesIds)) ctx.throw(409);
+      if (_.intersection(gamesIds, userGamesIds).length !== 0) ctx.throw(409);
 
       await Aigle.map(physicalGamesIds, async (id) => {
         const game = await Game.query().findById(id);

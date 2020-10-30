@@ -142,8 +142,8 @@ export const Store = () => {
   }, []);
 
   useEffect(() => {
-    if (error) history.push("/error", error);
-  }, [error]);
+    if (error && error.status !== 401) history.push("/error", error);
+  }, []);
 
   const isFiltersActive =
     filterConfig.gameCreatorId ||
@@ -272,7 +272,7 @@ export const Store = () => {
               </div>
               <h4 className={styles.inputGroupHeader}>Genres</h4>
               <ul className={styles.inputGroup}>
-                {isLoading || error ? (
+                {isLoading ? (
                   <li
                     className={`${styles.inputGroupItem} ${
                       error ? styles.errorItem : styles.loadingItem
@@ -325,7 +325,7 @@ export const Store = () => {
               </ul>
               <h4 className={styles.inputGroupHeader}>Game creators</h4>
               <ul className={styles.inputGroup}>
-                {isLoading || error ? (
+                {isLoading ? (
                   <li
                     className={`${styles.inputGroupItem} ${
                       error ? styles.errorItem : styles.loadingItem

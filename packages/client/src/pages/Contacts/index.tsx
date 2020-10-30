@@ -1,4 +1,5 @@
 import { Header } from "components/Header";
+import { config } from "config";
 import React from "react";
 import { FaHome, FaMailBulk, FaPhone } from "react-icons/fa";
 import { Map, Placemark } from "react-yandex-maps";
@@ -26,8 +27,11 @@ export const Contacts = () => {
               </div>
               <div className={styles.contentContainer}>
                 <p className={styles.contactDescription}>Give us a call</p>
-                <a className={styles.contactData} href={"tel:+123456789"}>
-                  +123 456 789
+                <a
+                  className={styles.contactData}
+                  href={`tel:${config.contacts.tel}`}
+                >
+                  {config.contacts.tel}
                 </a>
               </div>
             </li>
@@ -39,9 +43,9 @@ export const Contacts = () => {
                 <p className={styles.contactDescription}>Send us an email</p>
                 <a
                   className={styles.contactData}
-                  href={"mailto:super.duper@gmail.com"}
+                  href={`mailto:${config.contacts.mail}`}
                 >
-                  super.duper@gmail.com
+                  {config.contacts.mail}
                 </a>
               </div>
             </li>
@@ -57,7 +61,7 @@ export const Contacts = () => {
                     "https://yandex.by/maps/157/minsk/house/Zk4YcwNkS0wBQFtpfXR5eX9mZQ==/?ll=27.544471%2C53.887782&z=18"
                   }
                 >
-                  Pushkina Street, Kolotushkina House
+                  {config.contacts.address}
                 </a>
               </div>
             </li>

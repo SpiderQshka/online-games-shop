@@ -27,7 +27,6 @@ interface GameItemProps {}
 export const GameItem: React.FunctionComponent<GameItemProps> = () => {
   const { id } = useParams<{ id: string }>();
   const { token } = useAuth();
-  const { showPopup } = usePopup();
   const history = useHistory();
   const {
     getGame,
@@ -40,6 +39,7 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
     getUserAchievements,
     getUserGames,
   } = useApi();
+  const { showPopup } = usePopup();
   const [error, setError] = useState<IApiError | null>(null);
   const [game, setGame] = useState<IGameForUI | null>(null);
   const [userGames, setUserGames] = useState<IMyGameFromApi[]>([]);
@@ -62,6 +62,11 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
           blockGame(game.id).then(({ game, error }) => {
             if (error) setError(error);
           });
+
+        showPopup({
+          msg: `You successfully ordeded "${game?.name}"!`,
+          type: "success",
+        });
       } else history.push("/login");
     },
     [game, token]
@@ -150,8 +155,8 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
       .some((el) => !el);
 
   useEffect(() => {
-    if (error) history.push("/error", error);
-  }, [error]);
+    if (error && error.status !== 401) history.push("/error", error);
+  }, []);
 
   return (
     <>

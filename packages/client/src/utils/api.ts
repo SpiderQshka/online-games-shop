@@ -1,6 +1,7 @@
 import axios from "axios";
 import { config } from "config";
-import { IOrder, IApi } from "interfaces/api";
+import { IOrder } from "interfaces/api";
+import { IApi } from "context/api";
 
 import { getTokenFromLocalStorage } from "./helpers";
 

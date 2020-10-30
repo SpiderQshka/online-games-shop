@@ -6,9 +6,11 @@ import styles from "./styles.module.scss";
 
 export const Popup: React.FunctionComponent = () => {
   const { isOpen, msg, type, hidePopup, status } = usePopup();
-  if (type === "error") console.error(msg);
+
   const msgForShow = type === "error" ? `Error: ${status}` : msg;
+
   if (isOpen) setTimeout(hidePopup, config.popupTimeout);
+
   return (
     <div
       className={`${styles.popupContainer} ${isOpen && styles.open} ${

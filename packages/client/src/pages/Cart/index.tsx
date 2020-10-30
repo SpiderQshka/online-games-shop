@@ -130,10 +130,6 @@ export const Cart = () => {
     });
   }, [games]);
 
-  // useEffect(() => {
-  //   if (error) showPopup({ type: "error", msg: error.msg, code: error.status });
-  // }, [error]);
-
   useEffect(() => {
     if (error) history.push("/error", error);
   }, [error]);
@@ -187,7 +183,7 @@ export const Cart = () => {
                     {games.reduce(
                       (prev, curr) =>
                         prev +
-                        getOptimalGamePrice({
+                        +getOptimalGamePrice({
                           achievementDiscount,
                           game: curr,
                           isPhysical: curr.isPhysical,

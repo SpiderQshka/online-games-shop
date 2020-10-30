@@ -6,6 +6,7 @@ import {
   IGameForOrder,
   IGameFromApi,
   IGenreFromApi,
+  IMyGameFromApi,
   IOrderedGame,
   IOrderFromApi,
   IUsedDiscount,
@@ -182,7 +183,7 @@ export const formatGamesForUI: (
 interface FormatOrdersForUIConfig {
   orderedGames: IOrderedGame[];
   orders: IOrderFromApi[];
-  userGames: IGameFromApi[];
+  userGames: IMyGameFromApi[];
   usedDiscounts: IUsedDiscount[];
   discounts: IDiscountFromApi[];
 }
@@ -208,37 +209,18 @@ export const formatOrdersForUI: (
         const gameDiscountsIds = usedDiscounts
           .filter((el) => el.gameId === game?.id)
           .map((el) => el.discountId);
-        const doesGameHavePhysicalDublicate =
-          orderedGames.filter(
-            (el) => el.gameId === game.id && el.orderId === order.id
-          ).length > 1;
+
         const discount = getGameHightestDiscount({
           discounts,
           game,
           gameDiscountsIds,
         });
-        if (doesGameHavePhysicalDublicate) {
-          gamePhysicalDublicates.push({
-            ...game,
-            isPhysical: true,
-            discount,
-          });
-          return {
-            ...game,
-            isPhysical: false,
-            discount,
-          };
-        }
         return {
           ...game,
-          isPhysical: orderedGames.filter(
-            (el) => el.gameId === game.id && el.orderId === order.id
-          )[0].isPhysical,
+          isPhysical: game.isPhysical,
           discount,
         };
       });
-
-    gamesForOrder.push(...gamePhysicalDublicates);
 
     const userId = orderedGames.filter(
       (orderedGame) => orderedGame.orderId === order.id

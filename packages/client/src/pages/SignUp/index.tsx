@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useAuth } from "context/auth";
 import { useApi } from "context/api";
+import { usePopup } from "context/popup";
 
 export interface SignUpFormValues {
   login: string;
@@ -16,6 +17,7 @@ export const SignUp = () => {
   const [serverError, setServerError] = useState<string | null>(null);
   const { setToken } = useAuth();
   const { register } = useApi();
+  const { showPopup } = usePopup();
   const history = useHistory();
   const formik = useFormik({
     initialValues: {
@@ -40,6 +42,7 @@ export const SignUp = () => {
         else {
           setToken(response.token as string);
           history.push("/profile");
+          showPopup({ msg: "You are welcome!", type: "success" });
         }
       });
     },

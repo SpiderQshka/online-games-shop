@@ -55,7 +55,7 @@ router.route({
     type: "json",
     body: gamesRoutesValidation.block,
   },
-  pre: checkAdmin,
+  pre: checkAuth,
   handler: gamesController.block,
 });
 
@@ -66,7 +66,7 @@ router.route({
     type: "json",
     body: gamesRoutesValidation.unblock,
   },
-  pre: checkAdmin,
+  pre: checkAuth,
   handler: gamesController.unblock,
 });
 

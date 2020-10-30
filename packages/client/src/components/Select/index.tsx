@@ -46,14 +46,3 @@ export const Select: React.FunctionComponent<SelectProps> = ({
     </div>
   );
 };
-//   <select {...props} className={styles.select}>
-//     <option value="creationDate" className={styles.item}>
-//       Creation date
-//     </option>
-//     <option value="alphabet" className={styles.item}>
-//       Alphabet
-//     </option>
-//     <option value="discount" className={styles.item}>
-//       Discount
-//     </option>
-//   </select>

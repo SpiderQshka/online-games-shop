@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useAuth } from "context/auth";
 import { useApi } from "context/api";
+import { usePopup } from "context/popup";
 
 export interface LoginFormValues {
   login: string;
@@ -16,6 +17,7 @@ export const Login = () => {
   const { setToken } = useAuth();
   const history = useHistory();
   const { login } = useApi();
+  const { showPopup } = usePopup();
   const formik = useFormik({
     initialValues: { login: "", password: "" } as LoginFormValues,
     validationSchema: Yup.object({
@@ -32,6 +34,7 @@ export const Login = () => {
         else {
           setToken(response.token as string);
           history.push("/store");
+          showPopup({ msg: "Nice to see you again!", type: "success" });
         }
       });
     },

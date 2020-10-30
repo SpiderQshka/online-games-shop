@@ -44,9 +44,7 @@ export const Games: React.FunctionComponent<GamesProps> = ({
               ))}
             </>
           ) : (
-            <li className={styles.notFound}>
-              You don't have any orders.. yet!
-            </li>
+            <li className={styles.notFound}>You don't have any games.. yet!</li>
           )}
         </ul>
       )}
