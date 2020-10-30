@@ -24,6 +24,12 @@ export const Error = () => {
 
         <h2 className={styles.errorStatus}>{error.status}</h2>
         <p className={styles.errorMsg}>{error.msg}</p>
+        <p className={styles.errorAdvise}>
+          Check your internet connection and try to go back
+        </p>
+        <button className={styles.goBack} onClick={() => history.goBack()}>
+          Go back
+        </button>
       </div>
     </>
   );

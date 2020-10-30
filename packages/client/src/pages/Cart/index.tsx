@@ -15,13 +15,11 @@ import { Header } from "components/Header";
 import { useHistory } from "react-router-dom";
 import { GiTumbleweed } from "react-icons/gi";
 import { Loader } from "components/Loader";
-import { usePopup } from "context/popup";
 
 Aigle.mixin(_, {});
 
 export const Cart = () => {
   const history = useHistory();
-  const { showPopup } = usePopup();
   const {
     getGame,
     postOrder,
@@ -102,10 +100,6 @@ export const Cart = () => {
     };
     processGames();
   }, []);
-
-  useEffect(() => {
-    if (error) showPopup({ type: "error", msg: error.msg, code: error.status });
-  }, [error]);
 
   const submitHandler = useCallback(async () => {
     await Aigle.map(games, (game) =>

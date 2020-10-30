@@ -149,7 +149,7 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
 
   useEffect(() => {
     if (error && error.status !== 401) history.push("/error", error);
-  }, []);
+  }, [error]);
 
   return (
     <>

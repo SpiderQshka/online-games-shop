@@ -141,9 +141,9 @@ export const Store = () => {
     processAsync();
   }, []);
 
-  useEffect(() => {
-    if (error && error.status !== 401) history.push("/error", error);
-  }, []);
+  // useEffect(() => {
+  //   if (error && error.status !== 401) history.push("/error", error);
+  // }, []);
 
   const isFiltersActive =
     filterConfig.gameCreatorId ||
@@ -188,6 +188,17 @@ export const Store = () => {
             </div>
             {isLoading ? (
               <CenteredLoader />
+            ) : error ? (
+              <div className={styles.errorContainer}>
+                <h1 className={styles.errorHeader}>Oops!</h1>
+                <h2 className={styles.errorStatus}>
+                  Error code - {error.status}
+                </h2>
+                <p className={styles.errorMsg}>{error.msg}</p>
+                <p className={styles.errorAdvise}>
+                  Check your internet connection and try to reload this page
+                </p>
+              </div>
             ) : filteredGames.length > 0 ? (
               <ul className={styles.gamesList}>
                 {filteredGames.map((game) => (
