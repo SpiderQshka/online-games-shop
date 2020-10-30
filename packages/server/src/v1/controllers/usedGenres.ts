@@ -10,26 +10,16 @@ interface IUsedGenresController {
   getAll: Middleware;
   put: Middleware;
   post: Middleware;
-  delete: Middleware;
 }
 
 export const usedGenresController: IUsedGenresController = {
   get: async (ctx) => {
-    try {
-      const response = await UsedGenre.query().findById(ctx.params.id);
+    const response = await UsedGenre.query().findById(ctx.params.id);
 
-      if (!response) ctx.throw(404);
+    if (!response)
+      ctx.throw(404, `Used genre with id '${ctx.params.id}' was not found`);
 
-      ctx.body = response;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(404, `Used genre with id '${ctx.params.id}' was not found`);
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = response;
   },
   getAll: async (ctx) => {
     const response = await UsedGenre.query();
@@ -39,40 +29,18 @@ export const usedGenresController: IUsedGenresController = {
     ctx.body = response;
   },
   put: async (ctx) => {
-    try {
-      const response = await UsedGenre.query()
-        .findById(ctx.params.id)
-        .patchAndFetchById(ctx.params.id, ctx.request.body);
+    const response = await UsedGenre.query()
+      .findById(ctx.params.id)
+      .patchAndFetchById(ctx.params.id, ctx.request.body);
 
-      if (!response) ctx.throw(404);
+    if (!response)
+      ctx.throw(404, `Used genre with id '${ctx.params.id}' was not found`);
 
-      ctx.body = response;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(404, `Used genre with id '${ctx.params.id}' was not found`);
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = response;
   },
   post: async (ctx) => {
-    try {
-      const response = await UsedGenre.query().insert(ctx.request.body);
+    const response = await UsedGenre.query().insert(ctx.request.body);
 
-      ctx.body = response;
-    } catch (e) {
-      ctx.throw(400, "Bad request");
-    }
-  },
-  delete: async (ctx) => {
-    try {
-      const response = await UsedGenre.query().deleteById(ctx.params.id);
-
-      ctx.body = response;
-    } catch (e) {
-      ctx.throw(400, "Bad request");
-    }
+    ctx.body = response;
   },
 };

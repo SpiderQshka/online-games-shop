@@ -24,21 +24,12 @@ interface IGamesController {
 
 export const gamesController: IGamesController = {
   get: async (ctx) => {
-    try {
-      const response = await Game.query().findById(ctx.params.id);
+    const response = await Game.query().findById(ctx.params.id);
 
-      if (!response) ctx.throw(404);
+    if (!response)
+      ctx.throw(404, `Game with id '${ctx.params.id}' was not found`);
 
-      ctx.body = response;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(404, `Game with id '${ctx.params.id}' was not found`);
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = response;
   },
   getAll: async (ctx) => {
     const response = await Game.query();
@@ -50,128 +41,88 @@ export const gamesController: IGamesController = {
   getMy: async (ctx) => {
     const user = verifyJwtToken(ctx);
 
-    try {
-      const myOrderedGames = await OrderedGame.query().where("userId", user.id);
-      const myGames = await Aigle.map(myOrderedGames, async (el) => {
-        const game = await Game.query().findById(el.gameId);
-        return { ...game, isPhysical: el.isPhysical };
-      });
-      ctx.body = myGames;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(404, `No games found`);
+    const myOrderedGames = await OrderedGame.query().where("userId", user.id);
 
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    const myGames = await Aigle.map(myOrderedGames, async (el) => {
+      const game = await Game.query().findById(el.gameId);
+      return { ...game, isPhysical: el.isPhysical };
+    });
+
+    ctx.body = myGames;
   },
   put: async (ctx) => {
-    try {
-      const genresIds = [...ctx.request.body.genresIds] as number[];
+    const genresIds = [...ctx.request.body.genresIds] as number[];
 
-      delete ctx.request.body.genresIds;
+    delete ctx.request.body.genresIds;
 
-      const game = await Game.query()
-        .findById(ctx.params.id)
-        .patchAndFetchById(ctx.params.id, ctx.request.body);
+    const game = await Game.query()
+      .findById(ctx.params.id)
+      .patchAndFetchById(ctx.params.id, ctx.request.body);
 
-      if (!game) ctx.throw(404);
+    if (!game) ctx.throw(404, `Game with id '${ctx.params.id}' was not found`);
 
-      const usedGenres = await UsedGenre.query();
+    const usedGenres = await UsedGenre.query();
 
-      const gameGenresIds =
-        usedGenres.length > 0
-          ? _.uniq(
-              usedGenres
-                .filter((usedGenre) => usedGenre.gameId === game.id)
-                .map((usedGenre) => usedGenre.genreId)
-            )
-          : [];
+    const gameGenresIds =
+      usedGenres.length > 0
+        ? _.uniq(
+            usedGenres
+              .filter((usedGenre) => usedGenre.gameId === game.id)
+              .map((usedGenre) => usedGenre.genreId)
+          )
+        : [];
 
-      await Aigle.map(gameGenresIds, (genreId) =>
-        UsedGenre.query()
-          .delete()
-          .where("genreId", genreId)
-          .where("gameId", game.id)
-      );
+    await Aigle.map(gameGenresIds, (genreId) =>
+      UsedGenre.query()
+        .delete()
+        .where("genreId", genreId)
+        .where("gameId", game.id)
+    );
 
-      await Aigle.map(genresIds, (genreId) =>
-        UsedGenre.query().insert({ gameId: game.id, genreId })
-      );
+    await Aigle.map(genresIds, (genreId) =>
+      UsedGenre.query().insert({ gameId: game.id, genreId })
+    );
 
-      ctx.body = game;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(404, `Game with id '${ctx.params.id}' was not found`);
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = game;
   },
   post: async (ctx) => {
-    try {
-      const genresIds = [...ctx.request.body.genresIds] as number[];
+    const genresIds = [...ctx.request.body.genresIds] as number[];
 
-      delete ctx.request.body.genresIds;
+    delete ctx.request.body.genresIds;
 
-      const game = await Game.query().insert(ctx.request.body);
+    const game = await Game.query().insert(ctx.request.body);
 
-      await Aigle.map(genresIds, (genreId) =>
-        UsedGenre.query().insert({
-          gameId: game.id,
-          genreId: genreId,
-        })
-      );
+    await Aigle.map(genresIds, (genreId) =>
+      UsedGenre.query().insert({
+        gameId: game.id,
+        genreId: genreId,
+      })
+    );
 
-      ctx.body = game;
-    } catch (e) {
-      console.log(e);
-
-      ctx.throw(400, "Bad request");
-    }
+    ctx.body = game;
   },
   block: async (ctx) => {
-    try {
-      const gameId = ctx.request.body.gameId as number;
+    const gameId = ctx.request.body.gameId as number;
 
-      const game = await Game.query().findById(gameId);
-      if (game.numberOfPhysicalCopies === 0) ctx.throw(400);
+    const game = await Game.query().findById(gameId);
+    if (game.numberOfPhysicalCopies === 0)
+      ctx.throw(404, "Game doesn't have physical copies left");
 
-      const updatedGame = await Game.query().patchAndFetchById(gameId, {
-        numberOfPhysicalCopies: +game.numberOfPhysicalCopies - 1,
-      });
+    const updatedGame = await Game.query().patchAndFetchById(gameId, {
+      numberOfPhysicalCopies: +game.numberOfPhysicalCopies - 1,
+    });
 
-      ctx.body = updatedGame;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(404, `Game with id '${ctx.params.id}' was not found`);
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = updatedGame;
   },
   unblock: async (ctx) => {
-    try {
-      const gameId = ctx.request.body.gameId as number;
+    const gameId = ctx.request.body.gameId as number;
 
-      const game = await Game.query().findById(gameId);
+    const game = await Game.query().findById(gameId);
 
-      const updatedGame = await Game.query().patchAndFetchById(gameId, {
-        numberOfPhysicalCopies: +game.numberOfPhysicalCopies + 1,
-      });
+    const updatedGame = await Game.query().patchAndFetchById(gameId, {
+      numberOfPhysicalCopies: +game.numberOfPhysicalCopies + 1,
+    });
 
-      ctx.body = updatedGame;
-    } catch (e) {
-      switch (e.status) {
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = updatedGame;
   },
 };

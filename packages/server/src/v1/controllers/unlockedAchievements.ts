@@ -14,26 +14,15 @@ interface IUnlockedAchievementsController {
 
 export const unlockedAchievementsController: IUnlockedAchievementsController = {
   get: async (ctx) => {
-    try {
-      const response = await UnlockedAchievement.query().findById(
-        ctx.params.id
+    const response = await UnlockedAchievement.query().findById(ctx.params.id);
+
+    if (!response)
+      ctx.throw(
+        404,
+        `Unlocked achievement with id '${ctx.params.id}' was not found`
       );
 
-      if (!response) ctx.throw(404);
-
-      ctx.body = response;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(
-            404,
-            `Unlocked achievement with id '${ctx.params.id}' was not found`
-          );
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = response;
   },
   getAll: async (ctx) => {
     const response = await UnlockedAchievement.query();
@@ -44,26 +33,17 @@ export const unlockedAchievementsController: IUnlockedAchievementsController = {
   },
 
   put: async (ctx) => {
-    try {
-      const response = await UnlockedAchievement.query()
-        .findById(ctx.params.id)
-        .patchAndFetchById(ctx.params.id, ctx.request.body);
+    const response = await UnlockedAchievement.query()
+      .findById(ctx.params.id)
+      .patchAndFetchById(ctx.params.id, ctx.request.body);
 
-      if (!response) ctx.throw(404);
+    if (!response)
+      ctx.throw(
+        404,
+        `Unlocked achievement with id '${ctx.params.id}' was not found`
+      );
 
-      ctx.body = response;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(
-            404,
-            `Unlocked achievement with id '${ctx.params.id}' was not found`
-          );
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = response;
   },
   post: async (ctx) => {
     try {

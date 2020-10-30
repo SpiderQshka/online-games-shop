@@ -14,21 +14,12 @@ interface IGenresController {
 
 export const genresController: IGenresController = {
   get: async (ctx) => {
-    try {
-      const response = await Genre.query().findById(ctx.params.id);
+    const response = await Genre.query().findById(ctx.params.id);
 
-      if (!response) ctx.throw(404);
+    if (!response)
+      ctx.throw(404, `Genre with id '${ctx.params.id}' was not found`);
 
-      ctx.body = response;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(404, `Genre with id '${ctx.params.id}' was not found`);
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = response;
   },
   getAll: async (ctx) => {
     const response = await Genre.query();
@@ -38,31 +29,18 @@ export const genresController: IGenresController = {
     ctx.body = response;
   },
   put: async (ctx) => {
-    try {
-      const response = await Genre.query()
-        .findById(ctx.params.id)
-        .patchAndFetchById(ctx.params.id, ctx.request.body);
+    const response = await Genre.query()
+      .findById(ctx.params.id)
+      .patchAndFetchById(ctx.params.id, ctx.request.body);
 
-      if (!response) ctx.throw(404);
+    if (!response)
+      ctx.throw(404, `Genre with id '${ctx.params.id}' was not found`);
 
-      ctx.body = response;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(404, `Genre with id '${ctx.params.id}' was not found`);
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = response;
   },
   post: async (ctx) => {
-    try {
-      const response = await Genre.query().insert(ctx.request.body);
+    const response = await Genre.query().insert(ctx.request.body);
 
-      ctx.body = response;
-    } catch (e) {
-      ctx.throw(400, "Bad request");
-    }
+    ctx.body = response;
   },
 };

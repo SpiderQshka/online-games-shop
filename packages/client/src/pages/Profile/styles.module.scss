@@ -20,8 +20,11 @@
         .menuLink {
           display: flex;
           align-items: center;
+          justify-content: center;
           text-decoration: none;
           padding: 20px;
+          box-sizing: border-box;
+          min-height: 100%;
           .menuText {
             @include primaryFont;
             display: block;

@@ -19,26 +19,16 @@ interface IUsersController {
 export const usersController: IUsersController = {
   get: async (ctx) => {
     const user = verifyJwtToken(ctx);
-    try {
-      const response = await User.query().findById(ctx.params.id);
 
-      if (!response) ctx.throw(404);
+    const response = await User.query().findById(ctx.params.id);
 
-      if (user.id !== ctx.params.id && !user.isAdmin) ctx.throw(403);
+    if (!response)
+      ctx.throw(404, `User with id '${ctx.params.id}' was not found`);
 
-      ctx.body = response;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(404, `User with id '${ctx.params.id}' was not found`);
+    if (user.id !== ctx.params.id && !user.isAdmin)
+      ctx.throw(403, `Access denied`);
 
-        case 403:
-          ctx.throw(403, `Forbidden`);
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = response;
   },
   getAll: async (ctx) => {
     const response = await User.query();
@@ -53,23 +43,14 @@ export const usersController: IUsersController = {
     ctx.body = user;
   },
   put: async (ctx) => {
-    try {
-      const response = await User.query()
-        .findById(ctx.params.id)
-        .patchAndFetchById(ctx.params.id, ctx.request.body);
+    const response = await User.query()
+      .findById(ctx.params.id)
+      .patchAndFetchById(ctx.params.id, ctx.request.body);
 
-      if (!response) ctx.throw(404);
+    if (!response)
+      ctx.throw(404, `User with id '${ctx.params.id}' was not found`);
 
-      ctx.body = response;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(404, `User with id '${ctx.params.id}' was not found`);
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = response;
   },
   post: async (ctx) => {
     try {

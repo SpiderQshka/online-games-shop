@@ -16,21 +16,12 @@ interface IDiscountsController {
 
 export const discountsController: IDiscountsController = {
   get: async (ctx) => {
-    try {
-      const response = await Discount.query().findById(ctx.params.id);
+    const response = await Discount.query().findById(ctx.params.id);
 
-      if (!response) ctx.throw(404);
+    if (!response)
+      ctx.throw(404, `Discount with id '${ctx.params.id}' was not found`);
 
-      ctx.body = response;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(404, `Discount with id '${ctx.params.id}' was not found`);
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = response;
   },
   getAll: async (ctx) => {
     const response = await Discount.query();
@@ -40,47 +31,34 @@ export const discountsController: IDiscountsController = {
     ctx.body = response;
   },
   put: async (ctx) => {
-    try {
-      const gamesIds = ctx.request.body.gamesIds as number[];
-      delete ctx.request.body.gamesIds;
+    const gamesIds = ctx.request.body.gamesIds as number[];
+    delete ctx.request.body.gamesIds;
 
-      const discount = await Discount.query()
-        .findById(ctx.params.id)
-        .patchAndFetchById(ctx.params.id, ctx.request.body);
+    const discount = await Discount.query()
+      .findById(ctx.params.id)
+      .patchAndFetchById(ctx.params.id, ctx.request.body);
 
-      if (!discount) ctx.throw(404);
+    if (!discount)
+      ctx.throw(404, `Discount with id '${ctx.params.id}' was not found`);
 
-      await UsedDiscount.query().delete().where("discountId", discount.id);
+    await UsedDiscount.query().delete().where("discountId", discount.id);
 
-      await Aigle.map(gamesIds, (gameId) =>
-        UsedDiscount.query().insert({ discountId: discount.id, gameId })
-      );
+    await Aigle.map(gamesIds, (gameId) =>
+      UsedDiscount.query().insert({ discountId: discount.id, gameId })
+    );
 
-      ctx.body = discount;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(404, `Discount with id '${ctx.params.id}' was not found`);
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = discount;
   },
   post: async (ctx) => {
-    try {
-      const gamesIds = ctx.request.body.gamesIds as number[];
-      delete ctx.request.body.gamesIds;
+    const gamesIds = ctx.request.body.gamesIds as number[];
+    delete ctx.request.body.gamesIds;
 
-      const discount = await Discount.query().insert(ctx.request.body);
-      Aigle.map(gamesIds, (gameId) =>
-        UsedDiscount.query().insert({ discountId: discount.id, gameId })
-      );
+    const discount = await Discount.query().insert(ctx.request.body);
 
-      ctx.body = discount;
-    } catch (e) {
-      3;
-      ctx.throw(400, "Bad request");
-    }
+    await Aigle.map(gamesIds, (gameId) =>
+      UsedDiscount.query().insert({ discountId: discount.id, gameId })
+    );
+
+    ctx.body = discount;
   },
 };
