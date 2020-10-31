@@ -141,10 +141,6 @@ export const Store = () => {
     processAsync();
   }, []);
 
-  // useEffect(() => {
-  //   if (error && error.status !== 401) history.push("/error", error);
-  // }, []);
-
   const isFiltersActive =
     filterConfig.gameCreatorId ||
     filterConfig.genresIds.length > 0 ||

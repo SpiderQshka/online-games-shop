@@ -32,7 +32,6 @@ import { Genres } from "../sections/Genres";
 import { CreateGenre } from "../sections/Genres/CreateGenre";
 import { UpdateGenre } from "../sections/Genres/UpdateGenre";
 import { formatGamesForUI, getGameHightestDiscount } from "utils/helpers";
-import { usePopup } from "context/popup";
 
 interface RoutesProps {
   isLoading: boolean;
@@ -46,7 +45,6 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
   updateTrigger,
 }) => {
   const history = useHistory();
-  const { showPopup } = usePopup();
   const {
     getGames,
     getGameCreators,
@@ -205,13 +203,18 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
     processAsync();
   }, [history.location.pathname, updateTrigger]);
 
-  useEffect(() => {
-    if (error) showPopup({ type: "error", msg: error.msg, code: error.status });
-  }, [error]);
-
-  return isLoading || error ? (
+  return isLoading ? (
     <div className={styles.loaderContainer}>
       <Loader />
+    </div>
+  ) : error ? (
+    <div className={styles.errorContainer}>
+      <h1 className={styles.errorHeader}>Oops!</h1>
+      <h2 className={styles.errorStatus}>Error code - {error.status}</h2>
+      <p className={styles.errorMsg}>{error.msg}</p>
+      <p className={styles.errorAdvise}>
+        Check your internet connection and try to reload this page
+      </p>
     </div>
   ) : (
     <Switch>

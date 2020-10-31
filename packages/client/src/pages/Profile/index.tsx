@@ -88,10 +88,6 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
     processAsync();
   }, []);
 
-  useEffect(() => {
-    if (error) history.push("/error", error);
-  }, [error]);
-
   return (
     <>
       <Header />
@@ -140,32 +136,45 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
               </li>
             )}
           </ul>
-          <div className={styles.dataContainer}>
-            <Switch>
-              <Route
-                path="/profile/orders"
-                component={() => (
-                  <Orders orders={orders} isLoading={isLoading} />
-                )}
-              />
-              <Route
-                path="/profile/achievements"
-                component={() => (
-                  <Achievements
-                    achievements={achievements}
-                    isLoading={isLoading}
-                  />
-                )}
-              />
-              <Route
-                path="/profile/games"
-                component={() => (
-                  <Games games={userGames} isLoading={isLoading} />
-                )}
-              />
-              <Route component={() => <Redirect to="/profile/orders" />} />
-            </Switch>
-          </div>
+          {error ? (
+            <div className={styles.errorContainer}>
+              <h1 className={styles.errorHeader}>Oops!</h1>
+              <h2 className={styles.errorStatus}>
+                Error code - {error.status}
+              </h2>
+              <p className={styles.errorMsg}>{error.msg}</p>
+              <p className={styles.errorAdvise}>
+                Check your internet connection and try to reload this page
+              </p>
+            </div>
+          ) : (
+            <div className={`${styles.dataContainer}`}>
+              <Switch>
+                <Route
+                  path="/profile/orders"
+                  component={() => (
+                    <Orders orders={orders} isLoading={isLoading} />
+                  )}
+                />
+                <Route
+                  path="/profile/achievements"
+                  component={() => (
+                    <Achievements
+                      achievements={achievements}
+                      isLoading={isLoading}
+                    />
+                  )}
+                />
+                <Route
+                  path="/profile/games"
+                  component={() => (
+                    <Games games={userGames} isLoading={isLoading} />
+                  )}
+                />
+                <Route component={() => <Redirect to="/profile/orders" />} />
+              </Switch>
+            </div>
+          )}
         </div>
       </div>
     </>
