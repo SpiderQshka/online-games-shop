@@ -12,7 +12,7 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
   const history = useHistory();
   const { getGames, getUser } = useApi();
   const [error, setError] = useState<IApiError | null>(null);
-  const [games, setGames] = useState<IGameFromApi[]>([]);
+  // const [games, setGames] = useState<IGameFromApi[]>([]);
   const [user, setUser] = useState<IUser | null>();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -26,7 +26,7 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
       const { user, error: userError } = await getUser();
       if (userError) setError(userError);
 
-      setGames(games);
+      // setGames(games);
       setUser(user);
       setIsLoading(false);
     };
@@ -109,7 +109,7 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
         </button>
       </nav>
       <div className={`${styles.profileContainer}`}>
-        <SearchBar games={games} />
+        <SearchBar />
         {isLoading ? (
           <div className={styles.loadingProfile}>Loading...</div>
         ) : user ? (

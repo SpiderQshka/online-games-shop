@@ -49,6 +49,13 @@ router.route({
 });
 
 router.route({
+  method: "get",
+  path: "/api/v1/games/query/:query",
+  validate: {},
+  handler: gamesController.query,
+});
+
+router.route({
   method: "post",
   path: "/api/v1/games/block",
   validate: {

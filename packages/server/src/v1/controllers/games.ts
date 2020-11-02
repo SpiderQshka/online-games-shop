@@ -1,6 +1,6 @@
 import { Middleware } from "koa";
 import knex from "db/knex";
-import { Model } from "objection";
+import { Model, raw } from "objection";
 import { Game } from "models/Game";
 import _ from "lodash";
 import Aigle from "aigle";
@@ -18,6 +18,7 @@ interface IGamesController {
   getMy: Middleware;
   put: Middleware;
   post: Middleware;
+  query: Middleware;
   block: Middleware;
   unblock: Middleware;
 }
@@ -100,6 +101,19 @@ export const gamesController: IGamesController = {
     );
 
     ctx.body = game;
+  },
+  query: async (ctx) => {
+    const query = ctx.params.query as string;
+
+    const games = await Game.query().where(
+      raw('lower("name")'),
+      "like",
+      `%${query}%`
+    );
+
+    console.log(games);
+
+    ctx.body = games;
   },
   block: async (ctx) => {
     const gameId = ctx.request.body.gameId as number;

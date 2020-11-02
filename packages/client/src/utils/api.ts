@@ -522,4 +522,20 @@ export const API: IApi = {
           error: { msg: error.request.response, status: error.request.status },
         };
       }),
+  queryGame: (query: string) =>
+    axios
+      .get(`${config.apiUrl}/games/query/${query}`, {
+        headers: {
+          token: getTokenFromLocalStorage(),
+        },
+      })
+      .then((response) => {
+        return { games: response.data };
+      })
+      .catch((error) => {
+        return {
+          games: [],
+          error: { msg: error.request.response, status: error.request.status },
+        };
+      }),
 };

@@ -1,22 +1,30 @@
-import { IGameFromApi } from "interfaces/api";
-import React, { useState } from "react";
+import { useApi } from "context/api";
+import { IApiError, IGameFromApi } from "interfaces/api";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import styles from "./styles.module.scss";
 
-interface SearchBarProps {
-  games: IGameFromApi[];
-}
-
-export const SearchBar: React.FunctionComponent<SearchBarProps> = ({
-  games,
-}) => {
+export const SearchBar: React.FunctionComponent = () => {
   const history = useHistory();
+  const { queryGame } = useApi();
   const [query, setQuery] = useState<string>("");
   const [isInputActive, setIsInputActive] = useState<boolean>(false);
+  const [error, setError] = useState<IApiError | null>(null);
+  const [games, setGames] = useState<IGameFromApi[]>([]);
+
   const filteredGames = games.filter((game) =>
     game.name.toLowerCase().includes(query.toLowerCase())
   );
+
+  useEffect(() => {
+    const processAsync = async () => {
+      const { games, error } = await queryGame(query);
+      if (error) setError(error);
+      setGames(games);
+    };
+    processAsync();
+  }, [query]);
 
   return (
     <div className={styles.searchBarContainer}>

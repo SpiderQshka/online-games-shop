@@ -140,6 +140,12 @@ export interface IApi {
     games: IMyGameFromApi[];
     error?: IApiError;
   }>;
+  queryGame: (
+    query: string
+  ) => Promise<{
+    games: IGameFromApi[];
+    error?: IApiError;
+  }>;
 }
 
 export const ApiContext = createContext<IApi>({} as IApi);
