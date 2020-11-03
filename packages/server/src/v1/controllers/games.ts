@@ -7,6 +7,7 @@ import Aigle from "aigle";
 import { UsedGenre } from "models/UsedGenre";
 import { verifyJwtToken } from "v1/auth";
 import { OrderedGame } from "models/OrderedGame";
+import { checkAchievements } from "v1/helpers";
 
 Aigle.mixin(_, {});
 
@@ -48,6 +49,8 @@ export const gamesController: IGamesController = {
       const game = await Game.query().findById(el.gameId);
       return { ...game, isPhysical: el.isPhysical };
     });
+
+    await checkAchievements(user.id);
 
     ctx.body = myGames;
   },

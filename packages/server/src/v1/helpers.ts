@@ -1,5 +1,8 @@
 import { Achievement } from "models/Achievement";
 import { Discount } from "models/Discount";
+import { Game } from "models/Game";
+import { Order } from "models/Order";
+import { OrderedGame } from "models/OrderedGame";
 import { IDiscount, IGame } from "models/types";
 import { UnlockedAchievement } from "models/UnlockedAchievement";
 import { UsedDiscount } from "models/UsedDiscount";
@@ -104,5 +107,29 @@ export const getOptimalGamePrice = ({
     return gamePriceWithAchievement < gamePriceWithGameDiscount
       ? gamePriceWithAchievement
       : gamePriceWithGameDiscount;
+  }
+};
+
+export const checkAchievements = async (userId: number) => {
+  const userOrderedGames = await OrderedGame.query().where("userId", userId);
+  const userOrderedGamesIds = userOrderedGames.map((el) => el.gameId);
+  const userGames = (await Game.query()).filter((game) =>
+    userOrderedGamesIds.includes(game.id)
+  );
+  const userUnlockedAchievements = await UnlockedAchievement.query().where(
+    "userId",
+    userId
+  );
+  const userAchievementsIds = userUnlockedAchievements.map(
+    (el) => el.achievementId
+  );
+  const userAchievements = (await Achievement.query()).map((el) =>
+    userAchievementsIds.includes(el.id)
+  );
+
+  switch (
+    userGames.length
+    // case
+  ) {
   }
 };

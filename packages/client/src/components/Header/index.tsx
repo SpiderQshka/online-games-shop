@@ -4,7 +4,7 @@ import { SearchBar } from "../SearchBar";
 import { FaUser, FaGamepad, FaShoppingCart, FaBars } from "react-icons/fa";
 import { Link, useHistory } from "react-router-dom";
 import { useApi } from "context/api";
-import { IApiError, IGameFromApi, IUser } from "interfaces/api";
+import { IApiError, IUser } from "interfaces/api";
 
 interface HeaderProps {}
 
@@ -12,7 +12,6 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
   const history = useHistory();
   const { getGames, getUser } = useApi();
   const [error, setError] = useState<IApiError | null>(null);
-  // const [games, setGames] = useState<IGameFromApi[]>([]);
   const [user, setUser] = useState<IUser | null>();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -26,7 +25,6 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
       const { user, error: userError } = await getUser();
       if (userError) setError(userError);
 
-      // setGames(games);
       setUser(user);
       setIsLoading(false);
     };
