@@ -143,33 +143,29 @@ export const checkAchievements = async (userId: number) => {
     userOrderedGamesIds.includes(game.id)
   );
 
-  switch (userGames.length) {
-    case 10: {
-      const achievement = await doesUserHaveAchievement(userId, "Buy 10 games");
-      if (!achievement.exists) {
-        await UnlockedAchievement.query().insert({
-          userId,
-          achievementId: achievement.id,
-        });
-      }
+  if (userGames.length === 1) {
+    const achievement = await doesUserHaveAchievement(userId, "Buy 1 game");
+    if (!achievement.exists) {
+      await UnlockedAchievement.query().insert({
+        userId,
+        achievementId: achievement.id,
+      });
     }
-    case 2: {
-      const achievement = await doesUserHaveAchievement(userId, "Buy 2 games");
-      if (!achievement.exists) {
-        await UnlockedAchievement.query().insert({
-          userId,
-          achievementId: achievement.id,
-        });
-      }
+  } else if (userGames.length >= 2) {
+    const achievement = await doesUserHaveAchievement(userId, "Buy 2 games");
+    if (!achievement.exists) {
+      await UnlockedAchievement.query().insert({
+        userId,
+        achievementId: achievement.id,
+      });
     }
-    case 1: {
-      const achievement = await doesUserHaveAchievement(userId, "Buy 1 game");
-      if (!achievement.exists) {
-        await UnlockedAchievement.query().insert({
-          userId,
-          achievementId: achievement.id,
-        });
-      }
+  } else if (userGames.length >= 10) {
+    const achievement = await doesUserHaveAchievement(userId, "Buy 10 games");
+    if (!achievement.exists) {
+      await UnlockedAchievement.query().insert({
+        userId,
+        achievementId: achievement.id,
+      });
     }
   }
 };

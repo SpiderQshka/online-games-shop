@@ -15,7 +15,12 @@ import {
 import { useApi } from "context/api";
 import { IOrderWithUserId } from "interfaces/app";
 import { useAuth } from "context/auth";
-import { formatOrdersForUI, removeCartData } from "utils/helpers";
+import {
+  formatOrdersForUI,
+  getUnlockedAchievementsNumber,
+  removeCartData,
+  setUnlockedAchievementsNumber,
+} from "utils/helpers";
 import { usePopup } from "context/popup";
 import { Games } from "./Games";
 
@@ -23,6 +28,7 @@ interface IProfileProps {}
 
 export const Profile: React.FunctionComponent<IProfileProps> = () => {
   const history = useHistory();
+  const { showPopup } = usePopup();
   const [error, setError] = useState<IApiError | null>(null);
   const [orders, setOrders] = useState<IOrderWithUserId[]>([]);
   const [userGames, setUserGames] = useState<IMyGameFromApi[]>([]);
@@ -39,6 +45,10 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
   } = useApi();
   const { removeToken } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  if (getUnlockedAchievementsNumber() < achievements.length) {
+    setUnlockedAchievementsNumber(achievements.length);
+    showPopup({ type: "success", msg: "Achievement get!" });
+  }
 
   useEffect(() => {
     setIsLoading(true);
@@ -77,7 +87,6 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
 
       const { achievements, error } = await getUserAchievements();
       if (error) setError(error);
-      console.log(error);
 
       setUser(user);
       setUserGames(userGames);

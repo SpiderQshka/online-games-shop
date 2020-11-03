@@ -1,13 +1,8 @@
 import { Header } from "components/Header";
 import { useApi } from "context/api";
-import {
-  IAchievementFromApi,
-  IApiError,
-  IGameCreatorFromApi,
-  IGenreFromApi,
-} from "interfaces/api";
+import { IApiError, IGameCreatorFromApi, IGenreFromApi } from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { formatGamesForUI, getAchievementDiscountSize } from "utils/helpers";
 import { filterGames, sortGames } from "utils/helpers";
 import { FaWindowClose, FaSadTear, FaFilter } from "react-icons/fa";
@@ -16,7 +11,6 @@ import { useHistory } from "react-router-dom";
 import { CenteredLoader } from "components/Loader";
 import { Select } from "components/Select";
 import { SliderRange } from "components/SliderRange";
-import { usePopup } from "context/popup";
 
 export type SortType = "creationDate" | "alphabet" | "discount";
 export interface IFilterConfig {
@@ -40,8 +34,6 @@ export const Store = () => {
   } = useApi();
 
   const history = useHistory();
-  const { showPopup } = usePopup();
-
   const [games, setGames] = useState<IGameForUI[]>([]);
   const [gameCreators, setGameCreators] = useState<IGameCreatorFromApi[]>([]);
   const [genres, setGenres] = useState<IGenreFromApi[]>([]);
@@ -52,14 +44,6 @@ export const Store = () => {
   const [isFiltersMenuOpen, setIsFiltersMenuOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [achievementDiscount, setAchievementDiscount] = useState<number>(0);
-  const [userAchievements, setUserAchievements] = useState<
-    IAchievementFromApi[]
-  >([]);
-
-  const userAchievementsLength = useRef(0);
-  useEffect(() => {
-    userAchievementsLength.current = userAchievements.length;
-  });
 
   const [filterConfig, setFilterConfig] = useState<IFilterConfig>({
     gameCreatorId: null,
@@ -151,19 +135,10 @@ export const Store = () => {
       setFilteredGames(sortGames(storeGames, sortType));
       setGenres(genres);
       setGameCreators(gameCreators);
-      setUserAchievements(userAchievements);
       setIsLoading(false);
     };
     processAsync();
   }, []);
-
-  useEffect(() => {
-    if (userAchievementsLength.current > 0)
-      showPopup({
-        type: "success",
-        msg: userAchievements[userAchievements.length - 1].name,
-      });
-  }, [userAchievementsLength.current]);
 
   const areFiltersActive =
     filterConfig.gameCreatorId ||

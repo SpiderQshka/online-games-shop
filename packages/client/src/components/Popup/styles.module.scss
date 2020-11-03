@@ -1,7 +1,7 @@
 @import "../../styles/config.scss";
 
 $popup-height: 100px;
-$popup-width: 300px;
+$popup-width: 400px;
 
 .popupContainer {
   max-width: $popup-width;
@@ -35,7 +35,7 @@ $popup-width: 300px;
     line-height: 1.3;
   }
   .icon {
-    margin-right: 10px;
+    margin-right: 25px;
   }
   .closePopupBtn {
     @include basicBtn;

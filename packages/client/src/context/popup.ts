@@ -7,7 +7,6 @@ export interface IPopup {
   type: PopupType;
   msg: string;
   status: number;
-  // configPopup: (type: PopupType, msg: string, code?: number) => void;
   showPopup: (config: { type: PopupType; msg: string; code?: number }) => void;
   hidePopup: () => void;
 }

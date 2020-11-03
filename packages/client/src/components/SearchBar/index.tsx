@@ -2,6 +2,7 @@ import { useApi } from "context/api";
 import { IApiError, IGameFromApi } from "interfaces/api";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import _ from "lodash";
 
 import styles from "./styles.module.scss";
 
@@ -12,20 +13,26 @@ export const SearchBar: React.FunctionComponent = () => {
   const [isInputActive, setIsInputActive] = useState<boolean>(false);
   const [error, setError] = useState<IApiError | null>(null);
   const [games, setGames] = useState<IGameFromApi[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const filteredGames = games.filter((game) =>
     game.name.toLowerCase().includes(query.toLowerCase())
   );
 
   useEffect(() => {
-    if (query.length > 2) {
-      const processAsync = async () => {
-        const { games, error } = await queryGame(query);
-        if (error) setError(error);
-        setGames(games);
-      };
-      processAsync();
-    }
+    setIsLoading(true);
+    const debounced = _.debounce(() => {
+      if (query.length > 2) {
+        const processAsync = async () => {
+          const { games, error } = await queryGame(query.toLowerCase());
+          if (error) setError(error);
+          setGames(games);
+          setIsLoading(false);
+        };
+        processAsync();
+      } else setIsLoading(false);
+    }, 200);
+    debounced();
   }, [query]);
 
   return (
@@ -54,8 +61,14 @@ export const SearchBar: React.FunctionComponent = () => {
                 {game.name}
               </li>
             ))
+          ) : isLoading ? (
+            <li className={styles.notFound}>Loading...</li>
           ) : (
-            <li className={styles.notFound}>Nothing was found</li>
+            <li className={styles.notFound}>
+              {query.length > 2
+                ? "Nothing was found"
+                : "Type 3 or more symbols"}
+            </li>
           )}
         </ul>
       )}

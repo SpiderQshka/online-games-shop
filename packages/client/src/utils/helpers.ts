@@ -12,17 +12,17 @@ import {
   IUsedDiscount,
   IUsedGenre,
 } from "interfaces/api";
-import { IGameForUI, IOrderForUI, IOrderWithUserId } from "interfaces/app";
+import { IGameForUI, IOrderWithUserId } from "interfaces/app";
 import _ from "lodash";
 import { IFilterConfig, SortType } from "pages/Store";
 
 export const setCartData = (games: { id: number; isPhysical: boolean }[]) =>
-  localStorage.setItem("games", JSON.stringify(games));
+  localStorage.setItem("cart", JSON.stringify(games));
 
 export const getCartData = (): { id: number; isPhysical: boolean }[] =>
-  JSON.parse(localStorage.getItem("games") as string) || [];
+  JSON.parse(localStorage.getItem("cart") as string) || [];
 
-export const removeCartData = () => localStorage.removeItem("games");
+export const removeCartData = () => localStorage.removeItem("cart");
 
 export const getTokenFromLocalStorage = () => localStorage.getItem("token");
 
@@ -31,6 +31,12 @@ export const setTokenToLocalStorage = (token: string) =>
 
 export const removeTokenFromLocalStorage = () =>
   localStorage.removeItem("token");
+
+export const setUnlockedAchievementsNumber = (number: number) =>
+  localStorage.setItem("unlockedAchievementsNumber", `${number}`);
+
+export const getUnlockedAchievementsNumber = () =>
+  +(localStorage.getItem("unlockedAchievementsNumber") || 0);
 
 export const filterGames = (games: IGameForUI[], config: IFilterConfig) =>
   games.filter((game) => {

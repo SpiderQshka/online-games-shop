@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useCallback, useState } from "react";
+import React, { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -8,7 +8,7 @@ import {
 import { AuthContext } from "./context/auth";
 import "./styles/reset.scss";
 import { PrivateRoute } from "components/PrivateRoute";
-import { ApiContext } from "context/api";
+import { ApiContext, useApi } from "context/api";
 import { PopupContext } from "context/popup";
 import { API } from "utils/api";
 import { IconContext } from "react-icons";
@@ -17,10 +17,12 @@ import {
   getTokenFromLocalStorage,
   setTokenToLocalStorage,
   removeTokenFromLocalStorage,
+  setUnlockedAchievementsNumber,
 } from "utils/helpers";
 import { PopupType } from "context/popup";
 import { Popup } from "components/Popup";
 import { YMaps } from "react-yandex-maps";
+import { SetUnlockedAchievements } from "components/SetUnlockedAchievements";
 const FAQ = lazy(() => import("pages/FAQ"));
 const Error = lazy(() => import("pages/Error"));
 const Contacts = lazy(() => import("pages/Contacts"));
@@ -37,6 +39,7 @@ function App() {
   const [token, setTokenToContext] = useState<string | null>(
     getTokenFromLocalStorage()
   );
+  const { getUserAchievements } = useApi();
 
   const setTokenHandler = (token: string) => {
     setTokenToLocalStorage(token);
@@ -88,6 +91,7 @@ function App() {
               <Router>
                 <Suspense fallback={<PageLoader />}>
                   <Popup />
+                  <SetUnlockedAchievements />
                   <Switch>
                     <Route
                       exact

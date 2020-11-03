@@ -58,7 +58,7 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
 
         showPopup({
           msg: `You successfully ordeded "${game?.name}"!`,
-          type: "success",
+          type: "neutral",
         });
       } else history.push("/login");
     },
