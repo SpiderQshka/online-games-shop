@@ -286,9 +286,9 @@ export const getOptimalGamePrice = ({
       ? getGamePriceWithDiscount({
           discountSize: game.discount.amount,
           discountType: game.discount.type,
-          gamePrice: game.price,
+          gamePrice: +game.price,
         })
-      : game.price;
+      : +game.price;
     const gamePriceWithAchievement = getGamePriceWithDiscount({
       discountSize: achievementDiscount,
       gamePrice: game.price,
@@ -296,16 +296,16 @@ export const getOptimalGamePrice = ({
     });
 
     return gamePriceWithAchievement < gamePriceWithGameDiscount
-      ? gamePriceWithAchievement
-      : gamePriceWithGameDiscount;
+      ? +gamePriceWithAchievement.toFixed(2)
+      : +gamePriceWithGameDiscount.toFixed(2);
   } else {
     const gamePriceWithGameDiscount = game.discount
       ? getGamePriceWithDiscount({
           discountSize: game.discount.amount,
           discountType: game.discount.type,
-          gamePrice: game.physicalCopyPrice,
+          gamePrice: +game.physicalCopyPrice,
         })
-      : game.physicalCopyPrice;
+      : +game.physicalCopyPrice;
     const gamePriceWithAchievement = getGamePriceWithDiscount({
       discountSize: achievementDiscount,
       gamePrice: game.physicalCopyPrice,
@@ -313,13 +313,7 @@ export const getOptimalGamePrice = ({
     });
 
     return gamePriceWithAchievement < gamePriceWithGameDiscount
-      ? gamePriceWithAchievement
-      : gamePriceWithGameDiscount;
+      ? +gamePriceWithAchievement.toFixed(2)
+      : +gamePriceWithGameDiscount.toFixed(2);
   }
 };
-
-export const getUserGames = (orders: IOrderForUI[]) =>
-  orders.reduce(
-    (prev, curr) => [...prev, ...curr.orderedGames],
-    [] as IGameForOrder[]
-  );

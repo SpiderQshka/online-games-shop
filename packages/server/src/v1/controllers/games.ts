@@ -114,8 +114,6 @@ export const gamesController: IGamesController = {
       `%${query}%`
     );
 
-    console.log(games);
-
     ctx.body = games;
   },
   block: async (ctx) => {

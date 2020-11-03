@@ -1,4 +1,4 @@
-import { Achievement } from "models/Achievement";
+import { Achievement, AchievementName } from "models/Achievement";
 import { Discount } from "models/Discount";
 import { Game } from "models/Game";
 import { Order } from "models/Order";
@@ -110,12 +110,15 @@ export const getOptimalGamePrice = ({
   }
 };
 
-export const checkAchievements = async (userId: number) => {
-  const userOrderedGames = await OrderedGame.query().where("userId", userId);
-  const userOrderedGamesIds = userOrderedGames.map((el) => el.gameId);
-  const userGames = (await Game.query()).filter((game) =>
-    userOrderedGamesIds.includes(game.id)
-  );
+const doesUserHaveAchievement = async (
+  userId: number,
+  achName: AchievementName
+) => {
+  const achievements = await Achievement.query();
+  const requiredAchievement = achievements.filter(
+    (el) => el.name === achName
+  )[0];
+
   const userUnlockedAchievements = await UnlockedAchievement.query().where(
     "userId",
     userId
@@ -123,13 +126,50 @@ export const checkAchievements = async (userId: number) => {
   const userAchievementsIds = userUnlockedAchievements.map(
     (el) => el.achievementId
   );
-  const userAchievements = (await Achievement.query()).map((el) =>
+  const userAchievements = (await Achievement.query()).filter((el) =>
     userAchievementsIds.includes(el.id)
   );
+  const resultAchievement = userAchievements.filter(
+    (el) => el.name === achName
+  )[0];
 
-  switch (
-    userGames.length
-    // case
-  ) {
+  return { exists: !!resultAchievement, id: requiredAchievement.id };
+};
+
+export const checkAchievements = async (userId: number) => {
+  const userOrderedGames = await OrderedGame.query().where("userId", userId);
+  const userOrderedGamesIds = userOrderedGames.map((el) => el.gameId);
+  const userGames = (await Game.query()).filter((game) =>
+    userOrderedGamesIds.includes(game.id)
+  );
+
+  switch (userGames.length) {
+    case 10: {
+      const achievement = await doesUserHaveAchievement(userId, "Buy 10 games");
+      if (!achievement.exists) {
+        await UnlockedAchievement.query().insert({
+          userId,
+          achievementId: achievement.id,
+        });
+      }
+    }
+    case 2: {
+      const achievement = await doesUserHaveAchievement(userId, "Buy 2 games");
+      if (!achievement.exists) {
+        await UnlockedAchievement.query().insert({
+          userId,
+          achievementId: achievement.id,
+        });
+      }
+    }
+    case 1: {
+      const achievement = await doesUserHaveAchievement(userId, "Buy 1 game");
+      if (!achievement.exists) {
+        await UnlockedAchievement.query().insert({
+          userId,
+          achievementId: achievement.id,
+        });
+      }
+    }
   }
 };

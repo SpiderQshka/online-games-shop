@@ -77,6 +77,7 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
 
       const { achievements, error } = await getUserAchievements();
       if (error) setError(error);
+      console.log(error);
 
       setUser(user);
       setUserGames(userGames);

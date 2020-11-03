@@ -177,16 +177,18 @@ export const Cart = () => {
                 <p className={styles.totalPrice}>
                   <span>Sub-total</span>
                   <span className={styles.price}>
-                    {games.reduce(
-                      (prev, curr) =>
-                        prev +
-                        +getOptimalGamePrice({
-                          achievementDiscount,
-                          game: curr,
-                          isPhysical: curr.isPhysical,
-                        }),
-                      0
-                    )}
+                    {games
+                      .reduce(
+                        (prev, curr) =>
+                          prev +
+                          +getOptimalGamePrice({
+                            achievementDiscount,
+                            game: curr,
+                            isPhysical: curr.isPhysical,
+                          }),
+                        0
+                      )
+                      .toFixed(2)}
                     $
                   </span>
                 </p>

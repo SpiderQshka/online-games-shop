@@ -40,18 +40,12 @@ export const achievementsController: IAchievementsController = {
 
     const userAchievementsIds = (
       await UnlockedAchievement.query().where("userId", user.id)
-    ).map((el) => el.id);
+    ).map((el) => el.achievementId);
 
     const userAchievements = await Aigle.map(
       userAchievementsIds,
       (achId: number) => Achievement.query().findById(achId)
     );
-
-    if (!userAchievements)
-      ctx.throw(
-        404,
-        `Achievements for user with id '${user.id}' were not found`
-      );
 
     ctx.body = userAchievements;
   },

@@ -14,6 +14,7 @@ import {
   doesCurrentDateSuitDiscount,
   getHightestGameDiscount,
   getAchievementDiscount,
+  checkAchievements,
 } from "v1/helpers";
 
 Aigle.mixin(_, {});
@@ -66,6 +67,8 @@ export const ordersController: IOrdersController = {
 
     if (!orders)
       ctx.throw(404, `Orders for user with id '${user.id}' were not found`);
+
+    await checkAchievements(user.id);
 
     ctx.body = orders;
   },
@@ -326,6 +329,8 @@ export const ordersController: IOrdersController = {
           isPhysical: true,
         })
     );
+
+    await checkAchievements(user.id);
 
     ctx.body = {
       ...order,

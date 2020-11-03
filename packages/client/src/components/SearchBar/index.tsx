@@ -18,12 +18,14 @@ export const SearchBar: React.FunctionComponent = () => {
   );
 
   useEffect(() => {
-    const processAsync = async () => {
-      const { games, error } = await queryGame(query);
-      if (error) setError(error);
-      setGames(games);
-    };
-    processAsync();
+    if (query.length > 2) {
+      const processAsync = async () => {
+        const { games, error } = await queryGame(query);
+        if (error) setError(error);
+        setGames(games);
+      };
+      processAsync();
+    }
   }, [query]);
 
   return (
