@@ -16,7 +16,7 @@ export const SearchBar: React.FunctionComponent = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const filteredGames = games.filter((game) =>
-    game.name.toLowerCase().includes(query.toLowerCase())
+    game.name.toLowerCase().includes(query)
   );
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export const SearchBar: React.FunctionComponent = () => {
     const debounced = _.debounce(() => {
       if (query.length > 2) {
         const processAsync = async () => {
-          const { games, error } = await queryGame(query.toLowerCase());
+          const { games, error } = await queryGame(query);
           if (error) setError(error);
           setGames(games);
           setIsLoading(false);
@@ -41,7 +41,7 @@ export const SearchBar: React.FunctionComponent = () => {
         type="text"
         className={styles.input}
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => setQuery(e.target.value.toLowerCase())}
         placeholder="Search"
         onFocus={() => setIsInputActive(true)}
         onBlur={(e) => !e.relatedTarget && setIsInputActive(false)}
