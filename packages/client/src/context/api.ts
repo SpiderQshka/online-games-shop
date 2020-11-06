@@ -11,6 +11,7 @@ import {
   IGameFromApi,
   IGenre,
   IGenreFromApi,
+  IMyAchievementFromApi,
   IMyGameFromApi,
   IOrder,
   IOrderAdmin,
@@ -68,7 +69,7 @@ export interface IApi {
     error?: IApiError;
   }>;
   getUserAchievements: () => Promise<{
-    achievements: IAchievementFromApi[];
+    achievements: IMyAchievementFromApi[];
     error?: IApiError;
   }>;
   getUser: () => Promise<{

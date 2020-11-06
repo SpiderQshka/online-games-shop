@@ -143,12 +143,13 @@ export const checkAchievements = async (userId: number) => {
     userOrderedGamesIds.includes(game.id)
   );
 
-  if (userGames.length === 1) {
+  if (userGames.length >= 1) {
     const achievement = await doesUserHaveAchievement(userId, "Buy 1 game");
     if (!achievement.exists) {
       await UnlockedAchievement.query().insert({
         userId,
         achievementId: achievement.id,
+        seen: false,
       });
     }
   } else if (userGames.length >= 2) {
@@ -157,6 +158,7 @@ export const checkAchievements = async (userId: number) => {
       await UnlockedAchievement.query().insert({
         userId,
         achievementId: achievement.id,
+        seen: false,
       });
     }
   } else if (userGames.length >= 10) {
@@ -165,6 +167,7 @@ export const checkAchievements = async (userId: number) => {
       await UnlockedAchievement.query().insert({
         userId,
         achievementId: achievement.id,
+        seen: false,
       });
     }
   }

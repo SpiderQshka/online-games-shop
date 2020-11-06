@@ -118,6 +118,10 @@ export interface IAchievementFromApi extends IAchievement {
   id: number;
 }
 
+export interface IMyAchievementFromApi extends IAchievementFromApi {
+  seen: boolean;
+}
+
 export interface IUnlockedAchievement {
   achievementId: number;
   userId: number;

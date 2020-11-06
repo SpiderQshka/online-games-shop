@@ -210,7 +210,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
   ) : error ? (
     <div className={styles.errorContainer}>
       <h1 className={styles.errorHeader}>Oops!</h1>
-      <h2 className={styles.errorStatus}>Error code - {error.status}</h2>
+      <h2 className={styles.errorStatus}>Something went wrong!</h2>
       <p className={styles.errorMsg}>{error.msg}</p>
       <p className={styles.errorAdvise}>
         Check your internet connection and try to reload this page

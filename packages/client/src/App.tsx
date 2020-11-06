@@ -21,9 +21,8 @@ import {
 import { PopupType } from "context/popup";
 import { Popup } from "components/Popup";
 import { YMaps } from "react-yandex-maps";
-import { SetUnlockedAchievements } from "components/SetUnlockedAchievements";
 const FAQ = lazy(() => import("pages/FAQ"));
-const Error = lazy(() => import("pages/Error"));
+// const Error = lazy(() => import("pages/Error"));
 const Contacts = lazy(() => import("pages/Contacts"));
 const SuccessPage = lazy(() => import("pages/Store/SuccessPage"));
 const SignUp = lazy(() => import("pages/SignUp"));
@@ -89,7 +88,6 @@ function App() {
               <Router>
                 <Suspense fallback={<PageLoader />}>
                   <Popup />
-                  <SetUnlockedAchievements />
                   <Switch>
                     <Route
                       exact
@@ -109,7 +107,6 @@ function App() {
                       component={SuccessPage}
                     />
                     <PrivateRoute path="/admin" component={Admin} />
-                    <Route path="/error" component={Error} />
                     <Route component={NotFound} />
                   </Switch>
                 </Suspense>

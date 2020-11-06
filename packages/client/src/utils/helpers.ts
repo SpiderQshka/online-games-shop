@@ -32,12 +32,6 @@ export const setTokenToLocalStorage = (token: string) =>
 export const removeTokenFromLocalStorage = () =>
   localStorage.removeItem("token");
 
-export const setUnlockedAchievementsNumber = (number: number) =>
-  localStorage.setItem("unlockedAchievementsNumber", `${number}`);
-
-export const getUnlockedAchievementsNumber = () =>
-  +(localStorage.getItem("unlockedAchievementsNumber") || 0);
-
 export const filterGames = (games: IGameForUI[], config: IFilterConfig) =>
   games.filter((game) => {
     if (

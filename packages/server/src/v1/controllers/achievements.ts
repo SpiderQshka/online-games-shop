@@ -47,7 +47,23 @@ export const achievementsController: IAchievementsController = {
       (achId: number) => Achievement.query().findById(achId)
     );
 
-    ctx.body = userAchievements;
+    const userUnlockedAchievements = await UnlockedAchievement.query().where(
+      "userId",
+      user.id
+    );
+
+    const userAchievementsForClient = userAchievements.map((ach) => ({
+      ...ach,
+      seen: userUnlockedAchievements.filter(
+        (el) => el.achievementId === ach.id
+      )[0].seen,
+    }));
+
+    await UnlockedAchievement.query()
+      .where("userId", user.id)
+      .update({ seen: true });
+
+    ctx.body = userAchievementsForClient;
   },
   put: async (ctx) => {
     const response = await Achievement.query()

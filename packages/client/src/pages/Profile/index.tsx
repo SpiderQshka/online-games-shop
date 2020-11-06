@@ -9,18 +9,13 @@ import { Orders } from "./Orders";
 import {
   IApiError,
   IUser,
-  IAchievementFromApi,
   IMyGameFromApi,
+  IMyAchievementFromApi,
 } from "interfaces/api";
 import { useApi } from "context/api";
 import { IOrderWithUserId } from "interfaces/app";
 import { useAuth } from "context/auth";
-import {
-  formatOrdersForUI,
-  getUnlockedAchievementsNumber,
-  removeCartData,
-  setUnlockedAchievementsNumber,
-} from "utils/helpers";
+import { formatOrdersForUI, removeCartData } from "utils/helpers";
 import { usePopup } from "context/popup";
 import { Games } from "./Games";
 
@@ -33,7 +28,7 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
   const [orders, setOrders] = useState<IOrderWithUserId[]>([]);
   const [userGames, setUserGames] = useState<IMyGameFromApi[]>([]);
   const [user, setUser] = useState<IUser | null>(null);
-  const [achievements, setAchievements] = useState<IAchievementFromApi[]>([]);
+  const [achievements, setAchievements] = useState<IMyAchievementFromApi[]>([]);
   const {
     getUserOrders,
     getUserOrderedGames,
@@ -45,10 +40,12 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
   } = useApi();
   const { removeToken } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  if (getUnlockedAchievementsNumber() < achievements.length) {
-    setUnlockedAchievementsNumber(achievements.length);
-    showPopup({ type: "success", msg: "Achievement get!" });
-  }
+
+  useEffect(() => {
+    const newAchievements = achievements.filter((ach) => !ach.seen);
+    if (newAchievements.length > 0)
+      showPopup({ msg: "Achievement get!", type: "success" });
+  }, [achievements.length]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -149,9 +146,7 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
           {error ? (
             <div className={styles.errorContainer}>
               <h1 className={styles.errorHeader}>Oops!</h1>
-              <h2 className={styles.errorStatus}>
-                Error code - {error.status}
-              </h2>
+              <h2 className={styles.errorStatus}>Something went wrong!</h2>
               <p className={styles.errorMsg}>{error.msg}</p>
               <p className={styles.errorAdvise}>
                 Check your internet connection and try to reload this page
