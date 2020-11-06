@@ -5,10 +5,12 @@ import json from "koa-json";
 import { routesV1Middleware } from "./v1/routes";
 import session from "koa-session";
 import passport from "koa-passport";
+import cors from "@koa/cors";
 import "./v1/auth/setup";
 
 const app = new Koa();
 
+app.use(cors());
 app.use(session({}, app));
 
 app.use(passport.initialize());

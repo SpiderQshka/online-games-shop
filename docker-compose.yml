@@ -4,16 +4,25 @@ services:
   db:
     image: postgres:11
     restart: always
-    ports:
-      - 5432:5432
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=password
       - POSTGRES_DB=postgres
   client:
     stdin_open: true
-    build:
-      context: ./packages/client
-      dockerfile: Dockerfile
+    build: ./packages/client
+    ports:
+      - 80:5000
+  server:
+    build: ./packages/server
     ports:
       - 3333:3333
+    environment:
+      - PORT=3333
+      - DB_HOST=db
+      - DB_CLIENT=postgres
+      - DN_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - JWT_SECRET_KEY="secret key"
+    command: sh -c "yarn migrate && yarn seed && yarn server"

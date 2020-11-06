@@ -1,28 +1,26 @@
-FROM node:12
+FROM node:12.19-alpine
 
-# создание директории приложения
 WORKDIR /server
 
-# установка зависимостей
-# символ астериск ("*") используется для того чтобы по возможности 
-# скопировать оба файла: package.json и package-lock.json
 ENV PORT=3333
 ENV DB_CLIENT=postgres
 ENV DN_NAME=postgres
 ENV DB_USER=postgres
 ENV DB_PASSWORD=password
 ENV JWT_SECRET_KEY="secret key"
+ENV DB_HOST=db
+
 COPY package.json ./
 COPY yarn.lock ./
 COPY nodemon.json ./
 COPY tsconfig.json ./
 
 RUN yarn
-# Если вы создаете сборку для продакшн
-# RUN npm ci --only=production
 
-# копируем исходный код
 COPY ./src ./src
 
-EXPOSE 3333
-CMD [ "yarn", "start" ]
+RUN yarn global add tsc
+
+RUN yarn tsc
+
+CMD ["node", "--inspect", "-r", "ts-node/register", "-r", "dotenv/config", "-r", "tsconfig-paths/register", "./dist/index.js"]

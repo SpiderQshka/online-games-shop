@@ -13,6 +13,10 @@ RUN yarn
 COPY ./src ./src
 COPY ./public ./public
 
-EXPOSE 8080
+RUN yarn build
 
-CMD ["yarn", "start"]
+RUN yarn global add serve
+
+EXPOSE 80
+
+CMD ["serve", "-s", "build"]

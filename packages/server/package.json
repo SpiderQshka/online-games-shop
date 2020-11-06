@@ -5,10 +5,12 @@
     "start": "nodemon",
     "test": "jest --runInBand",
     "migrate:make": "knex --knexfile src/db/knexfile.ts migrate:make",
-    "migrate:latest": "knex --knexfile src/db/knexfile.ts migrate:latest",
+    "migrate": "knex --knexfile src/db/knexfile.ts migrate:latest",
     "migrate:rollback": "knex --knexfile src/db/knexfile.ts migrate:rollback",
-    "seed:run": "knex --knexfile src/db/knexfile.ts seed:run",
-    "seed:make": "knex --knexfile src/db/knexfile.ts seed:make"
+    "seed": "knex --knexfile src/db/knexfile.ts seed:run",
+    "seed:make": "knex --knexfile src/db/knexfile.ts seed:make",
+    "build": "tsc",
+    "server": "node --inspect -r ts-node/register -r dotenv/config -r tsconfig-paths/register ./dist/index.js"
   },
   "license": "ISC",
   "devDependencies": {
@@ -24,6 +26,7 @@
     "@types/koa-passport": "^4.0.2",
     "@types/koa-router": "^7.4.1",
     "@types/koa-session": "^5.10.2",
+    "@types/koa__cors": "^3.0.2",
     "@types/lodash": "^4.14.161",
     "@types/node": "^14.6.0",
     "@types/passport-jwt": "^3.0.3",
@@ -35,9 +38,10 @@
     "prettier": "^2.1.1",
     "ts-node": "^9.0.0",
     "tsconfig-paths": "^3.9.0",
-    "typescript": "^3.7.5"
+    "typescript": "^4.0.5"
   },
   "dependencies": {
+    "@koa/cors": "^3.1.0",
     "aigle": "^1.14.1",
     "bcrypt": "^5.0.0",
     "faker": "^4.1.0",
@@ -56,6 +60,7 @@
     "objection": "^2.2.3",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "pg": "^8.3.2"
+    "pg": "^8.3.2",
+    "tsc": "^1.20150623.0"
   }
 }
