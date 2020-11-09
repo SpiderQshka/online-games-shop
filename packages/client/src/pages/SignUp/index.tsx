@@ -42,7 +42,7 @@ export const SignUp = () => {
         else {
           setToken(response.token as string);
           history.push("/profile");
-          showPopup({ msg: "You are welcome!", type: "success" });
+          showPopup({ msg: "You are welcome!", type: "neutral" });
         }
       });
     },

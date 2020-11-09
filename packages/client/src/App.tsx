@@ -21,8 +21,8 @@ import {
 import { PopupType } from "context/popup";
 import { Popup } from "components/Popup";
 import { YMaps } from "react-yandex-maps";
+import { AdminRoute } from "components/AdminRoute";
 const FAQ = lazy(() => import("pages/FAQ"));
-// const Error = lazy(() => import("pages/Error"));
 const Contacts = lazy(() => import("pages/Contacts"));
 const SuccessPage = lazy(() => import("pages/Store/SuccessPage"));
 const SignUp = lazy(() => import("pages/SignUp"));
@@ -106,7 +106,7 @@ function App() {
                       path="/cart/success"
                       component={SuccessPage}
                     />
-                    <PrivateRoute path="/admin" component={Admin} />
+                    <AdminRoute path="/admin" component={Admin} />
                     <Route component={NotFound} />
                   </Switch>
                 </Suspense>

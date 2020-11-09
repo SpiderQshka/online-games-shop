@@ -138,10 +138,19 @@ const doesUserHaveAchievement = async (
 
 export const checkAchievements = async (userId: number) => {
   const userOrderedGames = await OrderedGame.query().where("userId", userId);
+  const userOrdersIds = userOrderedGames.map((el) => el.orderId);
   const userOrderedGamesIds = userOrderedGames.map((el) => el.gameId);
   const userGames = (await Game.query()).filter((game) =>
     userOrderedGamesIds.includes(game.id)
   );
+  const userOrders = (await Order.query()).filter((order) =>
+    userOrdersIds.includes(order.id)
+  );
+  const userPhysicalGamesIds = userOrderedGames
+    .filter((el) => el.isPhysical)
+    .map((el) => el.gameId);
+
+  // Buy N games achievements
 
   if (userGames.length >= 1) {
     const achievement = await doesUserHaveAchievement(userId, "Buy 1 game");
@@ -163,6 +172,77 @@ export const checkAchievements = async (userId: number) => {
     }
   } else if (userGames.length >= 10) {
     const achievement = await doesUserHaveAchievement(userId, "Buy 10 games");
+    if (!achievement.exists) {
+      await UnlockedAchievement.query().insert({
+        userId,
+        achievementId: achievement.id,
+        seen: false,
+      });
+    }
+  }
+
+  // Make N orders achievements
+
+  if (userOrders.length >= 1) {
+    const achievement = await doesUserHaveAchievement(userId, "Make 1 order");
+    if (!achievement.exists) {
+      await UnlockedAchievement.query().insert({
+        userId,
+        achievementId: achievement.id,
+        seen: false,
+      });
+    }
+  } else if (userOrders.length >= 2) {
+    const achievement = await doesUserHaveAchievement(userId, "Make 2 orders");
+    if (!achievement.exists) {
+      await UnlockedAchievement.query().insert({
+        userId,
+        achievementId: achievement.id,
+        seen: false,
+      });
+    }
+  } else if (userOrders.length >= 10) {
+    const achievement = await doesUserHaveAchievement(userId, "Make 10 orders");
+    if (!achievement.exists) {
+      await UnlockedAchievement.query().insert({
+        userId,
+        achievementId: achievement.id,
+        seen: false,
+      });
+    }
+  }
+
+  // Order N phydical copies achievements
+
+  if (userPhysicalGamesIds.length >= 1) {
+    const achievement = await doesUserHaveAchievement(
+      userId,
+      "Order 1 physical copy"
+    );
+    if (!achievement.exists) {
+      await UnlockedAchievement.query().insert({
+        userId,
+        achievementId: achievement.id,
+        seen: false,
+      });
+    }
+  } else if (userPhysicalGamesIds.length >= 2) {
+    const achievement = await doesUserHaveAchievement(
+      userId,
+      "Order 2 physical copies"
+    );
+    if (!achievement.exists) {
+      await UnlockedAchievement.query().insert({
+        userId,
+        achievementId: achievement.id,
+        seen: false,
+      });
+    }
+  } else if (userPhysicalGamesIds.length >= 10) {
+    const achievement = await doesUserHaveAchievement(
+      userId,
+      "Order 10 physical copies"
+    );
     if (!achievement.exists) {
       await UnlockedAchievement.query().insert({
         userId,

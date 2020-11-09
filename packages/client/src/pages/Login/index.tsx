@@ -34,7 +34,7 @@ export const Login = () => {
         else {
           setToken(response.token as string);
           history.push("/store");
-          showPopup({ msg: "Nice to see you again!", type: "success" });
+          showPopup({ msg: "Nice to see you again!", type: "neutral" });
         }
       });
     },
