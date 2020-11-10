@@ -6,8 +6,8 @@
 #         S3_BUCKET: my-example-bucket
 build:
   docker:
-    client: ./packages/client/Dockerfile
-    server: ./packages/server/Dockerfile
+    web: ./packages/client/Dockerfile
+    worker: ./packages/server/Dockerfile
     # db:
 # release:
 #     command:
