@@ -2,7 +2,7 @@ FROM node:12.19-alpine
 
 WORKDIR /server
 
-ENV PORT=3333
+ENV PORT=80
 ENV DB_CLIENT=postgres
 ENV DN_NAME=postgres
 ENV DB_USER=postgres

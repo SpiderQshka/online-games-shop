@@ -20,3 +20,4 @@ RUN yarn global add serve
 EXPOSE 80
 
 CMD ["serve", "-s", "build"]
+# CMD serve -s build -l $PORT 
