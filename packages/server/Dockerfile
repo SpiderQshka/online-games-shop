@@ -23,4 +23,5 @@ RUN yarn global add tsc
 
 RUN yarn tsc
 
-CMD ["node", "--inspect", "-r", "ts-node/register", "-r", "dotenv/config", "-r", "tsconfig-paths/register", "./dist/index.js"]
+# CMD ["node", "--inspect", "-r", "ts-node/register", "-r", "dotenv/config", "-r", "tsconfig-paths/register", "./dist/index.js"]
+CMD sh -c "yarn migrate && yarn seed && yarn server"
