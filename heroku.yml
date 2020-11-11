@@ -8,8 +8,8 @@
 #       POSTGRES_DB: postgres
 build:
   docker:
-    web: ./packages/client/Dockerfile
-    web: ./packages/server/Dockerfile
+    # web: ./packages/client/Dockerfile
+    worker: ./packages/server/Dockerfile
     # db:
 # release:
 #     command:
