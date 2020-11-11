@@ -20,7 +20,7 @@ module.exports = {
   },
 
   production: {
-    client: process.env.DB_CLIENT,
+    client: "postgres",
     connection: process.env.DATABASE_URL,
     migrations: {
       tableName: "table_migrations",
