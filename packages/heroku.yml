@@ -1,0 +1,3 @@
+build:
+  config:
+    REACT_APP_API_URL: https://online-games-shop-server.herokuapp.com/api/v1

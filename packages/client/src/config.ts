@@ -1,5 +1,5 @@
 export const config = {
-  apiUrl: "http://localhost:3333/api/v1",
+  apiUrl: process.env.REACT_APP_API_URL,
   colors: {
     accent: "#f0810f",
     primaryLight: "#f4f4f4",
