@@ -6,10 +6,8 @@
 #         S3_BUCKET: my-example-bucket
 build:
   docker:
-    web: ./packages/client/Dockerfile
-    worker: ./packages/server/Dockerfile
-  config:
-    SERVER_PORT: 1234
+    web: ./packages/server/Dockerfile
+    # worker: ./packages/server/Dockerfile
     # db:
 # release:
 #     command:
