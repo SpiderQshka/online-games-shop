@@ -3,11 +3,13 @@
 #       - plan: postgres:11
 #         as: db
 #     config:
-#         S3_BUCKET: my-example-bucket
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: password
+#       POSTGRES_DB: postgres
 build:
   docker:
+    web: ./packages/client/Dockerfile
     web: ./packages/server/Dockerfile
-    # worker: ./packages/server/Dockerfile
     # db:
 # release:
 #     command:
