@@ -13,7 +13,7 @@ RUN yarn
 COPY ./src ./src
 COPY ./public ./public
 
-ENV API_URL=http://localhost:3333/api/v1
+ENV REACT_APP_API_URL=http://localhost:3333/api/v1
 
 RUN yarn build
 
