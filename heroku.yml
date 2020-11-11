@@ -8,6 +8,8 @@ build:
   docker:
     web: ./packages/client/Dockerfile
     worker: ./packages/server/Dockerfile
+  config:
+    SERVER_PORT: 1234
     # db:
 # release:
 #     command:
