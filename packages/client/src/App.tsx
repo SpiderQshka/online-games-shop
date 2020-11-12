@@ -22,7 +22,7 @@ import { PopupType } from "context/popup";
 import { Popup } from "components/Popup";
 import { YMaps } from "react-yandex-maps";
 import { AdminRoute } from "components/AdminRoute";
-require("dotenv").config();
+import { config } from "dotenv";
 const FAQ = lazy(() => import("pages/FAQ"));
 const Contacts = lazy(() => import("pages/Contacts"));
 const SuccessPage = lazy(() => import("pages/Store/SuccessPage"));
@@ -34,6 +34,9 @@ const Login = lazy(() => import("pages/Login"));
 const GameItem = lazy(() => import("pages/GameItem"));
 const Cart = lazy(() => import("pages/Cart"));
 const Admin = lazy(() => import("pages/Admin"));
+
+config();
+
 function App() {
   const [token, setTokenToContext] = useState<string | null>(
     getTokenFromLocalStorage()
@@ -64,6 +67,8 @@ function App() {
     []
   );
   const hidePopup = useCallback(() => setIsPopupOpen(false), []);
+
+  console.log(process.env);
 
   return (
     <IconContext.Provider value={{ color: "#f4f4f4" }}>
