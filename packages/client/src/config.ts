@@ -1,5 +1,5 @@
 export const config = {
-  apiUrl: process.env.REACT_APP_URL || process.env.REACT_APP_API_URL,
+  apiUrl: process.env.REACT_APP_HEROKU_API_URL || process.env.REACT_APP_API_URL,
   colors: {
     accent: "#f0810f",
     primaryLight: "#f4f4f4",
