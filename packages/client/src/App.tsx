@@ -22,6 +22,7 @@ import { PopupType } from "context/popup";
 import { Popup } from "components/Popup";
 import { YMaps } from "react-yandex-maps";
 import { AdminRoute } from "components/AdminRoute";
+require("dotenv").config();
 const FAQ = lazy(() => import("pages/FAQ"));
 const Contacts = lazy(() => import("pages/Contacts"));
 const SuccessPage = lazy(() => import("pages/Store/SuccessPage"));
@@ -64,7 +65,7 @@ function App() {
   );
   const hidePopup = useCallback(() => setIsPopupOpen(false), []);
 
-  console.log(process.env.REACT_APP_API_URL);
+  console.log(process.env.REACT_APP_API_URL, process.env.API_URL);
 
   return (
     <IconContext.Provider value={{ color: "#f4f4f4" }}>
