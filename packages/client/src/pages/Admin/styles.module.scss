@@ -15,6 +15,7 @@
     }
     .actionsBlock {
       position: fixed;
+      display: inline-block;
       background-color: $secondary-color-light;
       right: 0;
       top: 0;

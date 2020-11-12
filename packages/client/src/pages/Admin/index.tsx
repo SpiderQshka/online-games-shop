@@ -41,6 +41,7 @@ export const Admin = () => {
           isLoading={isLoading}
           updateTrigger={updateTrigger}
           setIsLoading={setIsLoading}
+          setUpdateTrigger={setUpdateTrigger}
         />
       </div>
     </div>

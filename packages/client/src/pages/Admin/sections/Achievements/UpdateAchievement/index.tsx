@@ -8,10 +8,14 @@ import * as Yup from "yup";
 
 interface UpdateAchievementProps {
   achievements: IAchievementFromApi[];
+  updateTrigger: boolean;
+  setUpdateTrigger: (trigger: boolean) => void;
 }
 
 export const UpdateAchievement: React.FunctionComponent<UpdateAchievementProps> = ({
   achievements,
+  setUpdateTrigger,
+  updateTrigger,
 }) => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
@@ -37,7 +41,10 @@ export const UpdateAchievement: React.FunctionComponent<UpdateAchievementProps> 
     onSubmit: (data) =>
       putAchievement(achievement.id, data).then(({ achievement, error }) => {
         if (error) setError(error);
-        else history.push("/admin/achievements");
+        else {
+          setUpdateTrigger(!updateTrigger);
+          history.push("/admin/achievements");
+        }
       }),
   });
 

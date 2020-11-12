@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import styles from "components/AdminTable/styles.module.scss";
 import { FaPlus } from "react-icons/fa";
@@ -22,14 +22,6 @@ export const Achievements: React.FunctionComponent<AchievementsProps> = ({
           <th className={styles.col}>ID</th>
           <th className={styles.col}>Name</th>
           <th className={styles.col}>Discount</th>
-          <th
-            className={`${styles.col} ${styles.btnContainer}`}
-            onClick={() => history.push("/admin/achievements/create")}
-          >
-            <button className={styles.btn}>
-              <FaPlus size="25px" />
-            </button>
-          </th>
         </tr>
         {achievements
           .sort((a, b) => a.id - b.id)

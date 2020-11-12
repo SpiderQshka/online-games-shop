@@ -40,14 +40,15 @@ interface RoutesProps {
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
   updateTrigger: boolean;
+  setUpdateTrigger: (trigger: boolean) => void;
 }
 
 export const Routes: React.FunctionComponent<RoutesProps> = ({
   setIsLoading,
   isLoading,
   updateTrigger,
+  setUpdateTrigger,
 }) => {
-  const history = useHistory();
   const {
     getGames,
     getGameCreators,
@@ -154,7 +155,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
       setIsLoading(false);
     };
     processAsync();
-  }, [history.location.pathname, updateTrigger]);
+  }, [updateTrigger]);
 
   return isLoading ? (
     <div className={styles.loaderContainer}>
@@ -231,7 +232,12 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
       <Route
         exact
         path="/admin/achievements/create"
-        component={() => <CreateAchievement />}
+        component={() => (
+          <CreateAchievement
+            setUpdateTrigger={setUpdateTrigger}
+            updateTrigger={updateTrigger}
+          />
+        )}
       />
       <Route
         exact
@@ -259,7 +265,13 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
       />
       <Route
         path="/admin/achievements/:id"
-        component={() => <UpdateAchievement achievements={achievements} />}
+        component={() => (
+          <UpdateAchievement
+            setUpdateTrigger={setUpdateTrigger}
+            updateTrigger={updateTrigger}
+            achievements={achievements}
+          />
+        )}
       />
       <Route
         path="/admin/gameCreators/:id"

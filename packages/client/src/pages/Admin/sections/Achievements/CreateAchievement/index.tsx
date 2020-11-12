@@ -6,9 +6,15 @@ import { useHistory } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
 
-interface CreateAchievementProps {}
+interface CreateAchievementProps {
+  updateTrigger: boolean;
+  setUpdateTrigger: (trigger: boolean) => void;
+}
 
-export const CreateAchievement: React.FunctionComponent<CreateAchievementProps> = () => {
+export const CreateAchievement: React.FunctionComponent<CreateAchievementProps> = ({
+  setUpdateTrigger,
+  updateTrigger,
+}) => {
   const history = useHistory();
   const { postAchievement } = useApi();
   const [error, setError] = useState<IApiError | null>();
@@ -26,7 +32,10 @@ export const CreateAchievement: React.FunctionComponent<CreateAchievementProps> 
     onSubmit: (data) =>
       postAchievement(data).then(({ achievement, error }) => {
         if (error) setError(error);
-        else history.push("/admin/achievements");
+        else {
+          setUpdateTrigger(!updateTrigger);
+          history.push("/admin/achievements");
+        }
       }),
   });
 
