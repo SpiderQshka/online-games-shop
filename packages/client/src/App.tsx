@@ -65,7 +65,7 @@ function App() {
   );
   const hidePopup = useCallback(() => setIsPopupOpen(false), []);
 
-  console.log(process.env.REACT_APP_API_URL, process.env.API_URL);
+  console.log(process.env.REACT_APP_API_URL, process.env.REACT_APP_URL);
 
   return (
     <IconContext.Provider value={{ color: "#f4f4f4" }}>
