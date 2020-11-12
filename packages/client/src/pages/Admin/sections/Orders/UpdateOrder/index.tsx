@@ -16,11 +16,15 @@ interface OrderFormValues {
 interface OrderItemProps {
   orders: IOrderWithUserId[];
   games: IGameForUI[];
+  updateTrigger: boolean;
+  setUpdateTrigger: (trigger: boolean) => void;
 }
 
 export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
   orders,
   games,
+  setUpdateTrigger,
+  updateTrigger,
 }) => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
@@ -50,7 +54,10 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
           physicalGamesCopiesIds: data.physicalGamesCopiesIds.map((id) => +id),
         }).then(({ order, error }) => {
           if (error) setError(error);
-          else history.push("/admin/orders");
+          else {
+            setUpdateTrigger(!updateTrigger);
+            history.push("/admin/orders");
+          }
         });
     },
   });

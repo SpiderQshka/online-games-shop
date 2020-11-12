@@ -215,19 +215,36 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
       <Route
         exact
         path="/admin/orders/create"
-        component={() => <CreateOrder users={users} games={games} />}
+        component={() => (
+          <CreateOrder
+            setUpdateTrigger={setUpdateTrigger}
+            updateTrigger={updateTrigger}
+            users={users}
+            games={games}
+          />
+        )}
       />
       <Route
         exact
         path="/admin/games/create"
         component={() => (
-          <CreateGame gameCreators={gameCreators} genres={genres} />
+          <CreateGame
+            setUpdateTrigger={setUpdateTrigger}
+            updateTrigger={updateTrigger}
+            gameCreators={gameCreators}
+            genres={genres}
+          />
         )}
       />
       <Route
         exact
         path="/admin/gameCreators/create"
-        component={() => <CreateGameCreator />}
+        component={() => (
+          <CreateGameCreator
+            setUpdateTrigger={setUpdateTrigger}
+            updateTrigger={updateTrigger}
+          />
+        )}
       />
       <Route
         exact
@@ -242,16 +259,34 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
       <Route
         exact
         path="/admin/discounts/create"
-        component={() => <CreateDiscount games={games} />}
+        component={() => (
+          <CreateDiscount
+            setUpdateTrigger={setUpdateTrigger}
+            updateTrigger={updateTrigger}
+            games={games}
+          />
+        )}
       />
       <Route
         exact
         path="/admin/genres/create"
-        component={() => <CreateGenre />}
+        component={() => (
+          <CreateGenre
+            setUpdateTrigger={setUpdateTrigger}
+            updateTrigger={updateTrigger}
+          />
+        )}
       />
       <Route
         path="/admin/orders/:id"
-        component={() => <UpdateOrder games={games} orders={orders} />}
+        component={() => (
+          <UpdateOrder
+            setUpdateTrigger={setUpdateTrigger}
+            updateTrigger={updateTrigger}
+            games={games}
+            orders={orders}
+          />
+        )}
       />
       <Route
         path="/admin/games/:id"
@@ -260,6 +295,8 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
             games={games}
             gameCreators={gameCreators}
             genres={genres}
+            setUpdateTrigger={setUpdateTrigger}
+            updateTrigger={updateTrigger}
           />
         )}
       />
@@ -275,15 +312,34 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
       />
       <Route
         path="/admin/gameCreators/:id"
-        component={() => <UpdateGameCreator gameCreators={gameCreators} />}
+        component={() => (
+          <UpdateGameCreator
+            setUpdateTrigger={setUpdateTrigger}
+            updateTrigger={updateTrigger}
+            gameCreators={gameCreators}
+          />
+        )}
       />
       <Route
         path="/admin/discounts/:id"
-        component={() => <UpdateDiscount games={games} discounts={discounts} />}
+        component={() => (
+          <UpdateDiscount
+            setUpdateTrigger={setUpdateTrigger}
+            updateTrigger={updateTrigger}
+            games={games}
+            discounts={discounts}
+          />
+        )}
       />
       <Route
         path="/admin/genres/:id"
-        component={() => <UpdateGenre genres={genres} />}
+        component={() => (
+          <UpdateGenre
+            setUpdateTrigger={setUpdateTrigger}
+            updateTrigger={updateTrigger}
+            genres={genres}
+          />
+        )}
       />
       <Route component={() => <Redirect to="/admin/dashboard" />} />
     </Switch>

@@ -8,10 +8,14 @@ import * as Yup from "yup";
 
 interface UpdateGenreProps {
   genres: IGenreFromApi[];
+  updateTrigger: boolean;
+  setUpdateTrigger: (trigger: boolean) => void;
 }
 
 export const UpdateGenre: React.FunctionComponent<UpdateGenreProps> = ({
   genres,
+  setUpdateTrigger,
+  updateTrigger,
 }) => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
@@ -33,7 +37,10 @@ export const UpdateGenre: React.FunctionComponent<UpdateGenreProps> = ({
     onSubmit: (data) =>
       putGenre(genre.id, data).then(({ genre, error }) => {
         if (error) setError(error);
-        else history.push("/admin/genres");
+        else {
+          setUpdateTrigger(!updateTrigger);
+          history.push("/admin/genres");
+        }
       }),
   });
 

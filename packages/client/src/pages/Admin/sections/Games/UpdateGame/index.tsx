@@ -17,12 +17,16 @@ interface UpdateGameProps {
   games: IGameForUI[];
   gameCreators: IGameCreatorFromApi[];
   genres: IGenreFromApi[];
+  updateTrigger: boolean;
+  setUpdateTrigger: (trigger: boolean) => void;
 }
 
 export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
   games,
   gameCreators,
   genres,
+  setUpdateTrigger,
+  updateTrigger,
 }) => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
@@ -67,7 +71,10 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
         createdAt: new Date(data.createdAt).toISOString(),
       }).then(({ game, error }) => {
         if (error) setError(error);
-        else history.push("/admin/games");
+        else {
+          setUpdateTrigger(!updateTrigger);
+          history.push("/admin/games");
+        }
       });
     },
   });

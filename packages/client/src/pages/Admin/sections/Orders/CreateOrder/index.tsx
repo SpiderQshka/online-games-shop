@@ -17,11 +17,15 @@ interface OrderFormValues {
 interface AddOrderProps {
   games: IGameForUI[];
   users: IUser[];
+  updateTrigger: boolean;
+  setUpdateTrigger: (trigger: boolean) => void;
 }
 
 export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
   games,
   users,
+  setUpdateTrigger,
+  updateTrigger,
 }) => {
   const history = useHistory();
   const { postOrderAdmin } = useApi();
@@ -47,7 +51,10 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
         physicalGamesCopiesIds: data.physicalGamesCopiesIds.map((id) => +id),
       }).then(({ order, error }) => {
         if (error) setError(error);
-        else history.push("/admin/orders");
+        else {
+          setUpdateTrigger(!updateTrigger);
+          history.push("/admin/orders");
+        }
       });
     },
   });

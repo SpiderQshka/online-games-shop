@@ -19,11 +19,15 @@ interface DiscountFormValues {
 interface UpdateDiscountProps {
   games: IGameForUI[];
   discounts: IDiscountForUI[];
+  updateTrigger: boolean;
+  setUpdateTrigger: (trigger: boolean) => void;
 }
 
 export const UpdateDiscount: React.FunctionComponent<UpdateDiscountProps> = ({
   games,
   discounts,
+  updateTrigger,
+  setUpdateTrigger,
 }) => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
@@ -49,7 +53,10 @@ export const UpdateDiscount: React.FunctionComponent<UpdateDiscountProps> = ({
       discount &&
         putDiscount(discount.id, data).then(({ discount, error }) => {
           if (error) setError(error);
-          else history.push("/admin/discounts");
+          else {
+            setUpdateTrigger(!updateTrigger);
+            history.push("/admin/discounts");
+          }
         });
     },
   });

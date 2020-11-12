@@ -6,9 +6,15 @@ import { useHistory } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
 
-interface CreateGameCreatorProps {}
+interface CreateGameCreatorProps {
+  updateTrigger: boolean;
+  setUpdateTrigger: (trigger: boolean) => void;
+}
 
-export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> = () => {
+export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> = ({
+  setUpdateTrigger,
+  updateTrigger,
+}) => {
   const history = useHistory();
   const { postGameCreator } = useApi();
   const [error, setError] = useState<IApiError | null>();
@@ -28,7 +34,10 @@ export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> 
     onSubmit: (data) =>
       postGameCreator(data).then(({ gameCreator, error }) => {
         if (error) setError(error);
-        else history.push("/admin/gameCreators");
+        else {
+          setUpdateTrigger(!updateTrigger);
+          history.push("/admin/gameCreators");
+        }
       }),
   });
 

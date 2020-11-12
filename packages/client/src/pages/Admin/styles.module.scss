@@ -1,5 +1,7 @@
 @import "../../styles/config.scss";
 
+$actions-block-width: 110px;
+
 .adminContainer {
   min-height: 100vh;
   min-width: 100%;
@@ -15,16 +17,20 @@
     }
     .actionsBlock {
       position: fixed;
-      display: inline-block;
       background-color: $secondary-color-light;
       right: 0;
+      width: $actions-block-width;
       top: 0;
       padding: 10px;
       z-index: 1;
       box-shadow: $basic-shadow;
+      display: flex;
+      justify-content: space-around;
       .btn {
+        padding: 0;
         background-color: inherit;
         border: none;
+        outline: none;
         height: 40px;
         cursor: pointer;
         &.menuBtn {

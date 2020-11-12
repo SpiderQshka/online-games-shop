@@ -15,13 +15,18 @@ import moment from "moment";
 interface CreateGameProps {
   gameCreators: IGameCreatorFromApi[];
   genres: IGenreFromApi[];
+  updateTrigger: boolean;
+  setUpdateTrigger: (trigger: boolean) => void;
 }
 
-export const CreateGame: React.FunctionComponent<CreateGameProps> = () => {
+export const CreateGame: React.FunctionComponent<CreateGameProps> = ({
+  setUpdateTrigger,
+  updateTrigger,
+  genres,
+  gameCreators,
+}) => {
   const history = useHistory();
-  const { postGame, getGameCreators, getGenres } = useApi();
-  const [gameCreators, setGameCreators] = useState<IGameCreatorFromApi[]>([]);
-  const [genres, setGenres] = useState<IGenreFromApi[]>([]);
+  const { postGame } = useApi();
   const [error, setError] = useState<IApiError | null>();
   const formik = useFormik({
     initialValues: {
@@ -58,28 +63,13 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = () => {
     onSubmit: (data) =>
       postGame(data).then(({ game, error }) => {
         if (error) setError(error);
-        else history.push("/admin/games");
+        else {
+          setUpdateTrigger(!updateTrigger);
+          history.push("/admin/games");
+        }
       }),
   });
 
-  useEffect(() => {
-    const processAsync = async () => {
-      const {
-        gameCreators,
-        error: gameCreatorsError,
-      } = await getGameCreators();
-      if (gameCreatorsError) setError(gameCreatorsError);
-
-      const { genres, error: genresError } = await getGenres();
-      if (genresError) setError(genresError);
-
-      setGameCreators(gameCreators);
-      setGenres(genres);
-
-      formik.setValues({ ...formik.values, gameCreatorId: gameCreators[0].id });
-    };
-    processAsync();
-  }, []);
   return (
     <>
       <div className={styles.itemContent}>

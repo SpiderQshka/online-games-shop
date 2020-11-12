@@ -18,10 +18,14 @@ interface DiscountFormValues {
 
 interface CreateDiscountProps {
   games: IGameForUI[];
+  updateTrigger: boolean;
+  setUpdateTrigger: (trigger: boolean) => void;
 }
 
 export const CreateDiscount: React.FunctionComponent<CreateDiscountProps> = ({
   games,
+  setUpdateTrigger,
+  updateTrigger,
 }) => {
   const history = useHistory();
   const { postDiscount } = useApi();
@@ -45,7 +49,10 @@ export const CreateDiscount: React.FunctionComponent<CreateDiscountProps> = ({
     onSubmit: (data) => {
       postDiscount(data).then(({ discount, error }) => {
         if (error) setError(error);
-        else history.push("/admin/discounts");
+        else {
+          setUpdateTrigger(!updateTrigger);
+          history.push("/admin/discounts");
+        }
       });
     },
   });

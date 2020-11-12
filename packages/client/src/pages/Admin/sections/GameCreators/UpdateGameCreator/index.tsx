@@ -8,10 +8,14 @@ import * as Yup from "yup";
 
 interface UpdateGameCreatorProps {
   gameCreators: IGameCreatorFromApi[];
+  updateTrigger: boolean;
+  setUpdateTrigger: (trigger: boolean) => void;
 }
 
 export const UpdateGameCreator: React.FunctionComponent<UpdateGameCreatorProps> = ({
   gameCreators,
+  setUpdateTrigger,
+  updateTrigger,
 }) => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
@@ -36,7 +40,10 @@ export const UpdateGameCreator: React.FunctionComponent<UpdateGameCreatorProps> 
     onSubmit: (data) =>
       putGameCreator(gameCreator.id, data).then(({ gameCreator, error }) => {
         if (error) setError(error);
-        else history.push("/admin/gameCreators");
+        else {
+          setUpdateTrigger(!updateTrigger);
+          history.push("/admin/gameCreators");
+        }
       }),
   });
 

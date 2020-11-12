@@ -6,9 +6,15 @@ import { useHistory } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
 
-interface CreateGenreProps {}
+interface CreateGenreProps {
+  updateTrigger: boolean;
+  setUpdateTrigger: (trigger: boolean) => void;
+}
 
-export const CreateGenre: React.FunctionComponent<CreateGenreProps> = () => {
+export const CreateGenre: React.FunctionComponent<CreateGenreProps> = ({
+  setUpdateTrigger,
+  updateTrigger,
+}) => {
   const history = useHistory();
   const { postGenre } = useApi();
   const [error, setError] = useState<IApiError | null>();
@@ -24,7 +30,10 @@ export const CreateGenre: React.FunctionComponent<CreateGenreProps> = () => {
     onSubmit: (data) =>
       postGenre(data).then(({ genre, error }) => {
         if (error) setError(error);
-        else history.push("/admin/genres");
+        else {
+          setUpdateTrigger(!updateTrigger);
+          history.push("/admin/genres");
+        }
       }),
   });
 
