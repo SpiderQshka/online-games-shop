@@ -2,6 +2,7 @@ import { Middleware } from "koa";
 import knex from "db/knex";
 import { Model } from "objection";
 import { GameCreator } from "models/GameCreator";
+import axios from "axios";
 
 Model.knex(knex);
 
@@ -39,6 +40,17 @@ export const gameCreatorsController: IGameCreatorsController = {
     ctx.body = response;
   },
   post: async (ctx) => {
+    // try {
+    //   const logoString = ctx.request.body.logo as string;
+    //   const logoLink = await axios.post("https://api.imgbb.com/1/upload", {
+    //     key: process.env.IMGBB_API_KEY,
+    //     image: logoString,
+    //   });
+    //   console.log(logoLink);
+    // } catch (e) {
+    //   console.log(e);
+    // }
+
     const response = await GameCreator.query().insert(ctx.request.body);
 
     ctx.body = response;

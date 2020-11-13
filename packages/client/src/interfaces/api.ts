@@ -64,6 +64,12 @@ export interface IGameCreatorFromApi extends IGameCreator {
   id: number;
 }
 
+export interface IGameCreatorForApi extends IGameCreator {
+  name: string;
+  logo: string;
+  yearOfFoundation: number;
+}
+
 export interface IDiscount {
   startDate: string;
   endDate: string;

@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
+import { toBase64 } from "utils/helpers";
 
 interface CreateGameCreatorProps {
   updateTrigger: boolean;
@@ -20,31 +21,52 @@ export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> 
   const [error, setError] = useState<IApiError | null>();
   const formik = useFormik({
     initialValues: {
-      logo: "",
+      logo: null,
       name: "",
       yearOfFoundation: new Date().getFullYear(),
-    } as IGameCreator,
+    },
     validationSchema: Yup.object({
       name: Yup.string()
         .min(5, "Name should be at least 5 characters long")
         .required("Required"),
-      logo: Yup.string().required("Required"),
+      logo: Yup.mixed().required("Required"),
       yearOfFoundation: Yup.number().min(1900).required("Required"),
     }),
-    onSubmit: (data) =>
-      postGameCreator(data).then(({ gameCreator, error }) => {
-        if (error) setError(error);
-        else {
-          setUpdateTrigger(!updateTrigger);
-          history.push("/admin/gameCreators");
-        }
-      }),
+    onSubmit: (data) => {
+      const logo = (formik.values.logo as any) as File;
+      toBase64(logo).then((logo) => {
+        console.log(logo);
+        postGameCreator({ ...data, logo }).then(({ gameCreator, error }) => {
+          if (error) setError(error);
+          else {
+            setUpdateTrigger(!updateTrigger);
+            history.push("/admin/gameCreators");
+          }
+        });
+      });
+    },
   });
 
   return (
     <div className={styles.itemContent}>
       <h2 className={styles.header}>Create game creator</h2>
       <form onSubmit={formik.handleSubmit} className={styles.form}>
+        <label className={styles.label}>
+          <span className={styles.labelText}>Logo</span>
+          <input
+            name="logo"
+            type="file"
+            onChange={(event) => {
+              const files = event.currentTarget.files as FileList;
+              formik.setFieldValue("logo", files[0]);
+            }}
+            onBlur={formik.handleBlur}
+            className={`${styles.input} ${styles.nameInput}`}
+          />
+        </label>
+        {!!formik.touched.logo && !!formik.errors.logo && (
+          <p className={styles.errorMsg}>{formik.errors.logo}</p>
+        )}
         <label className={styles.label}>
           <span className={styles.labelText}>Name</span>
           <input
@@ -59,7 +81,7 @@ export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> 
         {!!formik.touched.name && !!formik.errors.name && (
           <p className={styles.errorMsg}>{formik.errors.name}</p>
         )}
-        <label className={styles.label}>
+        {/* <label className={styles.label}>
           <span className={styles.labelText}>Link to logo</span>
           <input
             name="logo"
@@ -72,7 +94,7 @@ export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> 
         </label>
         {!!formik.touched.logo && !!formik.errors.logo && (
           <p className={styles.errorMsg}>{formik.errors.logo}</p>
-        )}
+        )} */}
         <label className={styles.label}>
           <span className={styles.labelText}>Year of foundation</span>
           <input

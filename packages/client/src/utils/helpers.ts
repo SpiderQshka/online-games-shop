@@ -405,3 +405,11 @@ export const getOptimalGamePrice = ({
 };
 
 export const ifAppRunsLocally = () => window.location.hostname === "localhost";
+
+export const toBase64: (file: File) => Promise<string> = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });

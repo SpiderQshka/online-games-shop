@@ -7,6 +7,7 @@ import {
   IDiscountFromApi,
   IGame,
   IGameCreator,
+  IGameCreatorForApi,
   IGameCreatorFromApi,
   IGameFromApi,
   IGenre,
@@ -100,7 +101,7 @@ export interface IApi {
     game: IGame
   ) => Promise<{ game: IGameFromApi | null; error?: IApiError }>;
   postGameCreator: (
-    gameCreator: IGameCreator
+    gameCreator: IGameCreatorForApi
   ) => Promise<{ gameCreator: IGameCreatorFromApi | null; error?: IApiError }>;
   putGameCreator: (
     id: number,
