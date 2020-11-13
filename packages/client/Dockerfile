@@ -12,10 +12,10 @@ RUN yarn
 
 COPY ./src ./src
 COPY ./public ./public
-COPY ./.env ./.env
+# COPY ./.env ./.env
 
 ENV REACT_APP_API_URL=http://localhost:3333/api/v1
-# ENV REACT_APP_API_URL=https://online-games-shop-server.herokuapp.com/api/v1
+ENV REACT_APP_HEROKU_API_URL=https://online-games-shop-server.herokuapp.com/api/v1
 
 RUN yarn build
 

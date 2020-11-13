@@ -403,3 +403,5 @@ export const getOptimalGamePrice = ({
       : +gamePriceWithGameDiscount.toFixed(2);
   }
 };
+
+export const ifAppRunsLocally = () => window.location.hostname === "localhost";
