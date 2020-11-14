@@ -13,6 +13,15 @@
   .form {
     background-color: $secondary-color-light;
     padding: 30px;
+    .previewImage {
+      margin-left: auto;
+      display: block;
+      max-width: 50%;
+      margin-bottom: 20px;
+      &.hidden {
+        display: none;
+      }
+    }
     .label {
       display: flex;
       justify-content: space-between;
@@ -39,18 +48,27 @@
         }
       }
     }
-    .button {
-      background-color: $accent-color;
-      border: none;
-      color: $primary-color-light;
-      padding: 15px 20px;
-      margin-top: 10px;
-      cursor: pointer;
+    .actionsBlock {
+      .button {
+        background-color: $accent-color;
+        border: none;
+        color: $primary-color-light;
+        padding: 15px 20px;
+        margin-top: 10px;
+        cursor: pointer;
+        outline: none;
+        &.resetButton {
+          margin-left: 10px;
+          background-color: $primary-color-dark;
+        }
+      }
     }
+
     .errorMsg {
       margin: 10px 0 18px;
       @include primaryFont;
       color: $error-color;
+      text-align: right;
     }
   }
 }

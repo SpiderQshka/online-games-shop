@@ -1,7 +1,7 @@
 import { useApi } from "context/api";
 import { useFormik } from "formik";
 import { IApiError, IGameCreator } from "interfaces/api";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
@@ -19,7 +19,7 @@ export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> 
   const history = useHistory();
   const { postGameCreator } = useApi();
   const [error, setError] = useState<IApiError | null>();
-  const [baseImage, setBaseImage] = useState<string>("");
+  const [baseImage, setBaseImage] = useState<string | null>(null);
   const formik = useFormik({
     initialValues: {
       logo: null,
@@ -48,10 +48,34 @@ export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> 
     },
   });
 
+  useEffect(() => {
+    const processAsync = async () => {
+      if (formik.values.logo) {
+        const baseString = await toBase64(formik.values.logo as any);
+        setBaseImage(baseString);
+      }
+    };
+    processAsync();
+  }, [formik.values.logo]);
+
   return (
     <div className={styles.itemContent}>
       <h2 className={styles.header}>Create game creator</h2>
       <form onSubmit={formik.handleSubmit} className={styles.form}>
+        <label className={styles.label}>
+          <span className={styles.labelText}>Name</span>
+          <input
+            name="name"
+            type="text"
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            className={`${styles.input} ${styles.nameInput}`}
+            value={formik.values.name}
+          />
+        </label>
+        {!!formik.touched.name && !!formik.errors.name && (
+          <p className={styles.errorMsg}>{formik.errors.name}</p>
+        )}
         <label className={styles.label}>
           <span className={styles.labelText}>Logo</span>
           <input
@@ -68,35 +92,12 @@ export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> 
         {!!formik.touched.logo && !!formik.errors.logo && (
           <p className={styles.errorMsg}>{formik.errors.logo}</p>
         )}
-        <label className={styles.label}>
-          <span className={styles.labelText}>Name</span>
-          <input
-            name="name"
-            type="text"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            className={`${styles.input} ${styles.nameInput}`}
-            value={formik.values.name}
-          />
-        </label>
-        {!!formik.touched.name && !!formik.errors.name && (
-          <p className={styles.errorMsg}>{formik.errors.name}</p>
-        )}
-        <img src={baseImage} alt="" height="200px" />
-        {/* <label className={styles.label}>
-          <span className={styles.labelText}>Link to logo</span>
-          <input
-            name="logo"
-            type="text"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            className={`${styles.input} ${styles.logoInput}`}
-            value={formik.values.logo}
-          />
-        </label>
-        {!!formik.touched.logo && !!formik.errors.logo && (
-          <p className={styles.errorMsg}>{formik.errors.logo}</p>
-        )} */}
+        <img
+          src={baseImage || "#"}
+          alt="Game creator logo"
+          height="200px"
+          className={`${styles.previewImage} ${baseImage || styles.hidden}`}
+        />
         <label className={styles.label}>
           <span className={styles.labelText}>Year of foundation</span>
           <input
@@ -114,14 +115,22 @@ export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> 
           !!formik.errors.yearOfFoundation && (
             <p className={styles.errorMsg}>{formik.errors.yearOfFoundation}</p>
           )}
-        <button
-          type="submit"
-          className={`${styles.button} ${styles.submitButton} ${
-            true && styles.active
-          }`}
-        >
-          Create
-        </button>
+        <div className={styles.actionsBlock}>
+          <button
+            type="submit"
+            className={`${styles.button} ${styles.submitButton}`}
+          >
+            Create
+          </button>
+          <button
+            type="reset"
+            onClick={formik.handleReset}
+            className={`${styles.button} ${styles.resetButton}`}
+          >
+            Reset
+          </button>
+        </div>
+
         {!!error && <p className={styles.errorMsg}>{error.msg}</p>}
       </form>
     </div>

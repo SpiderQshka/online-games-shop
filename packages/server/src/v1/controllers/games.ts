@@ -7,7 +7,7 @@ import Aigle from "aigle";
 import { UsedGenre } from "models/UsedGenre";
 import { verifyJwtToken } from "v1/auth";
 import { OrderedGame } from "models/OrderedGame";
-import { checkAchievements } from "v1/helpers";
+import { checkAchievements, loadImageToHost } from "v1/helpers";
 
 Aigle.mixin(_, {});
 
@@ -59,9 +59,19 @@ export const gamesController: IGamesController = {
 
     delete ctx.request.body.genresIds;
 
+    const logoString = ctx.request.body.logo as string;
+    const gameObj = ctx.request.body;
+
+    if (logoString) {
+      const { error, imageUrl } = await loadImageToHost(logoString);
+
+      if (error) ctx.throw(500, "Error occured while loading game logo");
+      else gameObj.logo = imageUrl;
+    }
+
     const game = await Game.query()
       .findById(ctx.params.id)
-      .patchAndFetchById(ctx.params.id, ctx.request.body);
+      .patchAndFetchById(ctx.params.id, gameObj);
 
     if (!game) ctx.throw(404, `Game with id '${ctx.params.id}' was not found`);
 
@@ -94,7 +104,16 @@ export const gamesController: IGamesController = {
 
     delete ctx.request.body.genresIds;
 
-    const game = await Game.query().insert(ctx.request.body);
+    const logoString = ctx.request.body.logo as string;
+
+    const { error, imageUrl } = await loadImageToHost(logoString);
+
+    if (error) ctx.throw(500, "Error occured while loading game logo");
+
+    const game = await Game.query().insert({
+      ...ctx.request.body,
+      logo: imageUrl,
+    });
 
     await Aigle.map(genresIds, (genreId) =>
       UsedGenre.query().insert({

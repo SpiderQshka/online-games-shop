@@ -42,6 +42,19 @@ export interface IGame {
   physicalCopyPrice: number;
 }
 
+export interface IGamePut {
+  name: string;
+  logo?: string;
+  description: string;
+  ageRating: number;
+  price: number;
+  numberOfPhysicalCopies: number;
+  gameCreatorId: number;
+  createdAt: string;
+  genresIds: number[];
+  physicalCopyPrice: number;
+}
+
 export interface IGameFromApi extends IGame {
   id: number;
 }
@@ -56,7 +69,7 @@ export interface IGameForOrder extends IMyGameFromApi {
 
 export interface IGameCreator {
   name: string;
-  logo?: string;
+  logo: string;
   yearOfFoundation: number;
 }
 
@@ -64,9 +77,9 @@ export interface IGameCreatorFromApi extends IGameCreator {
   id: number;
 }
 
-export interface IGameCreatorForApi extends IGameCreator {
+export interface IGameCreatorPut {
   name: string;
-  logo: string;
+  logo?: string;
   yearOfFoundation: number;
 }
 

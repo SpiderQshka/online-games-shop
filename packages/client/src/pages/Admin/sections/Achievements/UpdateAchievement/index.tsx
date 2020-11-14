@@ -84,14 +84,21 @@ export const UpdateAchievement: React.FunctionComponent<UpdateAchievementProps> 
         {!!formik.touched.discount && !!formik.errors.discount && (
           <p className={styles.errorMsg}>{formik.errors.discount}</p>
         )}
-        <button
-          type="submit"
-          className={`${styles.button} ${styles.submitButton} ${
-            true && styles.active
-          }`}
-        >
-          Update
-        </button>
+        <div className={styles.actionsBlock}>
+          <button
+            type="submit"
+            className={`${styles.button} ${styles.submitButton}`}
+          >
+            Update
+          </button>
+          <button
+            type="reset"
+            onClick={formik.handleReset}
+            className={`${styles.button} ${styles.resetButton}`}
+          >
+            Reset
+          </button>
+        </div>
         {!!error && <p className={styles.errorMsg}>{error.msg}</p>}
       </form>
     </div>

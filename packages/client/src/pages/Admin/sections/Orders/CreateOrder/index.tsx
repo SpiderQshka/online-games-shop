@@ -145,14 +145,21 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
             </p>
           )}
 
-        <button
-          type="submit"
-          className={`${styles.button} ${styles.submitButton} ${
-            true && styles.active
-          }`}
-        >
-          Create
-        </button>
+        <div className={styles.actionsBlock}>
+          <button
+            type="submit"
+            className={`${styles.button} ${styles.submitButton}`}
+          >
+            Create
+          </button>
+          <button
+            type="reset"
+            onClick={formik.handleReset}
+            className={`${styles.button} ${styles.resetButton}`}
+          >
+            Reset
+          </button>
+        </div>
         {!!error && <p className={styles.errorMsg}>{error.msg}</p>}
       </form>
     </div>

@@ -1,7 +1,7 @@
 import { useApi } from "context/api";
 import { useFormik } from "formik";
-import { IApiError, IGameCreator, IGameCreatorFromApi } from "interfaces/api";
-import React, { useState } from "react";
+import { IApiError, IGameCreatorFromApi, IGameCreator } from "interfaces/api";
+import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
@@ -25,6 +25,7 @@ export const UpdateGameCreator: React.FunctionComponent<UpdateGameCreatorProps> 
   )[0];
   const { putGameCreator } = useApi();
   const [error, setError] = useState<IApiError | null>();
+  const [baseLogo, setBaseLogo] = useState<string | null>(null);
   const formik = useFormik({
     initialValues: {
       logo: null,
@@ -38,34 +39,42 @@ export const UpdateGameCreator: React.FunctionComponent<UpdateGameCreatorProps> 
       logo: Yup.mixed(),
       yearOfFoundation: Yup.number().min(1900).required("Required"),
     }),
-    onSubmit: (data) => {
+    onSubmit: async (data) => {
       const logo = data.logo;
+
+      const gameCreatorObj = {
+        name: data.name,
+        yearOfFoundation: data.yearOfFoundation,
+      } as IGameCreator;
+
       if (logo) {
-        toBase64(logo).then((logo) =>
-          putGameCreator(gameCreator.id, { ...data, logo }).then(
-            ({ gameCreator, error }) => {
-              if (error) setError(error);
-              else {
-                setUpdateTrigger(!updateTrigger);
-                history.push("/admin/gameCreators");
-              }
-            }
-          )
-        );
-      } else {
-        putGameCreator(gameCreator.id, {
-          name: data.name,
-          yearOfFoundation: data.yearOfFoundation,
-        }).then(({ gameCreator, error }) => {
+        const baseLogo = await toBase64(logo);
+        gameCreatorObj.logo = baseLogo;
+      }
+
+      putGameCreator(gameCreator.id, gameCreatorObj).then(
+        ({ gameCreator, error }) => {
           if (error) setError(error);
           else {
             setUpdateTrigger(!updateTrigger);
             history.push("/admin/gameCreators");
           }
-        });
-      }
+        }
+      );
     },
   });
+
+  useEffect(() => {
+    const processAsync = async () => {
+      if (formik.values.logo) {
+        const baseString = await toBase64(formik.values.logo as any);
+        setBaseLogo(baseString);
+      }
+    };
+    processAsync();
+  }, [formik.values.logo]);
+
+  const currentLogo = gameCreator.logo;
 
   return (
     <div className={styles.itemContent}>
@@ -100,6 +109,11 @@ export const UpdateGameCreator: React.FunctionComponent<UpdateGameCreatorProps> 
             className={`${styles.input} ${styles.nameInput}`}
           />
         </label>
+        <img
+          src={baseLogo || currentLogo || "#"}
+          alt="Game creator logo"
+          className={styles.previewImage}
+        />
         {!!formik.touched.logo && !!formik.errors.logo && (
           <p className={styles.errorMsg}>{formik.errors.logo}</p>
         )}
@@ -120,14 +134,21 @@ export const UpdateGameCreator: React.FunctionComponent<UpdateGameCreatorProps> 
           !!formik.errors.yearOfFoundation && (
             <p className={styles.errorMsg}>{formik.errors.yearOfFoundation}</p>
           )}
-        <button
-          type="submit"
-          className={`${styles.button} ${styles.submitButton} ${
-            true && styles.active
-          }`}
-        >
-          Update
-        </button>
+        <div className={styles.actionsBlock}>
+          <button
+            type="submit"
+            className={`${styles.button} ${styles.submitButton}`}
+          >
+            Update
+          </button>
+          <button
+            type="reset"
+            onClick={formik.handleReset}
+            className={`${styles.button} ${styles.resetButton}`}
+          >
+            Reset
+          </button>
+        </div>
         {!!error && <p className={styles.errorMsg}>{error.msg}</p>}
       </form>
     </div>

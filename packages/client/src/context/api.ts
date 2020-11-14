@@ -7,9 +7,10 @@ import {
   IDiscountFromApi,
   IGame,
   IGameCreator,
-  IGameCreatorForApi,
   IGameCreatorFromApi,
+  IGameCreatorPut,
   IGameFromApi,
+  IGamePut,
   IGenre,
   IGenreFromApi,
   IMyAchievementFromApi,
@@ -98,14 +99,14 @@ export interface IApi {
   ) => Promise<{ game: IGameFromApi | null; error?: IApiError }>;
   putGame: (
     id: number,
-    game: IGame
+    game: IGamePut
   ) => Promise<{ game: IGameFromApi | null; error?: IApiError }>;
   postGameCreator: (
-    gameCreator: IGameCreatorForApi
+    gameCreator: IGameCreator
   ) => Promise<{ gameCreator: IGameCreatorFromApi | null; error?: IApiError }>;
   putGameCreator: (
     id: number,
-    gameCreator: IGameCreator
+    gameCreator: IGameCreatorPut
   ) => Promise<{ gameCreator: IGameCreatorFromApi | null; error?: IApiError }>;
   getAchievements: () => Promise<{
     achievements: IAchievementFromApi[];

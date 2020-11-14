@@ -6,12 +6,13 @@ import {
   IGameCreatorFromApi,
   IGenreFromApi,
 } from "interfaces/api";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
 import { IGameForUI } from "interfaces/app";
 import moment from "moment";
+import { toBase64 } from "utils/helpers";
 
 interface UpdateGameProps {
   games: IGameForUI[];
@@ -33,11 +34,12 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
   const game = games.filter((game) => game.id === +id)[0];
   const { putGame } = useApi();
   const [error, setError] = useState<IApiError | null>();
+  const [baseLogo, setBaseLogo] = useState<string | null>(null);
   const formik = useFormik({
     initialValues: {
       numberOfPhysicalCopies: game.numberOfPhysicalCopies,
       name: game.name,
-      logo: game.logo,
+      logo: null,
       description: game.description,
       ageRating: game.ageRating,
       price: game.price,
@@ -45,12 +47,12 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
       genresIds: game.genres.map((genre) => genre.id),
       gameCreatorId: game.gameCreator.id,
       physicalCopyPrice: game.physicalCopyPrice,
-    } as IGame,
+    },
     validationSchema: Yup.object({
       name: Yup.string()
         .min(5, "Name should be at least 5 characters long")
         .required("Required"),
-      logo: Yup.string().required("Required"),
+      logo: Yup.string(),
       description: Yup.string()
         .min(30, "Description should be at least 30 characters long")
         .required("Required"),
@@ -65,11 +67,27 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
         .required("Required"),
       physicalCopyPrice: Yup.number().min(1).required("Required"),
     }),
-    onSubmit: (data) => {
-      putGame(game.id, {
-        ...data,
+    onSubmit: async (data) => {
+      const logo = data.logo;
+
+      const gameObj = {
+        ageRating: data.ageRating,
+        description: data.description,
+        gameCreatorId: data.gameCreatorId,
+        genresIds: data.genresIds,
+        name: data.name,
+        numberOfPhysicalCopies: data.numberOfPhysicalCopies,
+        physicalCopyPrice: data.physicalCopyPrice,
+        price: data.price,
         createdAt: new Date(data.createdAt).toISOString(),
-      }).then(({ game, error }) => {
+      } as IGame;
+
+      if (logo) {
+        const baseLogo = await toBase64(logo);
+        gameObj.logo = baseLogo;
+      }
+
+      putGame(game.id, gameObj).then(({ game, error }) => {
         if (error) setError(error);
         else {
           setUpdateTrigger(!updateTrigger);
@@ -78,6 +96,18 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
       });
     },
   });
+
+  useEffect(() => {
+    const processAsync = async () => {
+      if (formik.values.logo) {
+        const baseString = await toBase64(formik.values.logo as any);
+        setBaseLogo(baseString);
+      }
+    };
+    processAsync();
+  }, [formik.values.logo]);
+
+  const currentLogo = game.logo;
 
   return (
     <div className={styles.itemContent}>
@@ -98,19 +128,26 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
           <p className={styles.errorMsg}>{formik.errors.name}</p>
         )}
         <label className={styles.label}>
-          <span className={styles.labelText}>Link to logo</span>
+          <span className={styles.labelText}>Logo</span>
           <input
             name="logo"
-            type="text"
-            onChange={formik.handleChange}
+            type="file"
+            onChange={(event) => {
+              const files = event.currentTarget.files as FileList;
+              formik.setFieldValue("logo", files[0]);
+            }}
             onBlur={formik.handleBlur}
-            className={`${styles.input} ${styles.logoInput}`}
-            value={formik.values.logo}
+            className={`${styles.input} ${styles.nameInput}`}
           />
         </label>
         {!!formik.touched.logo && !!formik.errors.logo && (
           <p className={styles.errorMsg}>{formik.errors.logo}</p>
         )}
+        <img
+          src={baseLogo || currentLogo || "#"}
+          alt="Game logo"
+          className={styles.previewImage}
+        />
         <label className={styles.label}>
           <span className={styles.labelText}>Description</span>
           <input
@@ -245,14 +282,24 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
         {!!formik.touched.gameCreatorId && !!formik.errors.gameCreatorId && (
           <p className={styles.errorMsg}>{formik.errors.gameCreatorId}</p>
         )}
-        <button
-          type="submit"
-          className={`${styles.button} ${styles.submitButton} ${
-            true && styles.active
-          }`}
-        >
-          Update
-        </button>
+        <div className={styles.actionsBlock}>
+          <button
+            type="submit"
+            className={`${styles.button} ${styles.submitButton}`}
+          >
+            Update
+          </button>
+          <button
+            type="reset"
+            onClick={(e) => {
+              formik.handleReset(e);
+              setBaseLogo(null);
+            }}
+            className={`${styles.button} ${styles.resetButton}`}
+          >
+            Reset
+          </button>
+        </div>
         {!!error && <p className={styles.errorMsg}>{error.msg}</p>}
       </form>
     </div>

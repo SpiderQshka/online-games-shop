@@ -62,14 +62,21 @@ export const UpdateGenre: React.FunctionComponent<UpdateGenreProps> = ({
         {!!formik.touched.name && !!formik.errors.name && (
           <p className={styles.errorMsg}>{formik.errors.name}</p>
         )}
-        <button
-          type="submit"
-          className={`${styles.button} ${styles.submitButton} ${
-            true && styles.active
-          }`}
-        >
-          Update
-        </button>
+        <div className={styles.actionsBlock}>
+          <button
+            type="submit"
+            className={`${styles.button} ${styles.submitButton}`}
+          >
+            Update
+          </button>
+          <button
+            type="reset"
+            onClick={formik.handleReset}
+            className={`${styles.button} ${styles.resetButton}`}
+          >
+            Reset
+          </button>
+        </div>
         {!!error && <p className={styles.errorMsg}>{error.msg}</p>}
       </form>
     </div>

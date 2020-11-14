@@ -2,8 +2,7 @@ import { Middleware } from "koa";
 import knex from "db/knex";
 import { Model } from "objection";
 import { GameCreator } from "models/GameCreator";
-import axios from "axios";
-import FormData from "form-data";
+import { loadImageToHost } from "v1/helpers";
 
 Model.knex(knex);
 
@@ -31,9 +30,20 @@ export const gameCreatorsController: IGameCreatorsController = {
     ctx.body = response;
   },
   put: async (ctx) => {
+    const logoString = ctx.request.body.logo as string;
+    const gameCreatorObj = ctx.request.body;
+
+    if (logoString) {
+      const { error, imageUrl } = await loadImageToHost(logoString);
+
+      if (error)
+        ctx.throw(500, "Error occured while loading game creator logo");
+      else gameCreatorObj.logo = imageUrl;
+    }
+
     const response = await GameCreator.query()
       .findById(ctx.params.id)
-      .patchAndFetchById(ctx.params.id, ctx.request.body);
+      .patchAndFetchById(ctx.params.id, gameCreatorObj);
 
     if (!response)
       ctx.throw(404, `Game creator with id '${ctx.params.id}' was not found`);
@@ -42,24 +52,14 @@ export const gameCreatorsController: IGameCreatorsController = {
   },
   post: async (ctx) => {
     const logoString = ctx.request.body.logo as string;
-    const formData = new FormData();
 
-    formData.append("key", process.env.IMAGE_HOST_API_KEY as string);
-    formData.append("source", logoString.slice(logoString.indexOf(",") + 1));
-    formData.append("format", "json");
+    const { error, imageUrl } = await loadImageToHost(logoString);
 
-    const logoObj = (await axios({
-      url: "https://freeimage.host/api/1/upload",
-      method: "POST",
-      data: formData,
-      headers: formData.getHeaders(),
-    })) as any;
-
-    const logo = logoObj.data.image.url;
+    if (error) ctx.throw(500, "Error occured while loading game creator logo");
 
     const response = await GameCreator.query().insert({
       ...ctx.request.body,
-      logo,
+      logo: imageUrl,
     });
 
     ctx.body = response;

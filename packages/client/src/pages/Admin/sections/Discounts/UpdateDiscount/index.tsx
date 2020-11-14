@@ -155,14 +155,21 @@ export const UpdateDiscount: React.FunctionComponent<UpdateDiscountProps> = ({
         {!!formik.touched.gamesIds && !!formik.errors.gamesIds && (
           <p className={styles.errorMsg}>{formik.errors.gamesIds}</p>
         )}
-        <button
-          type="submit"
-          className={`${styles.button} ${styles.submitButton} ${
-            true && styles.active
-          }`}
-        >
-          Update
-        </button>
+        <div className={styles.actionsBlock}>
+          <button
+            type="submit"
+            className={`${styles.button} ${styles.submitButton}`}
+          >
+            Update
+          </button>
+          <button
+            type="reset"
+            onClick={formik.handleReset}
+            className={`${styles.button} ${styles.resetButton}`}
+          >
+            Reset
+          </button>
+        </div>
         {!!error && <p className={styles.errorMsg}>{error.msg}</p>}
       </form>
     </div>

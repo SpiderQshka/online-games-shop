@@ -11,6 +11,7 @@ import { useHistory } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
 import moment from "moment";
+import { toBase64 } from "utils/helpers";
 
 interface CreateGameProps {
   gameCreators: IGameCreatorFromApi[];
@@ -28,11 +29,12 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = ({
   const history = useHistory();
   const { postGame } = useApi();
   const [error, setError] = useState<IApiError | null>();
+  const [baseImage, setBaseImage] = useState<string | null>(null);
   const formik = useFormik({
     initialValues: {
       numberOfPhysicalCopies: 0,
       name: "",
-      logo: "",
+      logo: null,
       description: "",
       ageRating: 0,
       price: 1,
@@ -40,12 +42,12 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = ({
       genresIds: [],
       gameCreatorId: 1,
       physicalCopyPrice: 1,
-    } as IGame,
+    },
     validationSchema: Yup.object({
       name: Yup.string()
         .min(5, "Name should be at least 5 characters long")
         .required("Required"),
-      logo: Yup.string().required("Required"),
+      logo: Yup.mixed().required("Required"),
       description: Yup.string()
         .min(30, "Description should be at least 30 characters long")
         .required("Required"),
@@ -60,15 +62,30 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = ({
         .required("Required"),
       physicalCopyPrice: Yup.number().min(1).required("Required"),
     }),
-    onSubmit: (data) =>
-      postGame(data).then(({ game, error }) => {
-        if (error) setError(error);
-        else {
-          setUpdateTrigger(!updateTrigger);
-          history.push("/admin/games");
-        }
-      }),
+    onSubmit: (data) => {
+      const logo = (formik.values.logo as any) as File;
+      toBase64(logo).then((logo) => {
+        setBaseImage(logo);
+        postGame({ ...data, logo }).then(({ game, error }) => {
+          if (error) setError(error);
+          else {
+            setUpdateTrigger(!updateTrigger);
+            history.push("/admin/games");
+          }
+        });
+      });
+    },
   });
+
+  useEffect(() => {
+    const processAsync = async () => {
+      if (formik.values.logo) {
+        const baseString = await toBase64(formik.values.logo as any);
+        setBaseImage(baseString);
+      }
+    };
+    processAsync();
+  }, [formik.values.logo]);
 
   return (
     <>
@@ -90,19 +107,27 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = ({
             <p className={styles.errorMsg}>{formik.errors.name}</p>
           )}
           <label className={styles.label}>
-            <span className={styles.labelText}>Link to logo</span>
+            <span className={styles.labelText}>Logo</span>
             <input
               name="logo"
-              type="text"
-              onChange={formik.handleChange}
+              type="file"
+              onChange={(event) => {
+                const files = event.currentTarget.files as FileList;
+                formik.setFieldValue("logo", files[0]);
+              }}
               onBlur={formik.handleBlur}
-              className={`${styles.input} ${styles.logoInput}`}
-              value={formik.values.logo}
+              className={`${styles.input} ${styles.nameInput}`}
             />
           </label>
           {!!formik.touched.logo && !!formik.errors.logo && (
             <p className={styles.errorMsg}>{formik.errors.logo}</p>
           )}
+          <img
+            src={baseImage || "#"}
+            alt="Game logo"
+            height="200px"
+            className={`${styles.previewImage} ${baseImage || styles.hidden}`}
+          />
           <label className={styles.label}>
             <span className={styles.labelText}>Description</span>
             <input
@@ -239,14 +264,21 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = ({
           {!!formik.touched.gameCreatorId && !!formik.errors.gameCreatorId && (
             <p className={styles.errorMsg}>{formik.errors.gameCreatorId}</p>
           )}
-          <button
-            type="submit"
-            className={`${styles.button} ${styles.submitButton} ${
-              true && styles.active
-            }`}
-          >
-            Create
-          </button>
+          <div className={styles.actionsBlock}>
+            <button
+              type="submit"
+              className={`${styles.button} ${styles.submitButton}`}
+            >
+              Create
+            </button>
+            <button
+              type="reset"
+              onClick={formik.handleReset}
+              className={`${styles.button} ${styles.resetButton}`}
+            >
+              Reset
+            </button>
+          </div>
           {!!error && <p className={styles.errorMsg}>{error.msg}</p>}
         </form>
       </div>

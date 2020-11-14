@@ -6,6 +6,8 @@ import { OrderedGame } from "models/OrderedGame";
 import { IDiscount, IGame } from "models/types";
 import { UnlockedAchievement } from "models/UnlockedAchievement";
 import { UsedDiscount } from "models/UsedDiscount";
+import axios from "axios";
+import FormData from "form-data";
 
 export const doesCurrentDateSuitDiscount = (discount: Discount) => {
   return (
@@ -250,5 +252,32 @@ export const checkAchievements = async (userId: number) => {
         seen: false,
       });
     }
+  }
+};
+
+export const loadImageToHost: (
+  baseString: string
+) => Promise<{ error: string | null; imageUrl: string }> = async (
+  baseString
+) => {
+  const formData = new FormData();
+
+  formData.append("key", process.env.IMAGE_HOST_API_KEY as string);
+  formData.append("source", baseString.slice(baseString.indexOf(",") + 1));
+  formData.append("format", "json");
+
+  try {
+    const imageObj = (await axios({
+      url: "https://freeimage.host/api/1/upload",
+      method: "POST",
+      data: formData,
+      headers: formData.getHeaders(),
+    })) as any;
+
+    const imageUrl = imageObj.data.image.url;
+
+    return { error: null, imageUrl };
+  } catch (e) {
+    return { error: e.toString(), imageUrl: "" };
   }
 };
