@@ -3,6 +3,7 @@ import knex from "db/knex";
 import { Model } from "objection";
 import { GameCreator } from "models/GameCreator";
 import axios from "axios";
+import FormData from "form-data";
 
 Model.knex(knex);
 
@@ -40,18 +41,26 @@ export const gameCreatorsController: IGameCreatorsController = {
     ctx.body = response;
   },
   post: async (ctx) => {
-    // try {
-    //   const logoString = ctx.request.body.logo as string;
-    //   const logoLink = await axios.post("https://api.imgbb.com/1/upload", {
-    //     key: process.env.IMGBB_API_KEY,
-    //     image: logoString,
-    //   });
-    //   console.log(logoLink);
-    // } catch (e) {
-    //   console.log(e);
-    // }
+    const logoString = ctx.request.body.logo as string;
+    const formData = new FormData();
 
-    const response = await GameCreator.query().insert(ctx.request.body);
+    formData.append("key", process.env.IMAGE_HOST_API_KEY as string);
+    formData.append("source", logoString.slice(logoString.indexOf(",") + 1));
+    formData.append("format", "json");
+
+    const logoObj = (await axios({
+      url: "https://freeimage.host/api/1/upload",
+      method: "POST",
+      data: formData,
+      headers: formData.getHeaders(),
+    })) as any;
+
+    const logo = logoObj.data.image.url;
+
+    const response = await GameCreator.query().insert({
+      ...ctx.request.body,
+      logo,
+    });
 
     ctx.body = response;
   },

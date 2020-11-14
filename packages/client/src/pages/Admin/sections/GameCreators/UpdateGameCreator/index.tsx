@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
+import { toBase64 } from "utils/helpers";
 
 interface UpdateGameCreatorProps {
   gameCreators: IGameCreatorFromApi[];
@@ -26,25 +27,44 @@ export const UpdateGameCreator: React.FunctionComponent<UpdateGameCreatorProps> 
   const [error, setError] = useState<IApiError | null>();
   const formik = useFormik({
     initialValues: {
-      logo: gameCreator.logo,
+      logo: null,
       name: gameCreator.name,
       yearOfFoundation: gameCreator.yearOfFoundation,
-    } as IGameCreator,
+    },
     validationSchema: Yup.object({
       name: Yup.string()
         .min(5, "Name should be at least 5 characters long")
         .required("Required"),
-      logo: Yup.string().required("Required"),
+      logo: Yup.mixed(),
       yearOfFoundation: Yup.number().min(1900).required("Required"),
     }),
-    onSubmit: (data) =>
-      putGameCreator(gameCreator.id, data).then(({ gameCreator, error }) => {
-        if (error) setError(error);
-        else {
-          setUpdateTrigger(!updateTrigger);
-          history.push("/admin/gameCreators");
-        }
-      }),
+    onSubmit: (data) => {
+      const logo = data.logo;
+      if (logo) {
+        toBase64(logo).then((logo) =>
+          putGameCreator(gameCreator.id, { ...data, logo }).then(
+            ({ gameCreator, error }) => {
+              if (error) setError(error);
+              else {
+                setUpdateTrigger(!updateTrigger);
+                history.push("/admin/gameCreators");
+              }
+            }
+          )
+        );
+      } else {
+        putGameCreator(gameCreator.id, {
+          name: data.name,
+          yearOfFoundation: data.yearOfFoundation,
+        }).then(({ gameCreator, error }) => {
+          if (error) setError(error);
+          else {
+            setUpdateTrigger(!updateTrigger);
+            history.push("/admin/gameCreators");
+          }
+        });
+      }
+    },
   });
 
   return (
@@ -68,14 +88,16 @@ export const UpdateGameCreator: React.FunctionComponent<UpdateGameCreatorProps> 
           <p className={styles.errorMsg}>{formik.errors.name}</p>
         )}
         <label className={styles.label}>
-          <span className={styles.labelText}>Link to logo</span>
+          <span className={styles.labelText}>Logo</span>
           <input
             name="logo"
-            type="text"
-            onChange={formik.handleChange}
+            type="file"
+            onChange={(event) => {
+              const files = event.currentTarget.files as FileList;
+              formik.setFieldValue("logo", files[0]);
+            }}
             onBlur={formik.handleBlur}
-            className={`${styles.input} ${styles.logoInput}`}
-            value={formik.values.logo}
+            className={`${styles.input} ${styles.nameInput}`}
           />
         </label>
         {!!formik.touched.logo && !!formik.errors.logo && (

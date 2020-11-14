@@ -56,7 +56,7 @@ export interface IGameForOrder extends IMyGameFromApi {
 
 export interface IGameCreator {
   name: string;
-  logo: string;
+  logo?: string;
   yearOfFoundation: number;
 }
 

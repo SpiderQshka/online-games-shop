@@ -19,6 +19,7 @@ export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> 
   const history = useHistory();
   const { postGameCreator } = useApi();
   const [error, setError] = useState<IApiError | null>();
+  const [baseImage, setBaseImage] = useState<string>("");
   const formik = useFormik({
     initialValues: {
       logo: null,
@@ -35,7 +36,7 @@ export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> 
     onSubmit: (data) => {
       const logo = (formik.values.logo as any) as File;
       toBase64(logo).then((logo) => {
-        console.log(logo);
+        setBaseImage(logo);
         postGameCreator({ ...data, logo }).then(({ gameCreator, error }) => {
           if (error) setError(error);
           else {
@@ -81,6 +82,7 @@ export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> 
         {!!formik.touched.name && !!formik.errors.name && (
           <p className={styles.errorMsg}>{formik.errors.name}</p>
         )}
+        <img src={baseImage} alt="" height="200px" />
         {/* <label className={styles.label}>
           <span className={styles.labelText}>Link to logo</span>
           <input
