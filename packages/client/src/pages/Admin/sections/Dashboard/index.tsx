@@ -54,7 +54,7 @@ export const Dashboard: React.FunctionComponent<DashboardProps> = ({
         prev.value > curr.value ? prev : curr
       ).value;
       if (biggestValue === genre.value)
-        return { ...genre, color: config.colors.accent };
+        return { ...genre, color: config.colors.primary };
       return genre;
     });
 

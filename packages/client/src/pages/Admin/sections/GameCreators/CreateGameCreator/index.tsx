@@ -20,6 +20,7 @@ export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> 
   const { postGameCreator } = useApi();
   const [error, setError] = useState<IApiError | null>();
   const [baseImage, setBaseImage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const formik = useFormik({
     initialValues: {
       logo: null,
@@ -34,10 +35,12 @@ export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> 
       yearOfFoundation: Yup.number().min(1900).required("Required"),
     }),
     onSubmit: (data) => {
+      setIsLoading(true);
       const logo = (formik.values.logo as any) as File;
       toBase64(logo).then((logo) => {
         setBaseImage(logo);
         postGameCreator({ ...data, logo }).then(({ gameCreator, error }) => {
+          setIsLoading(false);
           if (error) setError(error);
           else {
             setUpdateTrigger(!updateTrigger);
@@ -115,7 +118,9 @@ export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> 
           !!formik.errors.yearOfFoundation && (
             <p className={styles.errorMsg}>{formik.errors.yearOfFoundation}</p>
           )}
-        <div className={styles.actionsBlock}>
+        <div
+          className={`${styles.actionsBlock} ${isLoading && styles.loading}`}
+        >
           <button
             type="submit"
             className={`${styles.button} ${styles.submitButton}`}

@@ -31,6 +31,7 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
   const { postOrderAdmin } = useApi();
 
   const [error, setError] = useState<IApiError | null>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const formik = useFormik({
     initialValues: {
       status: "pending",
@@ -45,11 +46,13 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
       userId: Yup.number().min(1).required("Required"),
     }),
     onSubmit: (data) => {
+      setIsLoading(true);
       postOrderAdmin({
         ...data,
         gamesIds: data.gamesIds.map((id) => +id),
         physicalGamesCopiesIds: data.physicalGamesCopiesIds.map((id) => +id),
       }).then(({ order, error }) => {
+        setIsLoading(false);
         if (error) setError(error);
         else {
           setUpdateTrigger(!updateTrigger);
@@ -145,7 +148,9 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
             </p>
           )}
 
-        <div className={styles.actionsBlock}>
+        <div
+          className={`${styles.actionsBlock} ${isLoading && styles.loading}`}
+        >
           <button
             type="submit"
             className={`${styles.button} ${styles.submitButton}`}

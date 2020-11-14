@@ -31,6 +31,7 @@ export const CreateDiscount: React.FunctionComponent<CreateDiscountProps> = ({
   const { postDiscount } = useApi();
 
   const [error, setError] = useState<IApiError | null>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const formik = useFormik({
     initialValues: {
       amount: 1,
@@ -47,7 +48,9 @@ export const CreateDiscount: React.FunctionComponent<CreateDiscountProps> = ({
       type: Yup.string().required("Required").oneOf(["%", "$"]),
     }),
     onSubmit: (data) => {
+      setIsLoading(true);
       postDiscount(data).then(({ discount, error }) => {
+        setIsLoading(false);
         if (error) setError(error);
         else {
           setUpdateTrigger(!updateTrigger);
@@ -148,7 +151,9 @@ export const CreateDiscount: React.FunctionComponent<CreateDiscountProps> = ({
         {!!formik.touched.gamesIds && !!formik.errors.gamesIds && (
           <p className={styles.errorMsg}>{formik.errors.gamesIds}</p>
         )}
-        <div className={styles.actionsBlock}>
+        <div
+          className={`${styles.actionsBlock} ${isLoading && styles.loading}`}
+        >
           <button
             type="submit"
             className={`${styles.button} ${styles.submitButton}`}

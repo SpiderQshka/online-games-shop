@@ -19,9 +19,9 @@ $actions-block-width: 110px;
       position: fixed;
       background-color: $secondary-color-light;
       right: 0;
-      width: $actions-block-width;
+      max-width: $actions-block-width;
       top: 0;
-      padding: 10px;
+      padding: 15px;
       z-index: 1;
       box-shadow: $basic-shadow;
       display: flex;
@@ -35,6 +35,7 @@ $actions-block-width: 110px;
         cursor: pointer;
         &.menuBtn {
           display: none;
+          margin-left: 15px;
         }
       }
     }

@@ -18,6 +18,7 @@ export const CreateAchievement: React.FunctionComponent<CreateAchievementProps> 
   const history = useHistory();
   const { postAchievement } = useApi();
   const [error, setError] = useState<IApiError | null>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -29,14 +30,17 @@ export const CreateAchievement: React.FunctionComponent<CreateAchievementProps> 
         .required("Required"),
       discount: Yup.number().min(0).max(100).required("Required"),
     }),
-    onSubmit: (data) =>
+    onSubmit: (data) => {
+      setIsLoading(true);
       postAchievement(data).then(({ achievement, error }) => {
+        setIsLoading(false);
         if (error) setError(error);
         else {
           setUpdateTrigger(!updateTrigger);
           history.push("/admin/achievements");
         }
-      }),
+      });
+    },
   });
 
   return (
@@ -73,7 +77,9 @@ export const CreateAchievement: React.FunctionComponent<CreateAchievementProps> 
         {!!formik.touched.discount && !!formik.errors.discount && (
           <p className={styles.errorMsg}>{formik.errors.discount}</p>
         )}
-        <div className={styles.actionsBlock}>
+        <div
+          className={`${styles.actionsBlock} ${isLoading && styles.loading}`}
+        >
           <button
             type="submit"
             className={`${styles.button} ${styles.submitButton}`}

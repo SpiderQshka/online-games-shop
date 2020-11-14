@@ -31,6 +31,7 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
   const { putOrder } = useApi();
   const order = orders.filter((order) => order.id === +id)[0];
   const [error, setError] = useState<IApiError | null>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const formik = useFormik({
     initialValues: {
       status: order.status,
@@ -47,18 +48,21 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
       physicalGamesCopiesIds: Yup.array().of(Yup.number().min(1)).min(1),
     }),
     onSubmit: (data) => {
-      order &&
+      if (order) {
+        setIsLoading(true);
         putOrder(order.id, {
           ...data,
           gamesIds: data.gamesIds.map((id) => +id),
           physicalGamesCopiesIds: data.physicalGamesCopiesIds.map((id) => +id),
         }).then(({ order, error }) => {
+          setIsLoading(false);
           if (error) setError(error);
           else {
             setUpdateTrigger(!updateTrigger);
             history.push("/admin/orders");
           }
         });
+      }
     },
   });
   return (
@@ -131,7 +135,9 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
               {formik.errors.physicalGamesCopiesIds}
             </p>
           )}
-        <div className={styles.actionsBlock}>
+        <div
+          className={`${styles.actionsBlock} ${isLoading && styles.loading}`}
+        >
           <button
             type="submit"
             className={`${styles.button} ${styles.submitButton}`}

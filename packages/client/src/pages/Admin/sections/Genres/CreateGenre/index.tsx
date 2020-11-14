@@ -18,6 +18,7 @@ export const CreateGenre: React.FunctionComponent<CreateGenreProps> = ({
   const history = useHistory();
   const { postGenre } = useApi();
   const [error, setError] = useState<IApiError | null>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -27,14 +28,17 @@ export const CreateGenre: React.FunctionComponent<CreateGenreProps> = ({
         .min(3, "Name should be at least 3 characters long")
         .required("Required"),
     }),
-    onSubmit: (data) =>
+    onSubmit: (data) => {
+      setIsLoading(true);
       postGenre(data).then(({ genre, error }) => {
+        setIsLoading(false);
         if (error) setError(error);
         else {
           setUpdateTrigger(!updateTrigger);
           history.push("/admin/genres");
         }
-      }),
+      });
+    },
   });
 
   return (
@@ -55,7 +59,9 @@ export const CreateGenre: React.FunctionComponent<CreateGenreProps> = ({
         {!!formik.touched.name && !!formik.errors.name && (
           <p className={styles.errorMsg}>{formik.errors.name}</p>
         )}
-        <div className={styles.actionsBlock}>
+        <div
+          className={`${styles.actionsBlock} ${isLoading && styles.loading}`}
+        >
           <button
             type="submit"
             className={`${styles.button} ${styles.submitButton}`}

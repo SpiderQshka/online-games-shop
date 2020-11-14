@@ -30,6 +30,7 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = ({
   const { postGame } = useApi();
   const [error, setError] = useState<IApiError | null>();
   const [baseImage, setBaseImage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const formik = useFormik({
     initialValues: {
       numberOfPhysicalCopies: 0,
@@ -63,10 +64,12 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = ({
       physicalCopyPrice: Yup.number().min(1).required("Required"),
     }),
     onSubmit: (data) => {
+      setIsLoading(true);
       const logo = (formik.values.logo as any) as File;
       toBase64(logo).then((logo) => {
         setBaseImage(logo);
         postGame({ ...data, logo }).then(({ game, error }) => {
+          setIsLoading(false);
           if (error) setError(error);
           else {
             setUpdateTrigger(!updateTrigger);
@@ -264,7 +267,9 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = ({
           {!!formik.touched.gameCreatorId && !!formik.errors.gameCreatorId && (
             <p className={styles.errorMsg}>{formik.errors.gameCreatorId}</p>
           )}
-          <div className={styles.actionsBlock}>
+          <div
+            className={`${styles.actionsBlock} ${isLoading && styles.loading}`}
+          >
             <button
               type="submit"
               className={`${styles.button} ${styles.submitButton}`}

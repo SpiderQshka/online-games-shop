@@ -35,6 +35,7 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
   const { putGame } = useApi();
   const [error, setError] = useState<IApiError | null>();
   const [baseLogo, setBaseLogo] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const formik = useFormik({
     initialValues: {
       numberOfPhysicalCopies: game.numberOfPhysicalCopies,
@@ -52,7 +53,7 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
       name: Yup.string()
         .min(5, "Name should be at least 5 characters long")
         .required("Required"),
-      logo: Yup.string(),
+      logo: Yup.mixed(),
       description: Yup.string()
         .min(30, "Description should be at least 30 characters long")
         .required("Required"),
@@ -68,6 +69,8 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
       physicalCopyPrice: Yup.number().min(1).required("Required"),
     }),
     onSubmit: async (data) => {
+      setIsLoading(true);
+
       const logo = data.logo;
 
       const gameObj = {
@@ -88,6 +91,7 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
       }
 
       putGame(game.id, gameObj).then(({ game, error }) => {
+        setIsLoading(false);
         if (error) setError(error);
         else {
           setUpdateTrigger(!updateTrigger);
@@ -282,7 +286,9 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
         {!!formik.touched.gameCreatorId && !!formik.errors.gameCreatorId && (
           <p className={styles.errorMsg}>{formik.errors.gameCreatorId}</p>
         )}
-        <div className={styles.actionsBlock}>
+        <div
+          className={`${styles.actionsBlock} ${isLoading && styles.loading}`}
+        >
           <button
             type="submit"
             className={`${styles.button} ${styles.submitButton}`}
