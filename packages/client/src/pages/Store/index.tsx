@@ -1,9 +1,18 @@
 import { Header } from "components/Header";
 import { useApi } from "context/api";
-import { IApiError, IGameCreatorFromApi, IGenreFromApi } from "interfaces/api";
+import {
+  IApiError,
+  IGameCreatorFromApi,
+  IGenreFromApi,
+  IMyAchievementFromApi,
+} from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
 import React, { useCallback, useEffect, useState } from "react";
-import { formatGamesForUI, getAchievementDiscountSize } from "utils/helpers";
+import {
+  checkNewAchievements,
+  formatGamesForUI,
+  getAchievementDiscountSize,
+} from "utils/helpers";
 import { filterGames, sortGames } from "utils/helpers";
 import { FaWindowClose, FaSadTear, FaFilter } from "react-icons/fa";
 import styles from "./styles.module.scss";
@@ -11,6 +20,7 @@ import { useHistory } from "react-router-dom";
 import { CenteredLoader } from "components/Loader";
 import { Select } from "components/Select";
 import { SliderRange } from "components/SliderRange";
+import { usePopup } from "context/popup";
 
 export type SortType = "creationDate" | "alphabet" | "discount";
 export interface IFilterConfig {
@@ -34,6 +44,7 @@ export const Store = () => {
   } = useApi();
 
   const history = useHistory();
+  const { showPopup } = usePopup();
   const [games, setGames] = useState<IGameForUI[]>([]);
   const [gameCreators, setGameCreators] = useState<IGameCreatorFromApi[]>([]);
   const [genres, setGenres] = useState<IGenreFromApi[]>([]);
@@ -44,6 +55,9 @@ export const Store = () => {
   const [isFiltersMenuOpen, setIsFiltersMenuOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [achievementDiscount, setAchievementDiscount] = useState<number>(0);
+  const [userAchievements, setUserAchievements] = useState<
+    IMyAchievementFromApi[]
+  >([]);
 
   const [filterConfig, setFilterConfig] = useState<IFilterConfig>({
     gameCreatorId: null,
@@ -63,6 +77,11 @@ export const Store = () => {
       genresIds: [],
     });
   }, [games, sortType, hightestGamePrice]);
+
+  useEffect(() => {
+    if (checkNewAchievements(userAchievements))
+      showPopup({ msg: "Achievement get!", type: "success" });
+  }, [userAchievements.length]);
 
   useEffect(
     () =>
@@ -131,6 +150,7 @@ export const Store = () => {
           userAchievements,
         })
       );
+      setUserAchievements(userAchievements);
       setGames(sortGames(storeGames, sortType));
       setFilteredGames(sortGames(storeGames, sortType));
       setGenres(genres);
@@ -154,9 +174,7 @@ export const Store = () => {
           className={`${styles.storeContent} ${
             isFiltersMenuOpen && styles.overlay
           }`}
-          onClick={() => {
-            isFiltersMenuOpen && setIsFiltersMenuOpen(false);
-          }}
+          onClick={() => isFiltersMenuOpen && setIsFiltersMenuOpen(false)}
         >
           <div className={styles.gamesContainer}>
             <div className={styles.infoContainer}>
@@ -209,23 +227,26 @@ export const Store = () => {
                       {game.gameCreator.name}
                     </p>
                     <div className={styles.priceBlock}>
-                      {(game.discount || achievementDiscount > 0) && (
-                        <>
-                          <span className={styles.saleSize}>
-                            {`-${
-                              game.discount
-                                ? game.discount.amount
-                                : achievementDiscount
-                            }${game.discount ? game.discount.type : "%"}`}
-                          </span>
-                          <span className={styles.previousPrice}>
-                            {game.price} $
-                          </span>
-                        </>
-                      )}
+                      {game.optimalPrice !== 0 &&
+                        (game.discount || achievementDiscount > 0) && (
+                          <>
+                            <span className={styles.saleSize}>
+                              {`-${
+                                game.discount
+                                  ? game.discount.amount
+                                  : achievementDiscount
+                              }${game.discount ? game.discount.type : "%"}`}
+                            </span>
+                            <span className={styles.previousPrice}>
+                              {game.price}$
+                            </span>
+                          </>
+                        )}
 
                       <span className={styles.currentPrice}>
-                        {game.optimalPrice}$
+                        {game.optimalPrice !== 0
+                          ? `${game.optimalPrice}$`
+                          : "Free"}
                       </span>
                     </div>
                   </li>
@@ -302,6 +323,7 @@ export const Store = () => {
                           value={genre.id}
                           checked={filterConfig.genresIds.includes(genre.id)}
                           className={`${styles.input}`}
+                          tabIndex={1}
                           onClick={(e) => {
                             const input = e.target as HTMLInputElement;
                             if (input.checked)
@@ -354,6 +376,7 @@ export const Store = () => {
                           name="gameCreatorId"
                           value={gameCreator.id}
                           className={styles.input}
+                          tabIndex={1}
                           checked={
                             filterConfig.gameCreatorId === gameCreator.id
                           }

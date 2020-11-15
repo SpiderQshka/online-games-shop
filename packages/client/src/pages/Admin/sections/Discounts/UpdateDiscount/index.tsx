@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
 import { useHistory, useParams } from "react-router-dom";
@@ -33,8 +33,11 @@ export const UpdateDiscount: React.FunctionComponent<UpdateDiscountProps> = ({
   const history = useHistory();
   const { putDiscount } = useApi();
   const discount = discounts.filter((discount) => discount.id === +id)[0];
+  if (!discount) history.goBack();
   const [error, setError] = useState<IApiError | null>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [choosenGames, setChoosenGames] = useState<IGameForUI[]>([]);
+
   const formik = useFormik({
     initialValues: {
       amount: discount.amount,
@@ -64,6 +67,20 @@ export const UpdateDiscount: React.FunctionComponent<UpdateDiscountProps> = ({
       }
     },
   });
+
+  useEffect(() => {
+    setChoosenGames(
+      games.filter((game) =>
+        formik.values.gamesIds.map((game) => +game).includes(game.id)
+      )
+    );
+  }, [
+    formik.values.gamesIds.length,
+    formik.values.gamesIds[formik.values.gamesIds.length - 1],
+  ]);
+
+  const maxDiscount =
+    choosenGames.map((game) => +game.price).sort((a, b) => a - b)[0] || 0;
 
   return (
     <div className={styles.itemContent}>
@@ -123,11 +140,7 @@ export const UpdateDiscount: React.FunctionComponent<UpdateDiscountProps> = ({
             name="amount"
             type="number"
             min={1}
-            max={
-              formik.values.type === "%"
-                ? 100
-                : games.map((game) => +game.price).sort((a, b) => a - b)[0]
-            }
+            max={formik.values.type === "%" ? 100 : maxDiscount}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             className={`${styles.input} ${styles.amountInput}`}
@@ -149,7 +162,7 @@ export const UpdateDiscount: React.FunctionComponent<UpdateDiscountProps> = ({
             multiple
           >
             {games.map((game) => (
-              <option value={game.id} key={game.id}>
+              <option value={+game.id} key={game.id}>
                 {game.name}
               </option>
             ))}

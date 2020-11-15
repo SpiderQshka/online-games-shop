@@ -15,7 +15,11 @@ import {
 import { useApi } from "context/api";
 import { IOrderWithUserId } from "interfaces/app";
 import { useAuth } from "context/auth";
-import { formatOrdersForUI, removeCartData } from "utils/helpers";
+import {
+  checkNewAchievements,
+  formatOrdersForUI,
+  removeCartData,
+} from "utils/helpers";
 import { usePopup } from "context/popup";
 import { Games } from "./Games";
 
@@ -42,8 +46,7 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const newAchievements = achievements.filter((ach) => !ach.seen);
-    if (newAchievements.length > 0)
+    if (checkNewAchievements(achievements))
       showPopup({ msg: "Achievement get!", type: "success" });
   }, [achievements.length]);
 

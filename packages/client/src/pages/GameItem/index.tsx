@@ -18,9 +18,7 @@ import { useAuth } from "context/auth";
 import { isInteger, uniq } from "lodash";
 import { usePopup } from "context/popup";
 
-interface GameItemProps {}
-
-export const GameItem: React.FunctionComponent<GameItemProps> = () => {
+export const GameItem: React.FunctionComponent = () => {
   const { id } = useParams<{ id: string }>();
   const { token } = useAuth();
   const history = useHistory();
@@ -215,7 +213,9 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
                     addToCartHandler(false)
                   }
                 >
-                  Digital ({game?.optimalPrice}$)
+                  Digital (
+                  {game?.optimalPrice !== 0 ? `${game?.optimalPrice}$` : "Free"}
+                  )
                   <span className={styles.msg}>
                     <FaShoppingCart size="15px" />
                   </span>
@@ -232,7 +232,11 @@ export const GameItem: React.FunctionComponent<GameItemProps> = () => {
                     addToCartHandler(true)
                   }
                 >
-                  Physical ({game?.physicalCopyOptimalPrice}$)
+                  Physical (
+                  {game?.physicalCopyOptimalPrice !== 0
+                    ? `${game?.physicalCopyOptimalPrice}$`
+                    : "Free"}
+                  )
                   <span className={styles.msg}>
                     <FaShoppingCart size="15px" />
                   </span>

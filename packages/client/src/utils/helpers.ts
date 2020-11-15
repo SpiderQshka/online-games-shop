@@ -1,3 +1,4 @@
+import Axios from "axios";
 import {
   IAchievementFromApi,
   IDiscount,
@@ -6,6 +7,7 @@ import {
   IGameForOrder,
   IGameFromApi,
   IGenreFromApi,
+  IMyAchievementFromApi,
   IMyGameFromApi,
   IOrderedGame,
   IOrderFromApi,
@@ -96,8 +98,8 @@ export const doesCurrentDateSuitDiscount = (
 ) => {
   return (
     !!discount.amount &&
-    new Date(discount.startDate) < new Date() &&
-    new Date(discount.endDate) > new Date()
+    new Date(discount.startDate) <= new Date() &&
+    new Date(discount.endDate) >= new Date()
   );
 };
 
@@ -368,13 +370,15 @@ export const getOptimalGamePrice = ({
   isPhysical,
 }: IGetOptimalGamePrice) => {
   if (!isPhysical) {
-    const gamePriceWithGameDiscount = game.discount
-      ? getGamePriceWithDiscount({
-          discountSize: game.discount.amount,
-          discountType: game.discount.type,
-          gamePrice: +game.price,
-        })
-      : +game.price;
+    if (game.price === 0) return 0;
+    const gamePriceWithGameDiscount =
+      game.discount && doesCurrentDateSuitDiscount(game.discount)
+        ? getGamePriceWithDiscount({
+            discountSize: game.discount.amount,
+            discountType: game.discount.type,
+            gamePrice: +game.price,
+          })
+        : +game.price;
     const gamePriceWithAchievement = getGamePriceWithDiscount({
       discountSize: achievementDiscount,
       gamePrice: game.price,
@@ -385,13 +389,15 @@ export const getOptimalGamePrice = ({
       ? +gamePriceWithAchievement.toFixed(2)
       : +gamePriceWithGameDiscount.toFixed(2);
   } else {
-    const gamePriceWithGameDiscount = game.discount
-      ? getGamePriceWithDiscount({
-          discountSize: game.discount.amount,
-          discountType: game.discount.type,
-          gamePrice: +game.physicalCopyPrice,
-        })
-      : +game.physicalCopyPrice;
+    if (game.physicalCopyPrice === 0) return 0;
+    const gamePriceWithGameDiscount =
+      game.discount && doesCurrentDateSuitDiscount(game.discount)
+        ? getGamePriceWithDiscount({
+            discountSize: game.discount.amount,
+            discountType: game.discount.type,
+            gamePrice: +game.physicalCopyPrice,
+          })
+        : +game.physicalCopyPrice;
     const gamePriceWithAchievement = getGamePriceWithDiscount({
       discountSize: achievementDiscount,
       gamePrice: game.physicalCopyPrice,
@@ -413,3 +419,6 @@ export const toBase64: (file: File) => Promise<string> = (file) =>
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = (error) => reject(error);
   });
+
+export const checkNewAchievements = (achievements: IMyAchievementFromApi[]) =>
+  !!achievements.filter((ach) => !ach.seen).length;

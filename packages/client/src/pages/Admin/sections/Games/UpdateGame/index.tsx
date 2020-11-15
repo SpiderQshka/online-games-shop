@@ -32,6 +32,7 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
   const game = games.filter((game) => game.id === +id)[0];
+  if (!game) history.goBack();
   const { putGame } = useApi();
   const [error, setError] = useState<IApiError | null>();
   const [baseLogo, setBaseLogo] = useState<string | null>(null);
@@ -58,7 +59,7 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
         .min(30, "Description should be at least 30 characters long")
         .required("Required"),
       ageRating: Yup.number().min(0).max(21).required("Required"),
-      price: Yup.number().min(1).required("Required"),
+      price: Yup.number().min(0).required("Required"),
       numberOfPhysicalCopies: Yup.number().min(0).required("Required"),
       gameCreatorId: Yup.number().min(1).required("Required"),
       createdAt: Yup.string().required("Required"),
@@ -207,7 +208,7 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
           <input
             name="price"
             type="number"
-            min="1"
+            min="0"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             className={`${styles.input} ${styles.priceInput}`}

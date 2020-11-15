@@ -21,6 +21,7 @@ export const UpdateGenre: React.FunctionComponent<UpdateGenreProps> = ({
   const history = useHistory();
 
   const genre = genres.filter((genre) => genre.id === +id)[0];
+  if (!genre) history.goBack();
   const { putGenre } = useApi();
 
   const [error, setError] = useState<IApiError | null>();

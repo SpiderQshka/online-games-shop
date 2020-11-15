@@ -186,7 +186,7 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = ({
             <input
               name="price"
               type="number"
-              min="1"
+              min="0"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className={`${styles.input} ${styles.priceInput}`}

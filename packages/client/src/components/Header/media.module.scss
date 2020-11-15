@@ -44,6 +44,9 @@ $nav-list-width: 200px;
           &.active::after {
             height: 0 !important;
           }
+          &.active .link {
+            color: $primary-color-light;
+          }
           &.mobileOnlyItem {
             display: block;
           }

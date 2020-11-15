@@ -17,21 +17,23 @@ export const Dashboard: React.FunctionComponent<DashboardProps> = ({
   gameCreators,
 }) => {
   const labelConfig = {
-    fontSize: "9px",
+    fontSize: "7px",
     fontFamily: "sans-serif",
     fill: "#fff",
   };
   const shiftSize = 0.5;
 
-  const gamesData = games.map((game, i) => ({
-    title: game.name,
-    value: +game.price,
-    color:
-      games.reduce((prev, curr) => (+prev.price < +curr.price ? curr : prev))
-        .id === game.id
-        ? config.colors.accent
-        : config.colors.primary,
-  }));
+  const gamesData = games
+    .filter((game) => +game.price !== 0)
+    .map((game, i) => ({
+      title: game.name,
+      value: +game.price,
+      color:
+        games.reduce((prev, curr) => (+prev.price < +curr.price ? curr : prev))
+          .id === game.id
+          ? config.colors.accent
+          : config.colors.primary,
+    }));
 
   const genresData = genres
     .map((genre) => {
@@ -56,19 +58,23 @@ export const Dashboard: React.FunctionComponent<DashboardProps> = ({
       if (biggestValue === genre.value)
         return { ...genre, color: config.colors.primary };
       return genre;
-    });
+    })
+    .filter((el) => el.value !== 0);
 
-  const gameCreatorsData = gameCreators.map((gameCreator, i) => {
-    const value = games.reduce(
-      (prev, curr) => (gameCreator.id === curr.gameCreator.id ? ++prev : prev),
-      0
-    );
-    return {
-      title: gameCreator.name,
-      color: config.colors.primary,
-      value,
-    };
-  });
+  const gameCreatorsData = gameCreators
+    .map((gameCreator, i) => {
+      const value = games.reduce(
+        (prev, curr) =>
+          gameCreator.id === curr.gameCreator.id ? ++prev : prev,
+        0
+      );
+      return {
+        title: gameCreator.name,
+        color: config.colors.primary,
+        value,
+      };
+    })
+    .filter((el) => el.value !== 0);
 
   return (
     <div className={styles.dashboardContent}>

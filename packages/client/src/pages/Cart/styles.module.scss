@@ -66,11 +66,13 @@
         .cartItem {
           @include primaryFont;
           display: grid;
-          grid-template-columns: 1fr 50px;
+          grid-template-columns: minmax(70px, 1fr) 70px 30px;
           margin-top: 20px;
           color: $primary-color-light;
-          .row {
+          .col {
             padding-right: 7px;
+            display: flex;
+            align-items: center;
             &:last-of-type {
               padding-right: 0;
             }
@@ -78,7 +80,14 @@
               cursor: pointer;
             }
             &.price {
-              text-align: right;
+              justify-content: end;
+            }
+            &.action {
+              .btn {
+                @include basicBtn;
+                width: 30px;
+                height: 30px;
+              }
             }
             .accent {
               color: $accent-color;
@@ -125,14 +134,18 @@
         display: flex;
         justify-content: center;
         margin-top: 20px;
-        .submitBtn {
-          @include primaryFont;
+        .btn {
+          @include basicBtn;
           padding: 15px 20px;
           border-radius: 5px;
-          border: none;
           color: $primary-color-light;
-          background-color: $accent-color;
-          cursor: pointer;
+          &.submitBtn {
+            background-color: $accent-color;
+          }
+          &.clearBtn {
+            background-color: $primary-color-dark;
+            margin-left: 10px;
+          }
         }
       }
     }

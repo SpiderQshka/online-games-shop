@@ -163,7 +163,8 @@ export const checkAchievements = async (userId: number) => {
         seen: false,
       });
     }
-  } else if (userGames.length >= 2) {
+  }
+  if (userGames.length >= 2) {
     const achievement = await doesUserHaveAchievement(userId, "Buy 2 games");
     if (!achievement.exists) {
       await UnlockedAchievement.query().insert({
@@ -172,7 +173,8 @@ export const checkAchievements = async (userId: number) => {
         seen: false,
       });
     }
-  } else if (userGames.length >= 10) {
+  }
+  if (userGames.length >= 10) {
     const achievement = await doesUserHaveAchievement(userId, "Buy 10 games");
     if (!achievement.exists) {
       await UnlockedAchievement.query().insert({
@@ -194,7 +196,8 @@ export const checkAchievements = async (userId: number) => {
         seen: false,
       });
     }
-  } else if (userOrders.length >= 2) {
+  }
+  if (userOrders.length >= 2) {
     const achievement = await doesUserHaveAchievement(userId, "Make 2 orders");
     if (!achievement.exists) {
       await UnlockedAchievement.query().insert({
@@ -203,7 +206,8 @@ export const checkAchievements = async (userId: number) => {
         seen: false,
       });
     }
-  } else if (userOrders.length >= 10) {
+  }
+  if (userOrders.length >= 10) {
     const achievement = await doesUserHaveAchievement(userId, "Make 10 orders");
     if (!achievement.exists) {
       await UnlockedAchievement.query().insert({
@@ -228,7 +232,8 @@ export const checkAchievements = async (userId: number) => {
         seen: false,
       });
     }
-  } else if (userPhysicalGamesIds.length >= 2) {
+  }
+  if (userPhysicalGamesIds.length >= 2) {
     const achievement = await doesUserHaveAchievement(
       userId,
       "Order 2 physical copies"
@@ -240,7 +245,8 @@ export const checkAchievements = async (userId: number) => {
         seen: false,
       });
     }
-  } else if (userPhysicalGamesIds.length >= 10) {
+  }
+  if (userPhysicalGamesIds.length >= 10) {
     const achievement = await doesUserHaveAchievement(
       userId,
       "Order 10 physical copies"

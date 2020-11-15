@@ -1,4 +1,4 @@
-FROM node:12.19-alpine
+FROM node:14.15-alpine
 
 WORKDIR /server
 
@@ -9,6 +9,7 @@ ENV DB_USER=postgres
 ENV DB_PASSWORD=password
 ENV JWT_SECRET_KEY="secret key"
 ENV DB_HOST=db
+ENV IMAGE_HOST_API_KEY=6d207e02198a847aa98d0a2a901485a5
 
 COPY package.json ./
 COPY yarn.lock ./
@@ -23,5 +24,4 @@ RUN yarn global add tsc
 
 RUN yarn tsc
 
-# CMD ["node", "--inspect", "-r", "ts-node/register", "-r", "dotenv/config", "-r", "tsconfig-paths/register", "./dist/index.js"]
 CMD sh -c "yarn migrate && yarn seed && yarn server"

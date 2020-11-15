@@ -7,6 +7,7 @@ import {
   getAchievementDiscountSize,
   getCartData,
   setCartData,
+  removeCartData,
 } from "utils/helpers";
 import styles from "./styles.module.scss";
 import _ from "lodash";
@@ -15,6 +16,7 @@ import { Header } from "components/Header";
 import { useHistory } from "react-router-dom";
 import { GiTumbleweed } from "react-icons/gi";
 import { Loader } from "components/Loader";
+import { FaEdit, FaTimes } from "react-icons/fa";
 
 Aigle.mixin(_, {});
 
@@ -99,7 +101,7 @@ export const Cart = () => {
       setIsLoading(false);
     };
     processGames();
-  }, []);
+  }, [getCartData.length]);
 
   const submitHandler = useCallback(async () => {
     await Aigle.map(games, (game) =>
@@ -124,6 +126,29 @@ export const Cart = () => {
     });
   }, [games]);
 
+  const clearCartHandler = useCallback(() => {
+    removeCartData();
+    history.push("/");
+  }, []);
+
+  const removeCartItemHandler = useCallback(
+    (gameId: number, isPhysical: boolean) => {
+      const cartGames = getCartData();
+
+      setCartData(
+        cartGames.filter(
+          (game) => !(game.id === gameId && game.isPhysical === isPhysical)
+        )
+      );
+      setGames(
+        games.filter(
+          (game) => !(game.id === gameId && game.isPhysical === isPhysical)
+        )
+      );
+    },
+    [games.length]
+  );
+
   useEffect(() => {
     if (error) history.push("/error", error);
   }, [error]);
@@ -144,15 +169,16 @@ export const Cart = () => {
 
                 <ul className={styles.cartList}>
                   <li className={`${styles.cartItem} ${styles.headerItem}`}>
-                    <span className={`${styles.row} ${styles.name}`}>Name</span>
-                    <span className={`${styles.row} ${styles.price}`}>
+                    <span className={`${styles.col} ${styles.name}`}>Name</span>
+                    <span className={`${styles.col} ${styles.price}`}>
                       Price
                     </span>
+                    <span className={`${styles.col} ${styles.action}`}></span>
                   </li>
                   {games.map((game) => (
                     <li className={styles.cartItem} key={game.id}>
                       <span
-                        className={`${styles.row} ${styles.name}`}
+                        className={`${styles.col} ${styles.name}`}
                         onClick={() => history.push(`/store/item/${game.id}`)}
                       >
                         {game.name}
@@ -160,13 +186,23 @@ export const Cart = () => {
                           <span className={styles.accent}>Physical copy</span>
                         )}
                       </span>
-                      <span className={`${styles.row} ${styles.price}`}>
+                      <span className={`${styles.col} ${styles.price}`}>
                         {getOptimalGamePrice({
                           achievementDiscount,
                           game,
                           isPhysical: game.isPhysical,
                         })}
                         $
+                      </span>
+                      <span className={`${styles.col} ${styles.action}`}>
+                        <button
+                          className={styles.btn}
+                          onClick={() =>
+                            removeCartItemHandler(game.id, game.isPhysical)
+                          }
+                        >
+                          <FaTimes size={"100%"} />
+                        </button>
                       </span>
                     </li>
                   ))}
@@ -194,10 +230,16 @@ export const Cart = () => {
                 </p>
                 <div className={styles.actionsBlock}>
                   <button
-                    className={styles.submitBtn}
+                    className={`${styles.btn} ${styles.submitBtn}`}
                     onClick={() => submitHandler()}
                   >
-                    That's it!
+                    Order
+                  </button>
+                  <button
+                    className={`${styles.btn} ${styles.clearBtn}`}
+                    onClick={() => clearCartHandler()}
+                  >
+                    Clear cart
                   </button>
                 </div>
               </div>

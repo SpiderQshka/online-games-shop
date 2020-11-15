@@ -24,7 +24,7 @@ export const UpdateAchievement: React.FunctionComponent<UpdateAchievementProps> 
     (achievement) => achievement.id === +id
   )[0];
   const { putAchievement } = useApi();
-
+  if (!achievement) history.goBack();
   const [error, setError] = useState<IApiError | null>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 

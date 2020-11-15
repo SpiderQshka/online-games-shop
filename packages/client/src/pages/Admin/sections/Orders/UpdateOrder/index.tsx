@@ -30,6 +30,7 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
   const history = useHistory();
   const { putOrder } = useApi();
   const order = orders.filter((order) => order.id === +id)[0];
+  if (!order) history.goBack();
   const [error, setError] = useState<IApiError | null>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const formik = useFormik({

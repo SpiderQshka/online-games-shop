@@ -90,6 +90,7 @@ export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> 
             }}
             onBlur={formik.handleBlur}
             className={`${styles.input} ${styles.nameInput}`}
+            accept="image/jpeg, image/png"
           />
         </label>
         {!!formik.touched.logo && !!formik.errors.logo && (

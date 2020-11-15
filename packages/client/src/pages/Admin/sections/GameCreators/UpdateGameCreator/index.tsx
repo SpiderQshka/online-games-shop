@@ -23,6 +23,7 @@ export const UpdateGameCreator: React.FunctionComponent<UpdateGameCreatorProps> 
   const gameCreator = gameCreators.filter(
     (gameCreator) => gameCreator.id === +id
   )[0];
+  if (!gameCreator) history.goBack();
   const { putGameCreator } = useApi();
   const [error, setError] = useState<IApiError | null>();
   const [baseLogo, setBaseLogo] = useState<string | null>(null);
@@ -149,7 +150,10 @@ export const UpdateGameCreator: React.FunctionComponent<UpdateGameCreatorProps> 
           </button>
           <button
             type="reset"
-            onClick={formik.handleReset}
+            onClick={(e) => {
+              formik.handleReset(e);
+              setBaseLogo(null);
+            }}
             className={`${styles.button} ${styles.resetButton}`}
           >
             Reset

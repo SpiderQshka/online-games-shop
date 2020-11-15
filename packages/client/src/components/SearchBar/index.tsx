@@ -5,10 +5,12 @@ import { useHistory } from "react-router-dom";
 import _ from "lodash";
 
 import styles from "./styles.module.scss";
+import { usePopup } from "context/popup";
 
 export const SearchBar: React.FunctionComponent = () => {
   const history = useHistory();
   const { queryGame } = useApi();
+  const { showPopup } = usePopup();
   const [query, setQuery] = useState<string>("");
   const [isInputActive, setIsInputActive] = useState<boolean>(false);
   const [error, setError] = useState<IApiError | null>(null);
@@ -35,6 +37,10 @@ export const SearchBar: React.FunctionComponent = () => {
     debounced();
   }, [query]);
 
+  useEffect(() => {
+    if (error) showPopup({ msg: error.msg, code: error.status, type: "error" });
+  }, [error]);
+
   return (
     <div className={styles.searchBarContainer}>
       <input
@@ -48,27 +54,27 @@ export const SearchBar: React.FunctionComponent = () => {
       />
       {isInputActive && !!query && (
         <ul className={styles.searchResultsList} tabIndex={0}>
-          {!!filteredGames.length ? (
-            filteredGames.map((game) => (
-              <li
-                className={styles.searchResultItem}
-                onClick={() => {
-                  history.push(`/store/item/${game.id}`);
-                  setIsInputActive(false);
-                }}
-                key={game.id}
-              >
-                {game.name}
-              </li>
-            ))
-          ) : isLoading ? (
-            <li className={styles.notFound}>Loading...</li>
+          {query.length > 2 ? (
+            !!filteredGames.length ? (
+              filteredGames.map((game) => (
+                <li
+                  className={styles.searchResultItem}
+                  onClick={() => {
+                    history.push(`/store/item/${game.id}`);
+                    setIsInputActive(false);
+                  }}
+                  key={game.id}
+                >
+                  {game.name}
+                </li>
+              ))
+            ) : isLoading ? (
+              <li className={styles.notFound}>Loading...</li>
+            ) : (
+              <li className={styles.notFound}>Nothing was found</li>
+            )
           ) : (
-            <li className={styles.notFound}>
-              {query.length > 2
-                ? "Nothing was found"
-                : "Type 3 or more symbols"}
-            </li>
+            <li className={styles.notFound}>Type 3 or more symbols</li>
           )}
         </ul>
       )}
