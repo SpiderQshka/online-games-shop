@@ -355,7 +355,8 @@ const getGamePriceWithDiscount: (config: {
 }) => number = ({ discountSize, discountType, gamePrice }) => {
   const discountIsPercents =
     discountType === "%" ? discountSize : (discountSize / gamePrice) * 100;
-  return (gamePrice * (100 - discountIsPercents)) / 100;
+  const discountedGamePrice = (gamePrice * (100 - discountIsPercents)) / 100;
+  return discountedGamePrice < 0 ? 0 : discountedGamePrice;
 };
 
 interface IGetOptimalGamePrice {

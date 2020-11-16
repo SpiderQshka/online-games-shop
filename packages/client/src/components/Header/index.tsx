@@ -109,7 +109,7 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
       <div className={`${styles.profileContainer}`}>
         <SearchBar />
         {isLoading ? (
-          <div className={styles.loadingProfile}>Loading...</div>
+          <div className={styles.loadingProfile}></div>
         ) : user ? (
           <>
             <div
