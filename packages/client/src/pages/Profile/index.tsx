@@ -105,26 +105,42 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
         <div className={styles.profileContent}>
           <ul className={styles.menuList}>
             <li className={`${styles.menuItem} ${styles.active}`}>
-              <Link to="/profile/orders" className={styles.menuLink}>
+              <Link
+                to="/profile/orders"
+                className={styles.menuLink}
+                title="Orders"
+              >
                 <FaShoppingCart color="#f4f4f4" className={styles.icon} />
                 <span className={styles.menuText}>Orders</span>
               </Link>
             </li>
             <li className={`${styles.menuItem} ${styles.active}`}>
-              <Link to="/profile/achievements" className={styles.menuLink}>
+              <Link
+                to="/profile/achievements"
+                className={styles.menuLink}
+                title="Achievements"
+              >
                 <FaStar color="#f4f4f4" className={styles.icon} />
                 <span className={styles.menuText}>Achievements</span>
               </Link>
             </li>
             <li className={`${styles.menuItem} ${styles.active}`}>
-              <Link to="/profile/games" className={styles.menuLink}>
+              <Link
+                to="/profile/games"
+                className={styles.menuLink}
+                title="Games"
+              >
                 <FaGamepad color="#f4f4f4" className={styles.icon} />
                 <span className={styles.menuText}>My games</span>
               </Link>
             </li>
             {user && user.isAdmin && (
               <li className={`${styles.menuItem} ${styles.active}`}>
-                <Link className={styles.menuLink} to="/admin">
+                <Link
+                  className={styles.menuLink}
+                  to="/admin"
+                  title="Admin panel"
+                >
                   <RiAdminLine color="#f4f4f4" className={styles.icon} />
                   <span className={styles.menuText}>Go to admin panel</span>
                 </Link>
@@ -139,6 +155,7 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
                     removeCartData();
                     history.push("/");
                   }}
+                  title="Log out"
                 >
                   <RiLogoutBoxRLine color="#f4f4f4" className={styles.icon} />
                   <span className={styles.menuText}>Log out</span>

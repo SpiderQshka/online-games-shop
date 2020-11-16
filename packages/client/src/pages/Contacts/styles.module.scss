@@ -38,6 +38,7 @@
         padding: 20px;
         display: flex;
         justify-content: flex-start;
+        min-width: 0;
         .iconContainer {
           width: 50px;
           min-width: 50px;
@@ -48,14 +49,22 @@
           display: flex;
           flex-direction: column;
           justify-content: center;
-          .contactDescription {
+          min-width: 0;
+          .contactDescription,
+          .contactData {
             color: $primary-color;
             margin-bottom: 10px;
-          }
-          .contactData {
-            color: $primary-color-light;
+            display: inline-block;
+            color: $primary-color;
             text-decoration: none;
             line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .contactData {
+            margin-bottom: 0;
+            color: $primary-color-light;
           }
         }
       }

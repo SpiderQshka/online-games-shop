@@ -81,27 +81,32 @@ $filters-menu-gap: 13px;
       .gamesList {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        grid-row-gap: 20px;
-        grid-column-gap: 10px;
+        grid-row-gap: 30px;
+        grid-column-gap: 20px;
         .gameItem {
           border-radius: 5px;
           box-sizing: border-box;
           cursor: pointer;
+          min-width: 0;
           .logoContainer {
             border-radius: 5px;
             min-height: 300px;
             background-color: #fff;
             background: no-repeat center/cover $primary-color-dark;
           }
-          .name {
+          .name,
+          .gameCreator {
             @include primaryFont;
             margin-top: 20px;
             color: $primary-color-light;
+            line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           .gameCreator {
-            @include primaryFont;
-            margin-top: 7px;
             color: $primary-color;
+            margin-top: 10px;
           }
           .priceBlock {
             margin-top: 20px;
