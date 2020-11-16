@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Redirect, Route, Switch, useHistory } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 import { Dashboard } from "../sections/Dashboard";
 import { useApi } from "context/api";
 import {
@@ -176,6 +176,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         path="/admin/dashboard"
         component={() => (
           <Dashboard
+            orders={orders}
             gameCreators={gameCreators}
             games={games}
             genres={genres}

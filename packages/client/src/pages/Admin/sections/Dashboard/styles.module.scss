@@ -9,21 +9,48 @@
     font-size: 25px;
     margin-bottom: 30px;
   }
-  .diagramsBlock {
+  .itemsBlock {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas: "infoFirst infoSecond infoThird" "barChart barChart pieChart" "barChart barChart .";
     grid-gap: 30px;
-    .diagramContainer {
+    .infoFirst {
+      grid-area: infoFirst;
+    }
+    .infoSecond {
+      grid-area: infoSecond;
+    }
+    .infoThird {
+      grid-area: infoThird;
+    }
+    .barChart {
+      grid-area: barChart;
+    }
+    .pieChart {
+      grid-area: pieChart;
+    }
+    .itemContainer {
       background-color: $secondary-color-light;
-      padding: 20px;
+      padding: 40px;
       .header {
         text-align: center;
         line-height: 1.4;
       }
-      .diagramContent {
-        padding: 20px;
+      .itemContent {
         max-width: 100%;
         max-height: 100%;
+        .value {
+          @include primaryFont;
+          color: $primary-color-light;
+          font-size: 30px;
+          font-weight: bold;
+          margin-bottom: 20px;
+        }
+        .description {
+          @include primaryFont;
+          color: $primary-color;
+          font-size: 20px;
+        }
       }
     }
   }

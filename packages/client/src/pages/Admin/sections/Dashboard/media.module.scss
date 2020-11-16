@@ -1,7 +1,25 @@
 @import "../../../../styles/config.scss";
 
+@media all and (max-width: 1600px) {
+  .dashboardContent {
+    .itemsBlock {
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas: "infoFirst infoFirst" "infoSecond infoThird" "barChart barChart" "pieChart pieChart";
+    }
+  }
+}
+
 @media all and (max-width: 1000px) {
   .dashboardContent {
     padding-left: 0;
+  }
+}
+
+@media all and (max-width: 700px) {
+  .dashboardContent {
+    .itemsBlock {
+      grid-template-columns: 1fr 1fr;
+      grid-template-areas: "infoFirst infoFirst" "infoSecond infoSecond" "infoThird infoThird" "barChart barChart" "pieChart pieChart";
+    }
   }
 }

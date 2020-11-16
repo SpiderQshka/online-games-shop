@@ -11,6 +11,7 @@ export const config = {
     primaryDark: "#3a3a3a",
     secondary: "#191919",
     secondaryDark: "#121212",
+    secondaryLight: "#2a2a2a",
     error: "#e32b2b",
     success: "#5a9516",
   },
