@@ -14,7 +14,12 @@ import {
   getAchievementDiscountSize,
 } from "utils/helpers";
 import { filterGames, sortGames } from "utils/helpers";
-import { FaWindowClose, FaSadTear, FaFilter } from "react-icons/fa";
+import {
+  FaWindowClose,
+  FaSadTear,
+  FaFilter,
+  FaArrowLeft,
+} from "react-icons/fa";
 import styles from "./styles.module.scss";
 import { useHistory } from "react-router-dom";
 import { CenteredLoader } from "components/Loader";
@@ -48,6 +53,10 @@ export const Store = () => {
   const [games, setGames] = useState<IGameForUI[]>([]);
   const [gameCreators, setGameCreators] = useState<IGameCreatorFromApi[]>([]);
   const [genres, setGenres] = useState<IGenreFromApi[]>([]);
+  const [openFilters, setOpenFilters] = useState<{
+    genres: boolean;
+    gameCreators: boolean;
+  }>({ gameCreators: false, genres: false });
 
   const [error, setError] = useState<IApiError | null>(null);
   const [sortType, setSortType] = useState<SortType>("alphabet");
@@ -297,8 +306,26 @@ export const Store = () => {
                   }}
                 />
               </div>
-              <h4 className={styles.inputGroupHeader}>Genres</h4>
-              <ul className={styles.inputGroup}>
+              <h4
+                className={`${styles.inputGroupHeader} ${
+                  openFilters.genres && styles.active
+                }`}
+                style={{ marginTop: "10px" }}
+                onClick={() =>
+                  setOpenFilters({
+                    ...openFilters,
+                    genres: !openFilters.genres,
+                  })
+                }
+              >
+                Genres
+                <FaArrowLeft className={styles.icon} size="20px" />
+              </h4>
+              <ul
+                className={`${styles.inputGroup} ${
+                  openFilters.genres && styles.active
+                }`}
+              >
                 {isLoading ? (
                   <li
                     className={`${styles.inputGroupItem} ${
@@ -351,8 +378,25 @@ export const Store = () => {
                   ))
                 )}
               </ul>
-              <h4 className={styles.inputGroupHeader}>Game creators</h4>
-              <ul className={styles.inputGroup}>
+              <h4
+                className={`${styles.inputGroupHeader} ${
+                  openFilters.gameCreators && styles.active
+                }`}
+                onClick={() =>
+                  setOpenFilters({
+                    ...openFilters,
+                    gameCreators: !openFilters.gameCreators,
+                  })
+                }
+              >
+                Game creators
+                <FaArrowLeft className={styles.icon} size="20px" />
+              </h4>
+              <ul
+                className={`${styles.inputGroup} ${
+                  openFilters.gameCreators && styles.active
+                }`}
+              >
                 {isLoading ? (
                   <li
                     className={`${styles.inputGroupItem} ${

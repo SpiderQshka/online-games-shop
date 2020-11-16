@@ -161,13 +161,26 @@ $filters-menu-gap: 13px;
           padding: 20px $filters-menu-gap;
           font-size: 1.2em;
           color: $primary-color-light;
+          position: relative;
+          cursor: pointer;
+          .icon {
+            position: absolute;
+            top: 20px;
+            right: $filters-menu-gap;
+            transition: 0.5s;
+          }
+          &.active {
+            .icon {
+              transform: rotate(-90deg);
+            }
+          }
         }
         .sliderRangeContainer {
           padding: 0 $filters-menu-gap;
         }
         .inputGroup {
           @include primaryFont;
-
+          display: none;
           .inputGroupItem {
             &.loadingItem,
             &.errorItem {
@@ -189,6 +202,9 @@ $filters-menu-gap: 13px;
                 display: none;
               }
             }
+          }
+          &.active {
+            display: block;
           }
         }
       }

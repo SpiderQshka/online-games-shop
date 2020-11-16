@@ -47,7 +47,7 @@
           .img {
             width: 100%;
             min-height: 10rem;
-            background: no-repeat center/cover $primary-color-dark;
+            background: no-repeat center/contain $primary-color-dark;
           }
         }
         &.btnContainer {

@@ -10,5 +10,17 @@ export async function seed(knex: Knex): Promise<void> {
       id: 2,
       name: "Action",
     },
+    {
+      id: 3,
+      name: "Strategy",
+    },
+    {
+      id: 4,
+      name: "Quest",
+    },
+    {
+      id: 5,
+      name: "Simulator",
+    },
   ]);
 }
