@@ -4,13 +4,13 @@
   "scripts": {
     "start": "nodemon",
     "test": "jest --runInBand",
-    "migrate:make": "knex --knexfile src/db/knexfile.ts migrate:make",
-    "migrate": "knex --knexfile src/db/knexfile.ts migrate:latest",
-    "migrate:rollback": "knex --knexfile src/db/knexfile.ts migrate:rollback",
-    "seed": "knex --knexfile src/db/knexfile.ts seed:run",
-    "seed:make": "knex --knexfile src/db/knexfile.ts seed:make",
+    "migrate:make": "knex migrate:make",
+    "migrate": "knex migrate:latest",
+    "migrate:rollback": "knex migrate:rollback",
+    "seed": "knex seed:run",
+    "seed:make": "knex seed:make",
     "build": "tsc",
-    "server": "node --inspect -r ts-node/register -r dotenv/config -r tsconfig-paths/register ./dist/index.js"
+    "server": "node --inspect -r ts-node/register -r dotenv/config -r tsconfig-paths/register ./dist/src/index.js"
   },
   "license": "ISC",
   "devDependencies": {
@@ -28,7 +28,7 @@
     "@types/koa-session": "^5.10.2",
     "@types/koa__cors": "^3.0.2",
     "@types/lodash": "^4.14.161",
-    "@types/node": "^14.6.0",
+    "@types/node": "^14.14.8",
     "@types/passport-jwt": "^3.0.3",
     "@types/passport-local": "^1.0.33",
     "concurrently": "^4.1.0",

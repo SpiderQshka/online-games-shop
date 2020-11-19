@@ -1,5 +1,6 @@
-require("ts-node/register");
-require("dotenv").config({ path: "../../.env" });
+import "ts-node/register";
+import { config } from "dotenv";
+config({ path: "./.env" });
 
 module.exports = {
   development: {
@@ -12,10 +13,10 @@ module.exports = {
     },
     migrations: {
       tableName: "table_migrations",
-      directory: __dirname + "/migrations",
+      directory: __dirname + "/src/db/migrations",
     },
     seeds: {
-      directory: __dirname + "/seeds",
+      directory: __dirname + "/src/db/seeds",
     },
   },
 
@@ -24,7 +25,7 @@ module.exports = {
     connection: process.env.DATABASE_URL,
     migrations: {
       tableName: "table_migrations",
-      directory: __dirname + "/migrations",
+      directory: __dirname + "/src/db/seeds",
     },
     seeds: {
       directory: __dirname + "/seeds",

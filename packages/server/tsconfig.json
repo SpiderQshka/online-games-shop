@@ -12,6 +12,7 @@
     "suppressImplicitAnyIndexErrors": true,
     "typeRoots": ["./types", "./node_modules/@types"]
   },
+  "files": ["knexfile.ts"],
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "src/tests"]
 }
