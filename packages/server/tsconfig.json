@@ -6,13 +6,16 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "dist",
-    "baseUrl": "./src",
+    "baseUrl": "src",
+    "paths": {
+      "": ["src/*"]
+    },
+    "plugins": [{ "transform": "typescript-transform-paths" }],
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "suppressImplicitAnyIndexErrors": true,
     "typeRoots": ["./types", "./node_modules/@types"]
   },
-  "files": ["knexfile.ts"],
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "src/tests"]
 }
