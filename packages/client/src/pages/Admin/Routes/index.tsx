@@ -67,7 +67,6 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
     getOrderedGames,
     getAchievements,
     getUsers,
-    getUserAchievements,
   } = useApi();
   const [error, setError] = useState<IErrorObject>(defaultErrorObj);
   const [games, setGames] = useState<IGameForUI[]>([]);
@@ -125,12 +124,6 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
       } = await getAchievements();
       if (achievementsError) errorObj.achievements = achievementsError;
 
-      const {
-        achievements: userAchievements,
-        error: userAchievementsError,
-      } = await getUserAchievements();
-      if (userAchievementsError) errorObj.achievements = userAchievementsError;
-
       const gamesForUI = formatGamesForUI({
         usedGenres,
         usedDiscounts,
@@ -138,7 +131,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         discounts,
         gameCreators,
         games,
-        userAchievements,
+        userAchievements: [],
       });
 
       const ordersForUI = formatOrdersForUIAdmin({
@@ -161,6 +154,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
       setAchievements(achievements);
       setUsers(users);
       setDiscounts(discountsForUI);
+      setError(errorObj);
       setIsLoading(false);
     };
     processAsync();
@@ -170,7 +164,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
     <div className={styles.loaderContainer}>
       <Loader />
     </div>
-  ) : error ? (
+  ) : error.auth ? (
     <Error />
   ) : (
     <Switch>
@@ -182,38 +176,53 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
             gameCreators={gameCreators}
             games={games}
             genres={genres}
+            error={
+              error.orders || error.gameCreators || error.games || error.genres
+            }
           />
         )}
       />
       <Route
         exact
         path="/admin/orders"
-        component={() => <Orders orders={orders} />}
+        component={() => <Orders error={error.orders} orders={orders} />}
       />
       <Route
         exact
         path="/admin/games"
-        component={() => <Games games={games} />}
+        component={() => <Games error={error.games} games={games} />}
       />
       <Route
         exact
         path="/admin/gameCreators"
-        component={() => <GameCreators gameCreators={gameCreators} />}
+        component={() => (
+          <GameCreators
+            error={error.gameCreators}
+            gameCreators={gameCreators}
+          />
+        )}
       />
       <Route
         exact
         path="/admin/achievements"
-        component={() => <Achievements achievements={achievements} />}
+        component={() => (
+          <Achievements
+            error={error.achievements}
+            achievements={achievements}
+          />
+        )}
       />
       <Route
         exact
         path="/admin/discounts"
-        component={() => <Discounts discounts={discounts} />}
+        component={() => (
+          <Discounts error={error.discounts} discounts={discounts} />
+        )}
       />
       <Route
         exact
         path="/admin/genres"
-        component={() => <Genres genres={genres} />}
+        component={() => <Genres error={error.genres} genres={genres} />}
       />
       <Route
         exact

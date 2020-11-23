@@ -2,18 +2,24 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import styles from "components/AdminTable/styles.module.scss";
 import { BsThreeDots } from "react-icons/bs";
-import { IAchievementFromApi } from "interfaces/api";
+import { IAchievementFromApi, IApiError } from "interfaces/api";
+import { Error } from "components/Error";
 
 interface AchievementsProps {
   achievements: IAchievementFromApi[];
+  error: IApiError | null;
 }
 
 export const Achievements: React.FunctionComponent<AchievementsProps> = ({
   achievements,
+  error,
 }) => {
   const history = useHistory();
+  console.log(error);
 
-  return (
+  return error ? (
+    <Error />
+  ) : (
     <div className={styles.itemsContent}>
       <h2 className={styles.header}>Achievements</h2>
       <table className={styles.itemsTable}>
