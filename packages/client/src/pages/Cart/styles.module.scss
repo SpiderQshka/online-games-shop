@@ -12,6 +12,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    &.error {
+      background-color: inherit;
+    }
     .iconContainer {
       max-width: 200px;
       margin-bottom: 30px;

@@ -1,30 +1,27 @@
 import { config } from "config";
-import { useApi } from "context/api";
 import { usePopup } from "context/popup";
-import React, { useEffect } from "react";
+import React from "react";
 import { FaCheck, FaInfoCircle, FaTimesCircle } from "react-icons/fa";
 import styles from "./styles.module.scss";
 
 export const Popup: React.FunctionComponent = () => {
-  const { isOpen, msg, type, hidePopup, status, showPopup } = usePopup();
-
-  const msgForShow = type === "error" ? `Error: ${status}` : msg;
+  const { isOpen, msg, type, hidePopup } = usePopup();
 
   if (isOpen) setTimeout(hidePopup, config.popupTimeout);
 
-  const { getUserAchievements } = useApi();
+  // const { getUserAchievements } = useApi();
 
-  useEffect(() => {
-    const processAchievements = async () => {
-      const { achievements } = await getUserAchievements();
-      if (!!achievements) {
-        const newAchievements = achievements.filter((ach) => !ach.seen);
-        if (newAchievements.length > 0)
-          showPopup({ msg: "Achievement get!", type: "success" });
-      }
-    };
-    processAchievements();
-  });
+  // useEffect(() => {
+  //   const processAchievements = async () => {
+  //     const { achievements } = await getUserAchievements();
+  //     if (!!achievements) {
+  //       const newAchievements = achievements.filter((ach) => !ach.seen);
+  //       if (newAchievements.length > 0)
+  //         showPopup({ msg: "Achievement get!", type: "success" });
+  //     }
+  //   };
+  //   processAchievements();
+  // });
 
   return (
     <div
@@ -39,7 +36,7 @@ export const Popup: React.FunctionComponent = () => {
       {type === "error" && (
         <FaTimesCircle size={"1.5em"} className={styles.icon} />
       )}
-      <p className={styles.popupMsg}>{msgForShow}</p>
+      <p className={styles.popupMsg}>{msg}</p>
     </div>
   );
 };

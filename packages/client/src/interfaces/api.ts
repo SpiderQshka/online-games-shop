@@ -1,6 +1,20 @@
+export type ResourceType =
+  | "games"
+  | "orders"
+  | "auth"
+  | "users"
+  | "genres"
+  | "discounts"
+  | "achievements"
+  | "gameCreators"
+  | "usedDiscounts"
+  | "usedGenres"
+  | "orderedGames";
+
 export interface IApiError {
   status: number;
   msg: string;
+  resource: ResourceType;
 }
 
 export interface IUser {

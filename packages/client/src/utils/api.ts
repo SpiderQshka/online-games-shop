@@ -19,7 +19,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           order: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "orders",
+          },
         };
       }),
   login: (data) =>
@@ -31,7 +35,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           token: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "auth",
+          },
         };
       }),
   register: (data) =>
@@ -46,7 +54,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           token: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "auth",
+          },
         };
       }),
   getGames: () =>
@@ -58,7 +70,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           games: [],
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response || "Network error",
+            status: error.request.status || 502,
+            resource: "games",
+          },
         };
       }),
   getGame: (id: number) =>
@@ -70,7 +86,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           game: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "games",
+          },
         };
       }),
 
@@ -83,7 +103,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           gameCreators: [],
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "gameCreators",
+          },
         };
       }),
   getGameCreator: (id: number) =>
@@ -95,7 +119,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           gameCreator: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "gameCreators",
+          },
         };
       }),
   getDiscounts: () =>
@@ -107,7 +135,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           discounts: [],
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "discounts",
+          },
         };
       }),
   getUsedDiscounts: () =>
@@ -119,7 +151,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           usedDiscounts: [],
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "usedDiscounts",
+          },
         };
       }),
   getGenres: () =>
@@ -131,7 +167,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           genres: [],
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "genres",
+          },
         };
       }),
   getUsedGenres: () =>
@@ -143,7 +183,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           usedGenres: [],
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "usedGenres",
+          },
         };
       }),
   getUserOrders: () =>
@@ -159,7 +203,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           orders: [],
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "orders",
+          },
         };
       }),
   getUserOrderedGames: () =>
@@ -175,7 +223,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           orderedGames: [],
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "orderedGames",
+          },
         };
       }),
   getUserAchievements: () =>
@@ -191,7 +243,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           achievements: [],
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "achievements",
+          },
         };
       }),
   getUser: () =>
@@ -207,7 +263,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           user: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "auth",
+          },
         };
       }),
   getOrders: () =>
@@ -223,7 +283,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           orders: [],
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "orders",
+          },
         };
       }),
   getOrderedGames: () =>
@@ -239,7 +303,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           orderedGames: [],
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "orderedGames",
+          },
         };
       }),
   putOrder: (id, order) =>
@@ -255,7 +323,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           order: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "orders",
+          },
         };
       }),
   postOrderAdmin: (order) =>
@@ -271,7 +343,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           order: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "orders",
+          },
         };
       }),
   getUsers: () =>
@@ -287,7 +363,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           users: [],
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "users",
+          },
         };
       }),
   postGame: (game) =>
@@ -303,7 +383,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           game: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "games",
+          },
         };
       }),
   putGame: (id, game) =>
@@ -319,7 +403,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           game: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "games",
+          },
         };
       }),
   postGameCreator: (gameCreator) =>
@@ -335,7 +423,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           gameCreator: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "gameCreators",
+          },
         };
       }),
   putGameCreator: (id, gameCreator) =>
@@ -351,7 +443,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           gameCreator: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "gameCreators",
+          },
         };
       }),
   getAchievements: () =>
@@ -367,7 +463,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           achievements: [],
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "achievements",
+          },
         };
       }),
   postAchievement: (achievement) =>
@@ -383,7 +483,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           achievement: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "achievements",
+          },
         };
       }),
   putAchievement: (id, achievement) =>
@@ -399,7 +503,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           achievement: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "achievements",
+          },
         };
       }),
   postDiscount: (discount) =>
@@ -415,7 +523,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           discount: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "discounts",
+          },
         };
       }),
   putDiscount: (id, discount) =>
@@ -431,7 +543,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           discount: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "discounts",
+          },
         };
       }),
   postGenre: (genre) =>
@@ -447,7 +563,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           genre: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "genres",
+          },
         };
       }),
   putGenre: (id, genre) =>
@@ -463,7 +583,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           genre: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "genres",
+          },
         };
       }),
   blockGame: (gameId) =>
@@ -483,7 +607,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           game: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "games",
+          },
         };
       }),
   unblockGame: (gameId) =>
@@ -503,7 +631,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           game: null,
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "games",
+          },
         };
       }),
   getUserGames: () =>
@@ -519,7 +651,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           games: [],
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "games",
+          },
         };
       }),
   queryGame: (query: string) =>
@@ -535,7 +671,11 @@ export const API: IApi = {
       .catch((error) => {
         return {
           games: [],
-          error: { msg: error.request.response, status: error.request.status },
+          error: {
+            msg: error.request.response,
+            status: error.request.status,
+            resource: "games",
+          },
         };
       }),
 };

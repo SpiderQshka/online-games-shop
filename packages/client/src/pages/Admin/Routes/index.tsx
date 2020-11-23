@@ -9,7 +9,13 @@ import {
   IGenreFromApi,
   IUser,
 } from "interfaces/api";
-import { IDiscountForUI, IGameForUI, IOrderWithUserId } from "interfaces/app";
+import {
+  defaultErrorObj,
+  IDiscountForUI,
+  IErrorObject,
+  IGameForUI,
+  IOrderWithUserId,
+} from "interfaces/app";
 import { Orders } from "../sections/Orders";
 import { UpdateOrder } from "../sections/Orders/UpdateOrder";
 import { CreateOrder } from "../sections/Orders/CreateOrder";
@@ -35,6 +41,7 @@ import {
   formatGamesForUI,
   formatOrdersForUIAdmin,
 } from "utils/helpers";
+import { Error } from "components/Error";
 
 interface RoutesProps {
   isLoading: boolean;
@@ -62,7 +69,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
     getUsers,
     getUserAchievements,
   } = useApi();
-  const [error, setError] = useState<IApiError | null>(null);
+  const [error, setError] = useState<IErrorObject>(defaultErrorObj);
   const [games, setGames] = useState<IGameForUI[]>([]);
   const [genres, setGenres] = useState<IGenreFromApi[]>([]);
   const [orders, setOrders] = useState<IOrderWithUserId[]>([]);
@@ -74,53 +81,55 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
   useEffect(() => {
     setIsLoading(true);
     const processAsync = async () => {
+      const errorObj = { ...defaultErrorObj } as IErrorObject;
+
       const { games, error: gamesError } = await getGames();
-      if (gamesError) setError(gamesError);
+      if (gamesError) errorObj.games = gamesError;
 
       const {
         gameCreators,
         error: gameCreatorsError,
       } = await getGameCreators();
-      if (gameCreatorsError) setError(gameCreatorsError);
+      if (gameCreatorsError) errorObj.gameCreators = gameCreatorsError;
 
       const { discounts, error: discountsError } = await getDiscounts();
-      if (discountsError) setError(discountsError);
+      if (discountsError) errorObj.discounts = discountsError;
 
       const {
         usedDiscounts,
         error: usedDiscountsError,
       } = await getUsedDiscounts();
-      if (usedDiscountsError) setError(usedDiscountsError);
+      if (usedDiscountsError) errorObj.usedDiscounts = usedDiscountsError;
 
       const { genres, error: genresError } = await getGenres();
-      if (genresError) setError(genresError);
+      if (genresError) errorObj.genres = genresError;
 
-      const { usedGenres, error: useGenresError } = await getUsedGenres();
-      if (useGenresError) setError(useGenresError);
+      const { usedGenres, error: usedGenresError } = await getUsedGenres();
+      if (usedGenresError) errorObj.usedGenres = usedGenresError;
 
       const { orders, error: ordersError } = await getOrders();
-      if (ordersError) setError(ordersError);
+      if (ordersError) errorObj.orders = ordersError;
 
       const { users, error: usersError } = await getUsers();
-      if (usersError) setError(usersError);
+      if (usersError) errorObj.users = usersError;
 
       const {
         orderedGames,
         error: orderedGamesError,
       } = await getOrderedGames();
-      if (orderedGamesError) setError(orderedGamesError);
+      if (orderedGamesError) errorObj.orderedGames = orderedGamesError;
 
       const {
         achievements,
         error: achievementsError,
       } = await getAchievements();
-      if (achievementsError) setError(achievementsError);
+      if (achievementsError) errorObj.achievements = achievementsError;
 
       const {
         achievements: userAchievements,
         error: userAchievementsError,
       } = await getUserAchievements();
-      if (userAchievementsError) setError(userAchievementsError);
+      if (userAchievementsError) errorObj.achievements = userAchievementsError;
 
       const gamesForUI = formatGamesForUI({
         usedGenres,
@@ -162,14 +171,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
       <Loader />
     </div>
   ) : error ? (
-    <div className={styles.errorContainer}>
-      <h1 className={styles.errorHeader}>Oops!</h1>
-      <h2 className={styles.errorStatus}>Something went wrong!</h2>
-      <p className={styles.errorMsg}>{error.msg}</p>
-      <p className={styles.errorAdvise}>
-        Check your internet connection and try to reload this page
-      </p>
-    </div>
+    <Error />
   ) : (
     <Switch>
       <Route

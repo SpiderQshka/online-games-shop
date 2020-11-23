@@ -1,16 +1,18 @@
 import React from "react";
 import styles from "./styles.module.scss";
-import { IAchievementFromApi } from "interfaces/api";
+import { IAchievementFromApi, IApiError } from "interfaces/api";
 import { Loader } from "components/Loader";
 
 interface AchievementsProps {
   achievements: IAchievementFromApi[];
   isLoading: boolean;
+  error: IApiError | null;
 }
 
 export const Achievements: React.FunctionComponent<AchievementsProps> = ({
   achievements,
   isLoading,
+  error,
 }) => {
   return (
     <>
@@ -53,7 +55,9 @@ export const Achievements: React.FunctionComponent<AchievementsProps> = ({
             </>
           ) : (
             <li className={styles.notFound}>
-              You don't have any achievements.. yet!
+              {error
+                ? "Error occured while loading achievements"
+                : "You don't have any achievements.. yet!"}
             </li>
           )}
         </ul>

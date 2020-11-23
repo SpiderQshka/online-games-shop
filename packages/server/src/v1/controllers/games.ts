@@ -139,7 +139,7 @@ export const gamesController: IGamesController = {
     const gameId = ctx.request.body.gameId as number;
 
     const game = await Game.query().findById(gameId);
-    if (game.numberOfPhysicalCopies === 0)
+    if (game.numberOfPhysicalCopies <= 0)
       ctx.throw(404, "Game doesn't have physical copies left");
 
     const updatedGame = await Game.query().patchAndFetchById(gameId, {

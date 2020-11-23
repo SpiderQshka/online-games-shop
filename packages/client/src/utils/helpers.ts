@@ -1,6 +1,7 @@
 import Axios from "axios";
 import {
   IAchievementFromApi,
+  IApiError,
   IDiscount,
   IDiscountFromApi,
   IGameCreatorFromApi,
@@ -150,8 +151,15 @@ export const formatGamesForUI: (
       });
       return {
         ...game,
-        gameCreator,
-        genres: gameGenres,
+        gameCreator: gameCreator || {
+          id: 1,
+          logo: "",
+          name: "Not loaded",
+          yearOfFoundation: 0,
+        },
+        genres: gameGenres.length
+          ? gameGenres
+          : [{ name: "Not loaded", id: 1 }],
         discount:
           gameHightestDiscount &&
           doesCurrentDateSuitDiscount(gameHightestDiscount)
@@ -216,7 +224,7 @@ export const formatOrdersForUI: (
         });
         return {
           ...game,
-          isPhysical: game.isPhysical,
+          isPhysical: !!game?.isPhysical,
           discount,
         };
       });
@@ -292,9 +300,9 @@ export const formatOrdersForUIAdmin: (
 
     gamesForOrder.push(...gamePhysicalDublicates);
 
-    const userId = orderedGames.filter(
-      (orderedGame) => orderedGame.orderId === order.id
-    )[0].userId;
+    const userId =
+      orderedGames.filter((orderedGame) => orderedGame.orderId === order.id)[0]
+        ?.userId || 1;
     return {
       ...order,
       orderedGames: gamesForOrder,

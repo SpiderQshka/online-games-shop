@@ -1,0 +1,122 @@
+@import "../../../styles/config.scss";
+
+.gamesContainer {
+  padding-bottom: $default-gap;
+  .infoContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .infoContainer {
+    padding: $default-gap 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .sortByContainer {
+      display: flex;
+      align-items: center;
+      .text {
+        @include primaryFont;
+        color: $primary-color;
+        margin-right: 7px;
+      }
+    }
+    .openFiltersBtn {
+      @include basicBtn;
+      display: none;
+      align-items: center;
+      .text {
+        margin-right: 10px;
+        color: $primary-color-light;
+      }
+    }
+  }
+  .notFoundBlock {
+    .header {
+      @include primaryFont;
+      color: $primary-color;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .iconContainer {
+      max-width: 100px;
+      margin: 0 auto;
+    }
+  }
+  .errorContainer {
+    @include primaryFont;
+    text-align: center;
+    .errorHeader {
+      font-size: 50px;
+      margin-bottom: 20px;
+      color: $accent-color;
+    }
+    .errorStatus {
+      font-size: 30px;
+      margin-bottom: 15px;
+      color: $primary-color-light;
+    }
+    .errorMsg {
+      color: $primary-color;
+      margin-bottom: 15px;
+    }
+    .errorAdvise {
+      color: $primary-color;
+    }
+  }
+  .gamesList {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-row-gap: 30px;
+    grid-column-gap: 20px;
+    .gameItem {
+      border-radius: 5px;
+      box-sizing: border-box;
+      cursor: pointer;
+      min-width: 0;
+      .logoContainer {
+        border-radius: 5px;
+        min-height: 300px;
+        background-color: #fff;
+        background: no-repeat center/cover $primary-color-dark;
+      }
+      .name,
+      .gameCreator {
+        @include primaryFont;
+        margin-top: 20px;
+        color: $primary-color-light;
+        line-height: 1.3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .gameCreator {
+        color: $primary-color;
+        margin-top: 10px;
+      }
+      .priceBlock {
+        margin-top: 20px;
+        @include primaryFont;
+        .saleSize {
+          display: inline-block;
+          color: $primary-color-light;
+          background-color: $success-color;
+          border-radius: 5px;
+          padding: 5px;
+          font-size: 12px;
+        }
+        .previousPrice {
+          color: $primary-color;
+          text-decoration: line-through;
+          margin: 0 7px;
+          line-height: 1.4;
+        }
+        .currentPrice {
+          color: $primary-color-light;
+        }
+      }
+    }
+  }
+}
+
+@import "./media.module.scss";

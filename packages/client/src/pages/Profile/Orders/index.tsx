@@ -4,15 +4,18 @@ import styles from "./styles.module.scss";
 import { IOrderForUI } from "interfaces/app";
 import moment from "moment";
 import { Loader } from "components/Loader";
+import { IApiError } from "interfaces/api";
 
 interface OrdersProps {
   orders: IOrderForUI[];
   isLoading: boolean;
+  error: IApiError | null;
 }
 
 export const Orders: React.FunctionComponent<OrdersProps> = ({
   orders,
   isLoading,
+  error,
 }) => {
   return (
     <>
@@ -36,18 +39,22 @@ export const Orders: React.FunctionComponent<OrdersProps> = ({
                     {moment(el.createdAt).format("DD-MM-YYYY")}
                   </span>
                   <span className={`${styles.row} ${styles.games}`}>
-                    {el.orderedGames.map((el) => (
-                      <Link
-                        to={`/store/item/${el.id}`}
-                        className={styles.gameName}
-                        key={el.id}
-                      >
-                        {el.name}
-                        {el.isPhysical && (
-                          <span className={styles.accent}>Physical copy</span>
-                        )}
-                      </Link>
-                    ))}
+                    {el.orderedGames.length ? (
+                      el.orderedGames.map((el) => (
+                        <Link
+                          to={`/store/item/${el.id}`}
+                          className={styles.gameName}
+                          key={el.id}
+                        >
+                          {el.name}
+                          {el.isPhysical && (
+                            <span className={styles.accent}>Physical copy</span>
+                          )}
+                        </Link>
+                      ))
+                    ) : (
+                      <li className={styles.gameName}>Not loaded</li>
+                    )}
                   </span>
                   <span className={`${styles.row} ${styles.price}`}>
                     {el.price}$
@@ -57,7 +64,9 @@ export const Orders: React.FunctionComponent<OrdersProps> = ({
             </>
           ) : (
             <li className={styles.notFound}>
-              You don't have any orders.. yet!
+              {error
+                ? "Error occured while loading orders"
+                : "You don't have any orders.. yet!"}
             </li>
           )}
         </ul>

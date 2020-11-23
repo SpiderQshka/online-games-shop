@@ -1,4 +1,5 @@
 import {
+  IApiError,
   IDiscountFromApi,
   IGameCreatorFromApi,
   IGameForOrder,
@@ -26,3 +27,31 @@ export interface IOrderWithUserId extends IOrderForUI {
 export interface IDiscountForUI extends IDiscountFromApi {
   games: IGameFromApi[];
 }
+
+export interface IErrorObject {
+  games: IApiError | null;
+  orders: IApiError | null;
+  auth: IApiError | null;
+  users: IApiError | null;
+  genres: IApiError | null;
+  discounts: IApiError | null;
+  achievements: IApiError | null;
+  gameCreators: IApiError | null;
+  usedDiscounts: IApiError | null;
+  usedGenres: IApiError | null;
+  orderedGames: IApiError | null;
+}
+
+export const defaultErrorObj = {
+  achievements: null,
+  auth: null,
+  discounts: null,
+  gameCreators: null,
+  games: null,
+  genres: null,
+  orderedGames: null,
+  orders: null,
+  usedDiscounts: null,
+  usedGenres: null,
+  users: null,
+};

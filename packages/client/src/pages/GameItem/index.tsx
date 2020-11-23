@@ -10,13 +10,14 @@ import {
   IMyGameFromApi,
 } from "interfaces/api";
 import moment from "moment";
-import { IGameForUI } from "interfaces/app";
+import { defaultErrorObj, IErrorObject, IGameForUI } from "interfaces/app";
 import { Loader } from "components/Loader";
 import { getCartData, setCartData, formatGamesForUI } from "utils/helpers";
 import { FaShoppingCart } from "react-icons/fa";
 import { useAuth } from "context/auth";
 import { isInteger, uniq } from "lodash";
 import { usePopup } from "context/popup";
+import { Error } from "components/Error";
 
 export const GameItem: React.FunctionComponent = () => {
   const { id } = useParams<{ id: string }>();
@@ -33,8 +34,7 @@ export const GameItem: React.FunctionComponent = () => {
     getUserAchievements,
     getUserGames,
   } = useApi();
-  const { showPopup } = usePopup();
-  const [error, setError] = useState<IApiError | null>(null);
+  const [error, setError] = useState<IErrorObject>(defaultErrorObj);
   const [game, setGame] = useState<IGameForUI | null>(null);
   const [userGames, setUserGames] = useState<IMyGameFromApi[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -43,21 +43,24 @@ export const GameItem: React.FunctionComponent = () => {
   >([]);
 
   const addToCartHandler = useCallback(
-    (isPhysical: boolean) => {
+    async (isPhysical: boolean) => {
       if (game && token) {
+        const errorObj = { ...defaultErrorObj } as IErrorObject;
+
         const games = uniq([...getCartData(), { id: game.id, isPhysical }]);
 
-        setCartData(games);
-        setSessionData(games);
-        if (isPhysical)
-          blockGame(game.id).then(({ game, error }) => {
-            if (error) setError(error);
-          });
-
-        showPopup({
-          msg: `You successfully ordeded "${game?.name}"!`,
-          type: "neutral",
-        });
+        if (isPhysical) {
+          const { error } = await blockGame(game.id);
+          if (error) errorObj.games = error;
+          else {
+            setCartData(games);
+            setSessionData(games);
+          }
+        } else {
+          setCartData(games);
+          setSessionData(games);
+        }
+        setError(errorObj);
       } else history.push("/login");
     },
     [game, token]
@@ -67,50 +70,54 @@ export const GameItem: React.FunctionComponent = () => {
     setIsLoading(true);
     if (!isInteger(+id)) history.push("/store");
     const processGame = async () => {
+      const errorObj = { ...defaultErrorObj } as IErrorObject;
+
       const { game, error: gameError } = await getGame(id as any);
-      if (gameError) setError(gameError);
+      if (gameError) errorObj.games = gameError;
 
       const { usedGenres, error: usedGenresError } = await getUsedGenres();
-      if (usedGenresError) setError(usedGenresError);
+      if (usedGenresError) errorObj.usedGenres = usedGenresError;
 
       const { genres, error: genresError } = await getGenres();
-      if (genresError) setError(genresError);
+      if (genresError) errorObj.genres = genresError;
 
       const { gameCreator, error: gameCreatorError } = await getGameCreator(
         game?.gameCreatorId as number
       );
-      if (gameCreatorError) setError(gameCreatorError);
+      if (gameCreatorError) errorObj.gameCreators = gameCreatorError;
 
       const { discounts, error: discountsError } = await getDiscounts();
-      if (discountsError) setError(discountsError);
+      if (discountsError) errorObj.discounts = discountsError;
 
       const {
         usedDiscounts,
         error: usedDiscountsError,
       } = await getUsedDiscounts();
-      if (usedDiscountsError) setError(usedDiscountsError);
+      if (usedDiscountsError) errorObj.usedDiscounts = usedDiscountsError;
 
       const {
         achievements: userAchievements,
         error: userAchievementsError,
       } = await getUserAchievements();
-      if (userAchievementsError) setError(userAchievementsError);
+      if (userAchievementsError) errorObj.achievements = userAchievementsError;
 
       const { games: userGames, error: userGamesError } = await getUserGames();
-      if (userGamesError) setError(userGamesError);
+      if (userGamesError) errorObj.games = userGamesError;
 
-      const gameForUI = formatGamesForUI({
-        games: game ? [game as IGameFromApi] : [],
-        discounts,
-        usedDiscounts,
-        userAchievements,
-        gameCreators: gameCreator ? [gameCreator as IGameCreatorFromApi] : [],
-        genres,
-        usedGenres,
-      })[0];
+      const gameForUI =
+        formatGamesForUI({
+          games: game ? [game as IGameFromApi] : [],
+          discounts,
+          usedDiscounts,
+          userAchievements,
+          gameCreators: gameCreator ? [gameCreator as IGameCreatorFromApi] : [],
+          genres,
+          usedGenres,
+        })[0] || null;
 
       setGame(gameForUI);
       setUserGames(userGames);
+      setError(errorObj);
       setIsLoading(false);
     };
     processGame();
@@ -145,10 +152,6 @@ export const GameItem: React.FunctionComponent = () => {
       .map((el) => el.isPhysical)
       .some((el) => !el);
 
-  useEffect(() => {
-    if (error && error.status !== 401) history.push("/error", error);
-  }, [error]);
-
   return (
     <>
       <Header />
@@ -159,90 +162,101 @@ export const GameItem: React.FunctionComponent = () => {
       ) : (
         <div className={styles.gameItemContainer}>
           <div className={styles.gameItemContent}>
-            <div className={styles.gameInfoBlock}>
-              <div
-                className={styles.gameLogo}
-                style={{ backgroundImage: `url(${game?.logo})` }}
-              ></div>
-              <h2 className={styles.gameName}>{game?.name}</h2>
-              <div className={styles.gameInfoContent}>
-                <ul className={styles.gameInfoList}>
-                  <li className={styles.gameInfoItem}>
-                    <span className={styles.fieldName}>Developer</span>
-                    <span className={styles.fieldValue}>
-                      {game?.gameCreator.name}
-                    </span>
-                  </li>
-                  <li className={styles.gameInfoItem}>
-                    <span className={styles.fieldName}>Release date</span>
-                    <span className={styles.fieldValue}>
-                      {moment(game?.createdAt).format("DD-MM-YYYY")}
-                    </span>
-                  </li>
-                  <li className={styles.gameInfoItem}>
-                    <span className={styles.fieldName}>Genres</span>
-                    <span className={styles.fieldValue}>
-                      {game?.genres.map((genre, i) =>
-                        i ? `, ${genre.name}` : genre.name
-                      )}
-                    </span>
-                  </li>
-                  <li className={styles.gameInfoItem}>
-                    <span className={styles.fieldName}>Age rating</span>
-                    <span className={styles.fieldValue}>{game?.ageRating}</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
+            {error.games ? (
+              <Error />
+            ) : (
+              <>
+                <div className={styles.gameInfoBlock}>
+                  <div
+                    className={styles.gameLogo}
+                    style={{ backgroundImage: `url(${game?.logo})` }}
+                  ></div>
+                  <h2 className={styles.gameName}>{game?.name}</h2>
 
-            <div className={styles.gameDescriptionBlock}>
-              <h2 className={styles.header}>About a game</h2>
-              <p className={styles.description}>{game?.description}</p>
-            </div>
-            <div className={styles.actionsBlock}>
-              <div className={styles.buttonsBlock}>
-                <button
-                  className={`${styles.actionBtn} ${styles.digital} ${
-                    isGameInCart && styles.active
-                  } ${isCopyDigital && styles.inCart} ${
-                    isDigitalCopyBought && styles.bought
-                  }`}
-                  onClick={() =>
-                    !isCopyDigital &&
-                    !isDigitalCopyBought &&
-                    addToCartHandler(false)
-                  }
-                >
-                  Digital (
-                  {game?.optimalPrice !== 0 ? `${game?.optimalPrice}$` : "Free"}
-                  )
-                  <span className={styles.msg}>
-                    <FaShoppingCart size="15px" />
-                  </span>
-                </button>
-                <button
-                  className={`${styles.actionBtn} ${styles.physical} ${
-                    isGameInCart && styles.active
-                  } ${isCopyPhysical && styles.inCart} ${
-                    isPhysicalCopyBought && styles.bought
-                  }`}
-                  onClick={() =>
-                    !isCopyPhysical &&
-                    !isPhysicalCopyBought &&
-                    addToCartHandler(true)
-                  }
-                >
-                  Physical (
-                  {game?.physicalCopyOptimalPrice !== 0
-                    ? `${game?.physicalCopyOptimalPrice}$`
-                    : "Free"}
-                  )
-                  <span className={styles.msg}>
-                    <FaShoppingCart size="15px" />
-                  </span>
-                </button>
-              </div>
-            </div>
+                  <div className={styles.gameInfoContent}>
+                    <ul className={styles.gameInfoList}>
+                      <li className={styles.gameInfoItem}>
+                        <span className={styles.fieldName}>Developer</span>
+                        <span className={styles.fieldValue}>
+                          {game?.gameCreator?.name}
+                        </span>
+                      </li>
+                      <li className={styles.gameInfoItem}>
+                        <span className={styles.fieldName}>Release date</span>
+                        <span className={styles.fieldValue}>
+                          {moment(game?.createdAt).format("DD-MM-YYYY")}
+                        </span>
+                      </li>
+                      <li className={styles.gameInfoItem}>
+                        <span className={styles.fieldName}>Genres</span>
+                        <span className={styles.fieldValue}>
+                          {game?.genres.map((genre, i) =>
+                            i ? `, ${genre.name}` : genre.name
+                          )}
+                        </span>
+                      </li>
+
+                      <li className={styles.gameInfoItem}>
+                        <span className={styles.fieldName}>Age rating</span>
+                        <span className={styles.fieldValue}>
+                          {game?.ageRating}
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div className={styles.gameDescriptionBlock}>
+                  <h2 className={styles.header}>About a game</h2>
+                  <p className={styles.description}>{game?.description}</p>
+                </div>
+                <div className={styles.actionsBlock}>
+                  <div className={styles.buttonsBlock}>
+                    <button
+                      className={`${styles.actionBtn} ${styles.digital} ${
+                        isGameInCart && styles.active
+                      } ${isCopyDigital && styles.inCart} ${
+                        isDigitalCopyBought && styles.bought
+                      }`}
+                      onClick={() =>
+                        !isCopyDigital &&
+                        !isDigitalCopyBought &&
+                        addToCartHandler(false)
+                      }
+                    >
+                      Digital (
+                      {game?.optimalPrice !== 0
+                        ? `${game?.optimalPrice}$`
+                        : "Free"}
+                      )
+                      <span className={styles.msg}>
+                        <FaShoppingCart size="15px" />
+                      </span>
+                    </button>
+                    <button
+                      className={`${styles.actionBtn} ${styles.physical} ${
+                        isGameInCart && styles.active
+                      } ${isCopyPhysical && styles.inCart} ${
+                        isPhysicalCopyBought && styles.bought
+                      }`}
+                      onClick={() =>
+                        !isCopyPhysical &&
+                        !isPhysicalCopyBought &&
+                        addToCartHandler(true)
+                      }
+                    >
+                      Physical (
+                      {game?.physicalCopyOptimalPrice !== 0
+                        ? `${game?.physicalCopyOptimalPrice}$`
+                        : "Free"}
+                      )
+                      <span className={styles.msg}>
+                        <FaShoppingCart size="15px" />
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

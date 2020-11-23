@@ -1,5 +1,5 @@
 import { useApi } from "context/api";
-import { IApiError, IGameForOrder, IGameFromApi } from "interfaces/api";
+import { IGameForOrder, IGameFromApi } from "interfaces/api";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   getOptimalGamePrice,
@@ -16,7 +16,9 @@ import { Header } from "components/Header";
 import { useHistory } from "react-router-dom";
 import { GiTumbleweed } from "react-icons/gi";
 import { Loader } from "components/Loader";
-import { FaEdit, FaTimes } from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
+import { Error } from "components/Error";
+import { defaultErrorObj, IErrorObject } from "interfaces/app";
 
 Aigle.mixin(_, {});
 
@@ -32,41 +34,44 @@ export const Cart = () => {
     getGameCreators,
     getGenres,
     getUsedGenres,
+    blockGame,
   } = useApi();
   const [games, setGames] = useState<IGameForOrder[]>([]);
-  const [error, setError] = useState<IApiError | null>(null);
+  const [error, setError] = useState<IErrorObject>(defaultErrorObj);
   const [achievementDiscount, setAchievementDiscount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     setIsLoading(true);
     const processGames = async () => {
+      const errorObj = { ...defaultErrorObj } as IErrorObject;
+
       const gamesFromSessionData = getCartData();
 
       const { discounts, error: discountsError } = await getDiscounts();
-      if (discountsError) setError(discountsError);
+      if (discountsError) errorObj.discounts = discountsError;
 
       const {
         usedDiscounts,
         error: usedDiscountsError,
       } = await getUsedDiscounts();
-      if (usedDiscountsError) setError(usedDiscountsError);
+      if (usedDiscountsError) errorObj.usedDiscounts = usedDiscountsError;
 
       const {
         gameCreators,
         error: gameCreatorsError,
       } = await getGameCreators();
-      if (gameCreatorsError) setError(gameCreatorsError);
+      if (gameCreatorsError) errorObj.gameCreators = gameCreatorsError;
 
       const { genres, error: genresError } = await getGenres();
-      if (genresError) setError(genresError);
+      if (genresError) errorObj.genres = genresError;
 
-      const { usedGenres, error: useGenresError } = await getUsedGenres();
-      if (useGenresError) setError(useGenresError);
+      const { usedGenres, error: usedGenresError } = await getUsedGenres();
+      if (usedGenresError) errorObj.usedGenres = usedGenresError;
 
-      const games = await Aigle.map(gamesFromSessionData, (game, i) =>
+      const games = await Aigle.map(gamesFromSessionData, (game) =>
         getGame(game.id).then(({ game, error }) => {
-          if (error) setError(error);
+          if (error) errorObj.games = error;
           else return game;
         })
       );
@@ -75,7 +80,7 @@ export const Cart = () => {
         achievements: userAchievements,
         error: userAchievementsError,
       } = await getUserAchievements();
-      if (userAchievementsError) setError(userAchievementsError);
+      if (userAchievementsError) errorObj.achievements = userAchievementsError;
 
       const formattedGames = formatGamesForUI({
         discounts,
@@ -85,48 +90,74 @@ export const Cart = () => {
         usedGenres,
         games: games.filter((game) => game !== undefined) as IGameFromApi[],
         userAchievements,
-      });
+      }).map((game, i) => ({
+        ...game,
+        isPhysical: gamesFromSessionData[i].isPhysical,
+      }));
 
-      setGames(
-        formattedGames.map((game, i) => ({
-          ...game,
-          isPhysical: gamesFromSessionData[i].isPhysical,
-        }))
-      );
+      setGames(formattedGames);
       setAchievementDiscount(
         getAchievementDiscountSize({
           userAchievements,
         })
       );
+      setError(errorObj);
       setIsLoading(false);
     };
     processGames();
   }, [getCartData.length]);
 
+  const blockGames = useCallback(
+    () =>
+      Aigle.map(games, (game) =>
+        blockGame(game.id).then(
+          ({ error: gameError }) =>
+            gameError && setError({ ...error, games: gameError || null })
+        )
+      ),
+    [games.length]
+  );
+
+  const unblockGames = useCallback(
+    () =>
+      Aigle.map(games, (game) =>
+        unblockGame(game.id).then(
+          ({ error: gameError }) =>
+            gameError && setError({ ...error, games: gameError || null })
+        )
+      ),
+    [games.length]
+  );
+
   const submitHandler = useCallback(async () => {
-    await Aigle.map(games, (game) =>
-      unblockGame(game.id).then(({ error }) => error && setError(error))
-    );
-    postOrder({
-      gamesIds: games
-        .filter((game) => !game.isPhysical)
-        .map((game) => +game.id),
+    await unblockGames();
+    const gamesIds = games
+      .filter((game) => !game.isPhysical)
+      .map((game) => +game.id);
+
+    const physicalGamesCopiesIds = games
+      .filter((game) => game.isPhysical)
+      .map((game) => +game.id);
+
+    const { order, error: orderError } = await postOrder({
+      gamesIds,
       status: "pending",
-      physicalGamesCopiesIds: games
-        .filter((game) => game.isPhysical)
-        .map((game) => +game.id),
-    }).then(({ order, error }) => {
-      if (error) setError(error);
-      else {
-        setGames([]);
-        setCartData([]);
-        const orderForUI = { ...order, orderedGames: games };
-        history.push("/cart/success", orderForUI);
-      }
+      physicalGamesCopiesIds,
     });
+
+    if (orderError) {
+      setError({ ...error, orders: orderError || null });
+      await blockGames();
+    } else {
+      setGames([]);
+      setCartData([]);
+      const orderForUI = { ...order, orderedGames: games };
+      history.push("/cart/success", orderForUI);
+    }
   }, [games]);
 
-  const clearCartHandler = useCallback(() => {
+  const clearCartHandler = useCallback(async () => {
+    await unblockGames();
     removeCartData();
     history.push("/");
   }, []);
@@ -149,9 +180,18 @@ export const Cart = () => {
     [games.length]
   );
 
-  useEffect(() => {
-    if (error) history.push("/error", error);
-  }, [error]);
+  const totalPrice = games
+    .reduce(
+      (prev, curr) =>
+        prev +
+        +getOptimalGamePrice({
+          achievementDiscount,
+          game: curr,
+          isPhysical: curr.isPhysical,
+        }),
+      0
+    )
+    .toFixed(2);
 
   return (
     <>
@@ -212,21 +252,7 @@ export const Cart = () => {
                 <h2 className={styles.header}>Total</h2>
                 <p className={styles.totalPrice}>
                   <span>Sub-total</span>
-                  <span className={styles.price}>
-                    {games
-                      .reduce(
-                        (prev, curr) =>
-                          prev +
-                          +getOptimalGamePrice({
-                            achievementDiscount,
-                            game: curr,
-                            isPhysical: curr.isPhysical,
-                          }),
-                        0
-                      )
-                      .toFixed(2)}
-                    $
-                  </span>
+                  <span className={styles.price}>{totalPrice}$</span>
                 </p>
                 <div className={styles.actionsBlock}>
                   <button
@@ -245,20 +271,30 @@ export const Cart = () => {
               </div>
             </div>
           ) : (
-            <div className={styles.emptyCartContent}>
-              <div className={styles.iconContainer}>
-                <GiTumbleweed size="100%" />
-              </div>
-              <h2 className={styles.header}>Empty cart</h2>
-              <p className={styles.text}>
-                Looks like your cart is empty for now...
-              </p>
-              <button
-                className={styles.btn}
-                onClick={() => history.push("/store")}
-              >
-                Back to store
-              </button>
+            <div
+              className={`${styles.emptyCartContent} ${
+                error.games && styles.error
+              }`}
+            >
+              {error.games ? (
+                <Error />
+              ) : (
+                <>
+                  <div className={styles.iconContainer}>
+                    <GiTumbleweed size="100%" />
+                  </div>
+                  <h2 className={styles.header}>Empty cart</h2>
+                  <p className={styles.text}>
+                    Looks like your cart is empty for now...
+                  </p>
+                  <button
+                    className={styles.btn}
+                    onClick={() => history.push("/store")}
+                  >
+                    Back to store
+                  </button>
+                </>
+              )}
             </div>
           )}
         </div>

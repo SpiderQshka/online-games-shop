@@ -6,14 +6,13 @@ import { FaStar, FaShoppingCart, FaGamepad } from "react-icons/fa";
 import { RiAdminLine, RiLogoutBoxRLine } from "react-icons/ri";
 import { Achievements } from "./Achievements";
 import { Orders } from "./Orders";
-import {
-  IApiError,
-  IUser,
-  IMyGameFromApi,
-  IMyAchievementFromApi,
-} from "interfaces/api";
+import { IUser, IMyGameFromApi, IMyAchievementFromApi } from "interfaces/api";
 import { useApi } from "context/api";
-import { IOrderWithUserId } from "interfaces/app";
+import {
+  defaultErrorObj,
+  IErrorObject,
+  IOrderWithUserId,
+} from "interfaces/app";
 import { useAuth } from "context/auth";
 import {
   checkNewAchievements,
@@ -28,7 +27,7 @@ interface IProfileProps {}
 export const Profile: React.FunctionComponent<IProfileProps> = () => {
   const history = useHistory();
   const { showPopup } = usePopup();
-  const [error, setError] = useState<IApiError | null>(null);
+  const [error, setError] = useState<IErrorObject>(defaultErrorObj);
   const [orders, setOrders] = useState<IOrderWithUserId[]>([]);
   const [userGames, setUserGames] = useState<IMyGameFromApi[]>([]);
   const [user, setUser] = useState<IUser | null>(null);
@@ -53,29 +52,36 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
   useEffect(() => {
     setIsLoading(true);
     const processAsync = async () => {
+      const errorObj = { ...defaultErrorObj } as IErrorObject;
       const { orders, error: ordersError } = await getUserOrders();
-      if (ordersError) setError(ordersError);
+      if (ordersError) errorObj.orders = ordersError;
 
       const {
         orderedGames,
         error: orderedGamesError,
       } = await getUserOrderedGames();
-      if (orderedGamesError) setError(orderedGamesError);
+      if (orderedGamesError) errorObj.orderedGames = orderedGamesError;
 
       const { user, error: userError } = await getUser();
-      if (userError) setError(userError);
+      if (userError) errorObj.auth = userError;
 
       const { discounts, error: discountsError } = await getDiscounts();
-      if (discountsError) setError(discountsError);
+      if (discountsError) errorObj.discounts = discountsError;
 
       const { games: userGames, error: userGamesError } = await getUserGames();
-      if (userGamesError) setError(userGamesError);
+      if (userGamesError) errorObj.games = userGamesError;
 
       const {
         usedDiscounts,
         error: usedDiscountsError,
       } = await getUsedDiscounts();
-      if (usedDiscountsError) setError(usedDiscountsError);
+      if (usedDiscountsError) errorObj.usedDiscounts = usedDiscountsError;
+
+      const {
+        achievements,
+        error: achievementsError,
+      } = await getUserAchievements();
+      if (achievementsError) errorObj.achievements = achievementsError;
 
       const ordersForUI = formatOrdersForUI({
         discounts,
@@ -85,14 +91,11 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
         userGames,
       });
 
-      const { achievements, error } = await getUserAchievements();
-      if (error) setError(error);
-
       setUser(user);
       setUserGames(userGames);
       setOrders(ordersForUI);
-
       setAchievements(achievements);
+      setError(errorObj);
       setIsLoading(false);
     };
     processAsync();
@@ -163,43 +166,42 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
               </li>
             )}
           </ul>
-          {error ? (
-            <div className={styles.errorContainer}>
-              <h1 className={styles.errorHeader}>Oops!</h1>
-              <h2 className={styles.errorStatus}>Something went wrong!</h2>
-              <p className={styles.errorMsg}>{error.msg}</p>
-              <p className={styles.errorAdvise}>
-                Check your internet connection and try to reload this page
-              </p>
-            </div>
-          ) : (
-            <div className={`${styles.dataContainer}`}>
-              <Switch>
-                <Route
-                  path="/profile/orders"
-                  component={() => (
-                    <Orders orders={orders} isLoading={isLoading} />
-                  )}
-                />
-                <Route
-                  path="/profile/achievements"
-                  component={() => (
-                    <Achievements
-                      achievements={achievements}
-                      isLoading={isLoading}
-                    />
-                  )}
-                />
-                <Route
-                  path="/profile/games"
-                  component={() => (
-                    <Games games={userGames} isLoading={isLoading} />
-                  )}
-                />
-                <Route component={() => <Redirect to="/profile/orders" />} />
-              </Switch>
-            </div>
-          )}
+
+          <div className={`${styles.dataContainer}`}>
+            <Switch>
+              <Route
+                path="/profile/orders"
+                component={() => (
+                  <Orders
+                    orders={orders}
+                    isLoading={isLoading}
+                    error={error.orders}
+                  />
+                )}
+              />
+              <Route
+                path="/profile/achievements"
+                component={() => (
+                  <Achievements
+                    achievements={achievements}
+                    isLoading={isLoading}
+                    error={error.achievements}
+                  />
+                )}
+              />
+              <Route
+                path="/profile/games"
+                component={() => (
+                  <Games
+                    games={userGames}
+                    isLoading={isLoading}
+                    error={error.games}
+                  />
+                )}
+              />
+              <Route component={() => <Redirect to="/profile/orders" />} />
+            </Switch>
+          </div>
         </div>
       </div>
     </>

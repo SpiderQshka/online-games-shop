@@ -1,17 +1,19 @@
 import React from "react";
 import styles from "./styles.module.scss";
 import { Loader } from "components/Loader";
-import { IMyGameFromApi } from "interfaces/api";
+import { IApiError, IMyGameFromApi } from "interfaces/api";
 import { useHistory } from "react-router-dom";
 
 interface GamesProps {
   games: IMyGameFromApi[];
   isLoading: boolean;
+  error: IApiError | null;
 }
 
 export const Games: React.FunctionComponent<GamesProps> = ({
   games,
   isLoading,
+  error,
 }) => {
   const history = useHistory();
   return (
@@ -44,7 +46,11 @@ export const Games: React.FunctionComponent<GamesProps> = ({
               ))}
             </>
           ) : (
-            <li className={styles.notFound}>You don't have any games.. yet!</li>
+            <li className={styles.notFound}>
+              {error
+                ? "Error occured while loading games"
+                : "You don't have any games.. yet!"}
+            </li>
           )}
         </ul>
       )}

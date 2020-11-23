@@ -1,0 +1,87 @@
+@import "../../../styles/config.scss";
+@import "../styles.module.scss";
+
+.filtersContainer {
+  .header {
+    @include primaryFont;
+    color: $primary-color;
+    padding: $default-gap 10px;
+    position: relative;
+    &.active {
+      .closeIcon {
+        display: inline-block;
+      }
+    }
+    .filtersAmount {
+      @include primaryFont;
+      color: $primary-color;
+      margin: 0 10px;
+    }
+    .closeIcon {
+      cursor: pointer;
+      position: absolute;
+      display: none;
+      right: 0;
+    }
+  }
+  .filtersForm {
+    display: block;
+    width: 100%;
+    background-color: inherit;
+    border: none;
+    color: $primary-color;
+    .inputGroupHeader {
+      @include primaryFont;
+      padding: 20px $filters-menu-gap;
+      font-size: 1.2em;
+      color: $primary-color-light;
+      position: relative;
+      cursor: pointer;
+      .icon {
+        position: absolute;
+        top: 20px;
+        right: $filters-menu-gap;
+        transition: 0.5s;
+      }
+      &.active {
+        .icon {
+          transform: rotate(-90deg);
+        }
+      }
+    }
+    .sliderRangeContainer {
+      padding: 0 $filters-menu-gap;
+    }
+    .inputGroup {
+      @include primaryFont;
+      display: none;
+      .inputGroupItem {
+        &.loadingItem,
+        &.errorItem {
+          padding: $filters-menu-gap;
+        }
+        .label {
+          display: block;
+          cursor: pointer;
+          padding: $filters-menu-gap;
+          border-top: 3px solid $secondary-color-dark;
+          position: relative;
+          &.active {
+            background-color: $secondary-color-light;
+            color: $primary-color-light;
+          }
+          .input {
+            position: absolute;
+            right: 5px;
+            display: none;
+          }
+        }
+      }
+      &.active {
+        display: block;
+      }
+    }
+  }
+}
+
+@import "./media.module.scss";

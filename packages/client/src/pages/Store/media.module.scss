@@ -1,17 +1,5 @@
 @import "../../styles/config.scss";
 
-@media all and (max-width: 1100px) {
-  .storeContainer {
-    .storeContent {
-      .gamesContainer {
-        .gamesList {
-          grid-template-columns: repeat(3, 1fr);
-        }
-      }
-    }
-  }
-}
-
 @media all and (max-width: 900px) {
   .storeContainer {
     .storeContent {
@@ -33,62 +21,6 @@
           background-color: rgba(0, 0, 0, 0.3);
           z-index: 2;
           cursor: pointer;
-        }
-      }
-      .gamesContainer {
-        .infoContainer {
-          .openFiltersBtn {
-            display: flex;
-          }
-        }
-      }
-      .filtersContainer {
-        position: fixed;
-        padding: 30px;
-        box-sizing: border-box;
-        background-color: $secondary-color-dark;
-        top: 0;
-        bottom: 0;
-        right: calc(-#{$filters-menu-width} - 60px);
-        max-width: calc(#{$filters-menu-width} + #{$default-gap} * 2);
-        transition: 0.7s;
-        z-index: 3;
-        &.open {
-          right: 0;
-        }
-      }
-    }
-  }
-}
-
-@media all and (max-width: 700px) {
-  .storeContainer {
-    .storeContent {
-      .gamesContainer {
-        .gamesList {
-          grid-template-columns: repeat(2, 1fr);
-        }
-      }
-    }
-  }
-}
-
-@media all and (max-width: 400px) {
-  .storeContainer {
-    .storeContent {
-      .gamesContainer {
-        .gamesList {
-          grid-template-columns: 1fr;
-        }
-      }
-      .infoContainer {
-        flex-direction: column;
-        .openFiltersBtn {
-          margin-top: 20px;
-          align-self: flex-end;
-        }
-        .sortByContainer {
-          align-self: flex-end;
         }
       }
     }
