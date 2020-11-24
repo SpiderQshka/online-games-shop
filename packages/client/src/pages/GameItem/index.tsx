@@ -4,7 +4,6 @@ import styles from "./styles.module.scss";
 import { useParams, useHistory } from "react-router-dom";
 import { useApi } from "context/api";
 import {
-  IApiError,
   IGameCreatorFromApi,
   IGameFromApi,
   IMyGameFromApi,
@@ -16,7 +15,6 @@ import { getCartData, setCartData, formatGamesForUI } from "utils/helpers";
 import { FaShoppingCart } from "react-icons/fa";
 import { useAuth } from "context/auth";
 import { isInteger, uniq } from "lodash";
-import { usePopup } from "context/popup";
 import { Error } from "components/Error";
 
 export const GameItem: React.FunctionComponent = () => {
@@ -102,7 +100,7 @@ export const GameItem: React.FunctionComponent = () => {
       if (userAchievementsError) errorObj.achievements = userAchievementsError;
 
       const { games: userGames, error: userGamesError } = await getUserGames();
-      if (userGamesError) errorObj.games = userGamesError;
+      if (userGamesError) errorObj.users = userGamesError;
 
       const gameForUI =
         formatGamesForUI({
@@ -162,7 +160,7 @@ export const GameItem: React.FunctionComponent = () => {
       ) : (
         <div className={styles.gameItemContainer}>
           <div className={styles.gameItemContent}>
-            {error.games ? (
+            {error.games && error.games.status !== 401 ? (
               <Error />
             ) : (
               <>

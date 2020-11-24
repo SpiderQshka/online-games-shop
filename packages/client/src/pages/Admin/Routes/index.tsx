@@ -4,7 +4,6 @@ import { Dashboard } from "../sections/Dashboard";
 import { useApi } from "context/api";
 import {
   IAchievementFromApi,
-  IApiError,
   IGameCreatorFromApi,
   IGenreFromApi,
   IUser,
@@ -26,7 +25,6 @@ import { CreateGameCreator } from "../sections/GameCreators/CreateGameCreator";
 import { GameCreators } from "../sections/GameCreators";
 import { UpdateGameCreator } from "../sections/GameCreators/UpdateGameCreator";
 import { Achievements } from "../sections/Achievements";
-import { CreateAchievement } from "../sections/Achievements/CreateAchievement";
 import { UpdateAchievement } from "../sections/Achievements/UpdateAchievement";
 import { Discounts } from "../sections/Discounts";
 import { CreateDiscount } from "../sections/Discounts/CreateDiscount";
@@ -253,16 +251,6 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         path="/admin/gameCreators/create"
         component={() => (
           <CreateGameCreator
-            setUpdateTrigger={setUpdateTrigger}
-            updateTrigger={updateTrigger}
-          />
-        )}
-      />
-      <Route
-        exact
-        path="/admin/achievements/create"
-        component={() => (
-          <CreateAchievement
             setUpdateTrigger={setUpdateTrigger}
             updateTrigger={updateTrigger}
           />

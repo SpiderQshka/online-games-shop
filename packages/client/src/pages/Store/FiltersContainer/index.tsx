@@ -37,7 +37,7 @@ export const FiltersContainer: React.FunctionComponent<FiltersContainerProps> = 
   const [openFilters, setOpenFilters] = useState<{
     genres: boolean;
     gameCreators: boolean;
-  }>({ gameCreators: false, genres: false });
+  }>({ gameCreators: true, genres: true });
 
   return (
     <aside

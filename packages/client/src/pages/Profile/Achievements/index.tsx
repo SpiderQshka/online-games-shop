@@ -27,10 +27,10 @@ export const Achievements: React.FunctionComponent<AchievementsProps> = ({
             <>
               <li className={`${styles.achievementItem} ${styles.headerItem}`}>
                 <span className={`${styles.row} ${styles.achievementName}`}>
-                  Achievement name
+                  Name
                 </span>
                 <span className={`${styles.row} ${styles.achievementDiscount}`}>
-                  Achievement discount
+                  Discount
                 </span>
               </li>
               {achievements.map((el) => (

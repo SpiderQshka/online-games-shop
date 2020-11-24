@@ -1,7 +1,5 @@
-import Axios from "axios";
 import {
   IAchievementFromApi,
-  IApiError,
   IDiscount,
   IDiscountFromApi,
   IGameCreatorFromApi,
@@ -419,7 +417,7 @@ export const getOptimalGamePrice = ({
   }
 };
 
-export const ifAppRunsLocally = () => window.location.hostname === "localhost";
+export const ifAppRunsLocally = window.location.hostname === "localhost";
 
 export const toBase64: (file: File) => Promise<string> = (file) =>
   new Promise((resolve, reject) => {

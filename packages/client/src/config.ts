@@ -1,7 +1,7 @@
 import { ifAppRunsLocally } from "utils/helpers";
 
 export const config = {
-  apiUrl: ifAppRunsLocally()
+  apiUrl: ifAppRunsLocally
     ? process.env.REACT_APP_API_URL
     : process.env.REACT_APP_HEROKU_API_URL,
   colors: {

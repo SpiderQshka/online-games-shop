@@ -42,6 +42,7 @@
         top: 20px;
         right: $filters-menu-gap;
         transition: 0.5s;
+        transform: rotate(90deg);
       }
       &.active {
         .icon {

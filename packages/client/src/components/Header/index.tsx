@@ -19,7 +19,7 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
   useEffect(() => {
     setIsLoading(true);
     const processGames = async () => {
-      const { games, error } = await getGames();
+      const { error } = await getGames();
       if (error) setError(error);
 
       const { user, error: userError } = await getUser();

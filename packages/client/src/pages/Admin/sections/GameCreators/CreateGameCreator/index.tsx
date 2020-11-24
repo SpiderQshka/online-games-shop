@@ -1,6 +1,6 @@
 import { useApi } from "context/api";
 import { useFormik } from "formik";
-import { IApiError, IGameCreator } from "interfaces/api";
+import { IApiError } from "interfaces/api";
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
