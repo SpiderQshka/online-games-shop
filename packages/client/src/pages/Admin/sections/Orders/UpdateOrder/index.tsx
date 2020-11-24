@@ -45,8 +45,8 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
     } as OrderFormValues,
     validationSchema: Yup.object({
       status: Yup.string().required("Required"),
-      gamesIds: Yup.array().of(Yup.string().min(1)).min(1).required("Required"),
-      physicalGamesCopiesIds: Yup.array().of(Yup.number().min(1)).min(1),
+      gamesIds: Yup.array().of(Yup.number().min(1)),
+      physicalGamesCopiesIds: Yup.array().of(Yup.number().min(1)),
     }),
     onSubmit: (data) => {
       if (order) {
@@ -55,7 +55,7 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
           ...data,
           gamesIds: data.gamesIds.map((id) => +id),
           physicalGamesCopiesIds: data.physicalGamesCopiesIds.map((id) => +id),
-        }).then(({ order, error }) => {
+        }).then(({ error }) => {
           setIsLoading(false);
           if (error) setError(error);
           else {

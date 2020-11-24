@@ -23,6 +23,7 @@ export const Genres: React.FunctionComponent<GenresProps> = ({
         <Error />
       ) : (
         <>
+          <h2 className={styles.header}>Genres</h2>
           <table className={styles.itemsTable}>
             <tr className={`${styles.row} ${styles.headerRow}`}>
               <th className={styles.col}>ID</th>
@@ -57,7 +58,6 @@ export const Genres: React.FunctionComponent<GenresProps> = ({
           </table>
         </>
       )}
-      <h2 className={styles.header}>Genres</h2>
     </div>
   );
 };

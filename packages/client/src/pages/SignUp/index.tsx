@@ -15,6 +15,7 @@ export interface SignUpFormValues {
 
 export const SignUp = () => {
   const [serverError, setServerError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { setToken } = useAuth();
   const { register } = useApi();
   const { showPopup } = usePopup();
@@ -37,6 +38,7 @@ export const SignUp = () => {
         .required("Required"),
     }),
     onSubmit: (data) => {
+      setIsLoading(true);
       register(data).then((response) => {
         if (response.error) setServerError(response.error.msg);
         else {
@@ -44,6 +46,7 @@ export const SignUp = () => {
           history.push("/profile");
           showPopup({ msg: "You are welcome!", type: "neutral" });
         }
+        setIsLoading(false);
       });
     },
   });
@@ -54,7 +57,7 @@ export const SignUp = () => {
     !formik.errors.passwordConfirmation;
   return (
     <div className={styles.formContainer}>
-      <div className={styles.formContent}>
+      <div className={`${styles.formContent} ${isLoading && styles.loading}`}>
         <h2 className={styles.header}>Sign Up</h2>
         <form onSubmit={formik.handleSubmit} className={styles.form}>
           <input

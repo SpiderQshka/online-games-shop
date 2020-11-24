@@ -16,10 +16,12 @@ import { FaShoppingCart } from "react-icons/fa";
 import { useAuth } from "context/auth";
 import { isInteger, uniq } from "lodash";
 import { Error } from "components/Error";
+import { usePopup } from "context/popup";
 
 export const GameItem: React.FunctionComponent = () => {
   const { id } = useParams<{ id: string }>();
   const { token } = useAuth();
+  const { showPopup } = usePopup();
   const history = useHistory();
   const {
     getGame,
@@ -58,6 +60,11 @@ export const GameItem: React.FunctionComponent = () => {
           setCartData(games);
           setSessionData(games);
         }
+        if (!errorObj.games)
+          showPopup({
+            msg: `You successfully ordered ${game.name}!`,
+            type: "success",
+          });
         setError(errorObj);
       } else history.push("/login");
     },
@@ -119,7 +126,7 @@ export const GameItem: React.FunctionComponent = () => {
       setIsLoading(false);
     };
     processGame();
-  }, [id, sessionData.length]);
+  }, [id]);
 
   const isGameInCart =
     game &&

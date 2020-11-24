@@ -32,6 +32,7 @@ export const Orders: React.FunctionComponent<OrdersProps> = ({
                 <span className={styles.date}>Date</span>
                 <span className={styles.name}>Games</span>
                 <span className={styles.price}>Price</span>
+                <span className={styles.status}>Status</span>
               </li>
               {orders.map((el) => (
                 <li className={styles.orderItem} key={el.id}>
@@ -58,6 +59,9 @@ export const Orders: React.FunctionComponent<OrdersProps> = ({
                   </span>
                   <span className={`${styles.row} ${styles.price}`}>
                     {el.price}$
+                  </span>
+                  <span className={`${styles.row} ${styles.status}`}>
+                    {el.status}
                   </span>
                 </li>
               ))}

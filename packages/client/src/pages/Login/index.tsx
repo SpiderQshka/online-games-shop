@@ -14,6 +14,7 @@ export interface LoginFormValues {
 
 export const Login = () => {
   const [serverError, setServerError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { setToken } = useAuth();
   const history = useHistory();
   const { login } = useApi();
@@ -29,6 +30,7 @@ export const Login = () => {
         .required("Required"),
     }),
     onSubmit: (data) => {
+      setIsLoading(true);
       login(data).then((response) => {
         if (response.error) setServerError(response.error.msg);
         else {
@@ -36,6 +38,7 @@ export const Login = () => {
           history.push("/store");
           showPopup({ msg: "Nice to see you again!", type: "neutral" });
         }
+        setIsLoading(false);
       });
     },
   });
@@ -43,7 +46,7 @@ export const Login = () => {
     !!formik.touched.login && !formik.errors.login && !formik.errors.password;
   return (
     <div className={styles.formContainer}>
-      <div className={styles.formContent}>
+      <div className={`${styles.formContent} ${isLoading && styles.loading}`}>
         <h2 className={styles.header}>Log in</h2>
         <form onSubmit={formik.handleSubmit} className={styles.form}>
           <input
@@ -81,9 +84,6 @@ export const Login = () => {
           {!!serverError && <p className={styles.errorMsg}>{serverError}</p>}
         </form>
         <div className={styles.links}>
-          <Link className={styles.link} to={"#"}>
-            Forget the password?
-          </Link>
           <Link className={styles.link} to={"/signup"}>
             Create an Account
           </Link>
