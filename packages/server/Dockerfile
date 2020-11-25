@@ -30,4 +30,4 @@ RUN yarn add knex
 
 COPY --from=builder /server/dist ./dist
 
-CMD sh -c "yarn migrate_prod && yarn seed_prod && yarn server"
+CMD sh -c "yarn migrate_prod && yarn server"

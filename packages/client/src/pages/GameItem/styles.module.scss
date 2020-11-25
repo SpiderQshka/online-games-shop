@@ -150,6 +150,10 @@
               }
             }
           }
+          &.restricted {
+            background-color: $error-color;
+            cursor: not-allowed;
+          }
           .msg {
             position: absolute;
             display: none;

@@ -38,9 +38,6 @@ export const GameItem: React.FunctionComponent = () => {
   const [game, setGame] = useState<IGameForUI | null>(null);
   const [userGames, setUserGames] = useState<IMyGameFromApi[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [sessionData, setSessionData] = useState<
-    { id: number; isPhysical: boolean }[]
-  >([]);
 
   const addToCartHandler = useCallback(
     async (isPhysical: boolean) => {
@@ -54,11 +51,9 @@ export const GameItem: React.FunctionComponent = () => {
           if (error) errorObj.games = error;
           else {
             setCartData(games);
-            setSessionData(games);
           }
         } else {
           setCartData(games);
-          setSessionData(games);
         }
         if (!errorObj.games)
           showPopup({
@@ -242,18 +237,29 @@ export const GameItem: React.FunctionComponent = () => {
                         isGameInCart && styles.active
                       } ${isCopyPhysical && styles.inCart} ${
                         isPhysicalCopyBought && styles.bought
+                      } ${
+                        +(game?.numberOfPhysicalCopies || 0) === 0 &&
+                        styles.restricted
                       }`}
                       onClick={() =>
                         !isCopyPhysical &&
                         !isPhysicalCopyBought &&
+                        !(game?.numberOfPhysicalCopies || 0 <= 0) &&
                         addToCartHandler(true)
                       }
                     >
-                      Physical (
-                      {game?.physicalCopyOptimalPrice !== 0
-                        ? `${game?.physicalCopyOptimalPrice}$`
-                        : "Free"}
-                      )
+                      {game?.numberOfPhysicalCopies || 0 <= 0 ? (
+                        "No physical copies left"
+                      ) : (
+                        <>
+                          Physical (
+                          {game?.physicalCopyOptimalPrice !== 0
+                            ? `${game?.physicalCopyOptimalPrice}$`
+                            : "Free"}
+                          )
+                        </>
+                      )}
+
                       <span className={styles.msg}>
                         <FaShoppingCart size="15px" />
                       </span>
