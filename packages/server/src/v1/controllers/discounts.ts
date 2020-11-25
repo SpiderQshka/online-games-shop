@@ -53,10 +53,16 @@ export const discountsController: IDiscountsController = {
     const gamesIds = ctx.request.body.gamesIds as number[];
     delete ctx.request.body.gamesIds;
 
-    const discount = await Discount.query().insert(ctx.request.body);
+    const discount = await Discount.query()
+      .insert(ctx.request.body)
+      .catch(() =>
+        ctx.throw(400, "Error occured while loading discount to database")
+      );
 
     await Aigle.map(gamesIds, (gameId) =>
       UsedDiscount.query().insert({ discountId: discount.id, gameId })
+    ).catch(() =>
+      ctx.throw(400, "Error occured while loading discount to database")
     );
 
     ctx.body = discount;

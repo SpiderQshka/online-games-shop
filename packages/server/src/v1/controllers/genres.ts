@@ -39,7 +39,11 @@ export const genresController: IGenresController = {
     ctx.body = response;
   },
   post: async (ctx) => {
-    const response = await Genre.query().insert(ctx.request.body);
+    const response = await Genre.query()
+      .insert(ctx.request.body)
+      .catch(() =>
+        ctx.throw(400, "Error occured while loading genre to database")
+      );
 
     ctx.body = response;
   },

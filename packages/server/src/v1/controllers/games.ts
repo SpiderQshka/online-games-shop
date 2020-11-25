@@ -110,16 +110,25 @@ export const gamesController: IGamesController = {
 
     if (error) ctx.throw(500, "Error occured while loading game logo");
 
-    const game = await Game.query().insert({
-      ...ctx.request.body,
-      logo: imageUrl,
-    });
+    const game = await Game.query()
+      .insert({
+        ...ctx.request.body,
+        logo: imageUrl,
+      })
+      .catch(() =>
+        ctx.throw(
+          400,
+          "Error occured while inserting game object into database"
+        )
+      );
 
     await Aigle.map(genresIds, (genreId) =>
       UsedGenre.query().insert({
         gameId: game.id,
         genreId: genreId,
       })
+    ).catch(() =>
+      ctx.throw(400, "Error occured while connecting genres to game")
     );
 
     ctx.body = game;

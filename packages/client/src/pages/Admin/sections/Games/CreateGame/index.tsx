@@ -63,7 +63,7 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = ({
       const logo = (formik.values.logo as any) as File;
       toBase64(logo).then((logo) => {
         setBaseImage(logo);
-        postGame({ ...data, logo }).then(({ game, error }) => {
+        postGame({ ...data, logo }).then(({ error }) => {
           setIsLoading(false);
           if (error) setError(error);
           else {
@@ -128,9 +128,8 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = ({
           />
           <label className={styles.label}>
             <span className={styles.labelText}>Description</span>
-            <input
+            <textarea
               name="description"
-              type="text"
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               className={`${styles.input} ${styles.descriptionInput}`}
@@ -166,7 +165,7 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = ({
               className={`${styles.input} ${styles.genresIdsInput}`}
               value={formik.values.genresIds.map((el) => `${el}`)}
             >
-              {genres.map((el, i) => (
+              {genres.map((el) => (
                 <option value={el.id} key={el.id}>
                   {el.name}
                 </option>

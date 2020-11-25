@@ -54,7 +54,11 @@ export const orderedGamesController: IOrderedGamesController = {
     ctx.body = response;
   },
   post: async (ctx) => {
-    const response = await OrderedGame.query().insert(ctx.request.body);
+    const response = await OrderedGame.query()
+      .insert(ctx.request.body)
+      .catch(() =>
+        ctx.throw(400, "Error occured while loading ordered game to database")
+      );
 
     ctx.body = response;
   },

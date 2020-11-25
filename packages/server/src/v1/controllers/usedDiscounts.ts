@@ -39,7 +39,11 @@ export const usedDiscountsController: IUsedDiscountsController = {
     ctx.body = response;
   },
   post: async (ctx) => {
-    const response = await UsedDiscount.query().insert(ctx.request.body);
+    const response = await UsedDiscount.query()
+      .insert(ctx.request.body)
+      .catch(() =>
+        ctx.throw(400, "Error occured while loading used discount to database")
+      );
 
     ctx.body = response;
   },

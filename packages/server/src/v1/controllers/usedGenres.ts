@@ -39,7 +39,11 @@ export const usedGenresController: IUsedGenresController = {
     ctx.body = response;
   },
   post: async (ctx) => {
-    const response = await UsedGenre.query().insert(ctx.request.body);
+    const response = await UsedGenre.query()
+      .insert(ctx.request.body)
+      .catch(() =>
+        ctx.throw(400, "Error occured while loading used genre to database")
+      );
 
     ctx.body = response;
   },

@@ -91,7 +91,7 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
         gameObj.logo = baseLogo;
       }
 
-      putGame(game.id, gameObj).then(({ game, error }) => {
+      putGame(game.id, gameObj).then(({ error }) => {
         setIsLoading(false);
         if (error) setError(error);
         else {
@@ -155,9 +155,8 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
         />
         <label className={styles.label}>
           <span className={styles.labelText}>Description</span>
-          <input
+          <textarea
             name="description"
-            type="text"
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             className={`${styles.input} ${styles.descriptionInput}`}
