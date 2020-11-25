@@ -238,7 +238,7 @@ export const GameItem: React.FunctionComponent = () => {
                       } ${isCopyPhysical && styles.inCart} ${
                         isPhysicalCopyBought && styles.bought
                       } ${
-                        +(game?.numberOfPhysicalCopies || 0) === 0 &&
+                        (game?.numberOfPhysicalCopies || 0 <= 0) &&
                         styles.restricted
                       }`}
                       onClick={() =>
