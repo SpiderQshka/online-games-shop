@@ -24,35 +24,35 @@ export const Games: React.FunctionComponent<GamesProps> = ({
           <Loader />
         </div>
       ) : (
-        <ul className={styles.gamesList}>
+        <table className={styles.gamesTable}>
           {games.length > 0 ? (
             <>
-              <li className={`${styles.gameItem} ${styles.headerItem}`}>
-                <span className={styles.name}>Name</span>
-              </li>
+              <tr className={`${styles.gameItem} ${styles.headerItem}`}>
+                <td className={`${styles.row} ${styles.name}`}>Name</td>
+              </tr>
               {games.map((el) => (
-                <li
+                <tr
                   className={styles.gameItem}
                   key={el.id}
                   onClick={() => history.push(`/store/item/${el.id}`)}
                 >
-                  <span className={`${styles.row} ${styles.name}`}>
+                  <td className={`${styles.row} ${styles.name}`}>
                     {el.name}
                     {el.isPhysical && (
                       <span className={styles.accent}>Physical copy</span>
                     )}
-                  </span>
-                </li>
+                  </td>
+                </tr>
               ))}
             </>
           ) : (
-            <li className={styles.notFound}>
+            <tr className={styles.notFound}>
               {error
                 ? "Error occured while loading games"
                 : "You don't have any games.. yet!"}
-            </li>
+            </tr>
           )}
-        </ul>
+        </table>
       )}
     </>
   );

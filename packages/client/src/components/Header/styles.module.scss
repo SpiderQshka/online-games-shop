@@ -73,7 +73,6 @@
     .loadingProfile {
       @include primaryFont;
       color: $primary-color-light;
-      // padding-right: $default-gap;
     }
     .profile {
       display: flex;

@@ -9,20 +9,6 @@ export const Popup: React.FunctionComponent = () => {
 
   if (isOpen) setTimeout(hidePopup, config.popupTimeout);
 
-  // const { getUserAchievements } = useApi();
-
-  // useEffect(() => {
-  //   const processAchievements = async () => {
-  //     const { achievements } = await getUserAchievements();
-  //     if (!!achievements) {
-  //       const newAchievements = achievements.filter((ach) => !ach.seen);
-  //       if (newAchievements.length > 0)
-  //         showPopup({ msg: "Achievement get!", type: "success" });
-  //     }
-  //   };
-  //   processAchievements();
-  // });
-
   return (
     <div
       className={`${styles.popupContainer} ${isOpen && styles.open} ${

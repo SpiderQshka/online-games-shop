@@ -43,6 +43,11 @@
       grid-area: data;
       background-color: $secondary-color-light;
       padding: 30px;
+      box-sizing: border-box;
+      overflow-x: auto;
+      &.loading {
+        background-color: $secondary-color-dark;
+      }
     }
     .errorContainer {
       @include primaryFont;

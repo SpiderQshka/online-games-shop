@@ -16,7 +16,7 @@ interface BarChartProps {
 
 export const BarChart: React.FunctionComponent<BarChartProps> = ({ data }) => {
   return (
-    <ResponsiveContainer width={"100%"} height={600}>
+    <ResponsiveContainer width={"100%"} height={500}>
       <RechartsBarChart
         data={data}
         margin={{ top: 15, right: 20 }}

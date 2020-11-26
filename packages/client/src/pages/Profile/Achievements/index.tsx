@@ -22,36 +22,41 @@ export const Achievements: React.FunctionComponent<AchievementsProps> = ({
           <Loader />
         </div>
       ) : (
-        <ul className={styles.achievementsList}>
+        <table className={styles.achievementsTable}>
           {achievements.length > 0 ? (
             <>
-              <li className={`${styles.achievementItem} ${styles.headerItem}`}>
-                <span className={`${styles.row} ${styles.achievementName}`}>
+              <tr className={`${styles.achievementItem} ${styles.headerItem}`}>
+                <td className={`${styles.row} ${styles.achievementName}`}>
                   Name
-                </span>
-                <span className={`${styles.row} ${styles.achievementDiscount}`}>
+                </td>
+                <td className={`${styles.row} ${styles.achievementDiscount}`}>
                   Discount
-                </span>
-              </li>
-              {achievements.map((el) => (
-                <li className={`${styles.achievementItem}`} key={el.id}>
-                  <span className={`${styles.row} ${styles.achievementName}`}>
+                </td>
+              </tr>
+              {achievements.map((el, i) => (
+                <tr
+                  className={`${styles.achievementItem} ${
+                    i === achievements.length - 1 && styles.lastItem
+                  }`}
+                  key={el.id}
+                >
+                  <td className={`${styles.row} ${styles.achievementName}`}>
                     {el.name}
-                  </span>
-                  <span
+                  </td>
+                  <td
                     className={`${styles.row} ${styles.achievementDiscount}`}
-                  >{`${el.discount}%`}</span>
-                </li>
+                  >{`${el.discount}%`}</td>
+                </tr>
               ))}
-              <li className={`${styles.achievementItem} ${styles.footerItem}`}>
-                <span className={`${styles.row} ${styles.achievementDiscount}`}>
+              <tr className={`${styles.achievementItem} ${styles.footerItem}`}>
+                <td className={`${styles.row} ${styles.achievementDiscount}`}>
                   Total discount
-                </span>
-                <span className={`${styles.row} ${styles.achievementDiscount}`}>
+                </td>
+                <td className={`${styles.row} ${styles.achievementDiscount}`}>
                   {achievements.reduce((prev, curr) => prev + curr.discount, 0)}
                   %
-                </span>
-              </li>
+                </td>
+              </tr>
             </>
           ) : (
             <li className={styles.notFound}>
@@ -60,7 +65,7 @@ export const Achievements: React.FunctionComponent<AchievementsProps> = ({
                 : "You don't have any achievements.. yet!"}
             </li>
           )}
-        </ul>
+        </table>
       )}
     </>
   );

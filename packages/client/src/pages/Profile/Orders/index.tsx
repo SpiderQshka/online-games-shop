@@ -25,21 +25,21 @@ export const Orders: React.FunctionComponent<OrdersProps> = ({
           <Loader />
         </div>
       ) : (
-        <ul className={styles.ordersList}>
+        <table className={styles.ordersTable}>
           {orders.length > 0 ? (
             <>
-              <li className={`${styles.orderItem} ${styles.headerItem}`}>
-                <span className={styles.date}>Date</span>
-                <span className={styles.name}>Games</span>
-                <span className={styles.price}>Price</span>
-                <span className={styles.status}>Status</span>
-              </li>
+              <tr className={`${styles.orderItem} ${styles.headerItem}`}>
+                <td className={`${styles.row} ${styles.date}`}>Date</td>
+                <td className={`${styles.row} ${styles.games}`}>Games</td>
+                <td className={`${styles.row} ${styles.price}`}>Price</td>
+                <td className={`${styles.row} ${styles.status}`}>Status</td>
+              </tr>
               {orders.map((el) => (
-                <li className={styles.orderItem} key={el.id}>
-                  <span className={`${styles.row} ${styles.date}`}>
+                <tr className={styles.orderItem} key={el.id}>
+                  <td className={`${styles.row} ${styles.date}`}>
                     {moment(el.createdAt).format("DD-MM-YYYY")}
-                  </span>
-                  <span className={`${styles.row} ${styles.games}`}>
+                  </td>
+                  <td className={`${styles.row} ${styles.games}`}>
                     {el.orderedGames.length ? (
                       el.orderedGames.map((el) => (
                         <Link
@@ -54,16 +54,16 @@ export const Orders: React.FunctionComponent<OrdersProps> = ({
                         </Link>
                       ))
                     ) : (
-                      <li className={styles.gameName}>Not loaded</li>
+                      <span className={styles.gameName}>Not loaded</span>
                     )}
-                  </span>
-                  <span className={`${styles.row} ${styles.price}`}>
+                  </td>
+                  <td className={`${styles.row} ${styles.price}`}>
                     {el.price}$
-                  </span>
-                  <span className={`${styles.row} ${styles.status}`}>
+                  </td>
+                  <td className={`${styles.row} ${styles.status}`}>
                     {el.status}
-                  </span>
-                </li>
+                  </td>
+                </tr>
               ))}
             </>
           ) : (
@@ -73,7 +73,7 @@ export const Orders: React.FunctionComponent<OrdersProps> = ({
                 : "You don't have any orders.. yet!"}
             </li>
           )}
-        </ul>
+        </table>
       )}
     </>
   );

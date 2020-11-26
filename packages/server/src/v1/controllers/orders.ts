@@ -444,6 +444,8 @@ export const ordersController: IOrdersController = {
         })
     );
 
+    await checkAchievements(userId);
+
     ctx.body = {
       ...order,
       orderedGames: [...orderedDigitalGames, ...orderedPhysicalGames],

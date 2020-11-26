@@ -57,7 +57,7 @@ export const GameItem: React.FunctionComponent = () => {
         }
         if (!errorObj.games)
           showPopup({
-            msg: `You successfully ordered ${game.name}!`,
+            msg: `Yea! You've ordered this game!`,
             type: "success",
           });
         setError(errorObj);
@@ -238,17 +238,17 @@ export const GameItem: React.FunctionComponent = () => {
                       } ${isCopyPhysical && styles.inCart} ${
                         isPhysicalCopyBought && styles.bought
                       } ${
-                        (game?.numberOfPhysicalCopies || 0 <= 0) &&
+                        +(game?.numberOfPhysicalCopies || 0) <= 0 &&
                         styles.restricted
                       }`}
                       onClick={() =>
                         !isCopyPhysical &&
                         !isPhysicalCopyBought &&
-                        !(game?.numberOfPhysicalCopies || 0 <= 0) &&
+                        !(+(game?.numberOfPhysicalCopies || 0) <= 0) &&
                         addToCartHandler(true)
                       }
                     >
-                      {game?.numberOfPhysicalCopies || 0 <= 0 ? (
+                      {+(game?.numberOfPhysicalCopies || 0) <= 0 ? (
                         "No physical copies left"
                       ) : (
                         <>

@@ -167,7 +167,9 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
             )}
           </ul>
 
-          <div className={`${styles.dataContainer}`}>
+          <div
+            className={`${styles.dataContainer} ${isLoading && styles.loading}`}
+          >
             <Switch>
               <Route
                 path="/profile/orders"

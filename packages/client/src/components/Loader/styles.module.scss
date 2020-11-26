@@ -2,9 +2,9 @@
 
 .loader {
   display: inline-block;
-  border: 16px solid inherit;
+  border: 16px solid $secondary-color;
   border-top: 16px solid $accent-color;
-  border-bottom: 16px solid $accent-color;
+  // border-bottom: 16px solid $accent-color;
   border-radius: 50%;
   width: 120px;
   height: 120px;

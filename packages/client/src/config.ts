@@ -20,5 +20,5 @@ export const config = {
     mail: "super.duper@gmail.com",
     address: "Pushkina Street, Kolotushkina House",
   },
-  popupTimeout: 5000,
+  popupTimeout: 2000,
 };
