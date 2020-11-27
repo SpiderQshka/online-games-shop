@@ -1,4 +1,4 @@
-FROM node:14.15-alpine
+FROM node:14.15-alpine AS builder
 
 WORKDIR /app
 
@@ -13,8 +13,10 @@ COPY ./public ./public
 
 RUN yarn build
 
-RUN yarn global add serve
+FROM node:14.15-alpine
 
-EXPOSE 80
+COPY --from=builder /app/build ./build
+
+RUN yarn global add serve
 
 CMD ["serve", "-s", "build"]

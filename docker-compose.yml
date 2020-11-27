@@ -13,8 +13,6 @@ services:
     build: ./packages/client
     ports:
       - 80:5000
-    environment:
-      - REACT_APP_API_URL=http://localhost:3333/api/v1
   server:
     build: ./packages/server
     ports:
