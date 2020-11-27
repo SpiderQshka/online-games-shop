@@ -10,7 +10,7 @@ $filters-menu-gap: 13px;
   .storeContent {
     margin: 0 auto;
     max-width: 1200px;
-    padding: 0 $default-gap;
+    padding: 5px $default-gap;
     display: grid;
     grid-template-columns: 1fr $filters-menu-width;
     grid-column-gap: 30px;

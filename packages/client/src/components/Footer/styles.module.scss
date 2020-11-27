@@ -1,0 +1,34 @@
+@import "../../styles/config.scss";
+
+.footerContainer {
+  width: 100%;
+  background-color: $secondary-color;
+  padding: 15px $default-gap;
+  box-sizing: border-box;
+  .footerContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .textInfo {
+      @include primaryFont;
+      font-size: 12px;
+      line-height: 1.4;
+      max-width: 30%;
+      color: $primary-color;
+    }
+    .linksList {
+      .listItem {
+        display: inline-block;
+        max-width: 30px;
+        margin-right: 15px;
+        &:last-of-type {
+          margin-right: 0;
+        }
+        .link {
+          cursor: pointer;
+          display: block;
+        }
+      }
+    }
+  }
+}

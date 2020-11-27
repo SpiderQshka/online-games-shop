@@ -16,8 +16,8 @@
       padding-bottom: 40px;
       .gameLogo {
         grid-area: logo;
-        background: no-repeat center/cover $primary-color-dark;
-        min-height: 400px;
+        background: no-repeat top/cover $secondary-color;
+        height: 300px;
       }
       .gameName {
         grid-area: header;
@@ -39,7 +39,7 @@
             display: grid;
             width: 100%;
             grid-template-columns: 150px 1fr;
-            padding: 30px 0;
+            padding: 15px 0;
             line-height: 1.3;
             .fieldName {
               color: $primary-color;

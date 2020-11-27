@@ -1,6 +1,6 @@
 @import "../../styles/config.scss";
 
-$select-height: 40px;
+$select-height: 20px;
 $select-min-width: 160px;
 
 .selectContainer {
@@ -16,7 +16,7 @@ $select-min-width: 160px;
     display: flex;
     align-items: center;
     height: $select-height;
-    background-color: $secondary-color-light;
+    // background-color: $secondary-color-light;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -34,16 +34,17 @@ $select-min-width: 160px;
   }
   .selectOptions {
     position: absolute;
-    top: $select-height;
+    top: calc(#{$select-height} + 10px);
     left: 0;
     right: 0;
     cursor: pointer;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    box-shadow: $basic-shadow;
     .selectOption {
       @include primaryFont;
-      background-color: $secondary-color-light;
+      background-color: $secondary-color;
       padding: 15px;
       color: $primary-color;
       transition: 0.7s;
