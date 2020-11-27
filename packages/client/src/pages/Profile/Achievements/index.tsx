@@ -59,11 +59,11 @@ export const Achievements: React.FunctionComponent<AchievementsProps> = ({
               </tr>
             </>
           ) : (
-            <li className={styles.notFound}>
+            <tr className={styles.notFound}>
               {error
                 ? "Error occured while loading achievements"
                 : "You don't have any achievements.. yet!"}
-            </li>
+            </tr>
           )}
         </table>
       )}

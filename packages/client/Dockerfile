@@ -15,6 +15,9 @@ RUN yarn build
 
 FROM node:14.15-alpine
 
+COPY package.json ./
+COPY yarn.lock ./
+
 COPY --from=builder /app/build ./build
 
 RUN yarn global add serve

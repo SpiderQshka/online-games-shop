@@ -8,7 +8,6 @@ export async function up(knex: Knex): Promise<void> {
       .table(Models.unlockedAchievements.tableName, (table) =>
         table.boolean("seen").notNullable().defaultTo(true)
       )
-
       .then(trx.commit)
       .catch(trx.rollback);
   });

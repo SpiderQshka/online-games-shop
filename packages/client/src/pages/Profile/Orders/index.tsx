@@ -67,11 +67,11 @@ export const Orders: React.FunctionComponent<OrdersProps> = ({
               ))}
             </>
           ) : (
-            <li className={styles.notFound}>
+            <tr className={styles.notFound}>
               {error
                 ? "Error occured while loading orders"
                 : "You don't have any orders.. yet!"}
-            </li>
+            </tr>
           )}
         </table>
       )}
