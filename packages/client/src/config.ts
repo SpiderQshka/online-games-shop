@@ -1,9 +1,11 @@
 import { ifAppRunsLocally } from "utils/helpers";
 
+console.log(process.env);
+
 export const config = {
-  apiUrl: ifAppRunsLocally
-    ? process.env.REACT_APP_API_URL
-    : process.env.REACT_APP_HEROKU_API_URL,
+  apiUrl:
+    process.env.REACT_APP_API_URL ||
+    "https://online-games-shop-server.herokuapp.com/api/v1",
   colors: {
     accent: "#f0810f",
     primaryLight: "#f4f4f4",

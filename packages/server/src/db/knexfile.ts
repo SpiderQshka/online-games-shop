@@ -5,7 +5,7 @@ config({ path: "../../.env" });
 const fileExt = __filename.split(".")[1];
 
 const migrationsTableName =
-  fileExt === "js" ? "table_migrations_production" : "table_migrations";
+  fileExt === "js" ? "table_migrations_production" : "table_migrations"; // WTF???
 
 module.exports = {
   development: {
