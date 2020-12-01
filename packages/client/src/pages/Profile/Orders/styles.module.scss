@@ -33,6 +33,9 @@
     .row {
       padding: 15px 15px 0 0;
       white-space: nowrap;
+      &:last-of-type {
+        padding-right: 0;
+      }
       &.games {
         .gameName {
           display: block;

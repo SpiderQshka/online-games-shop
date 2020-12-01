@@ -58,7 +58,11 @@ export const filterGames = (games: IGameForUI[], config: IFilterConfig) =>
     return true;
   });
 
-export const sortGames = (games: IGameForUI[], sortBy: SortType) => {
+export const sortGames = (
+  games: IGameForUI[],
+  sortBy: SortType,
+  userAchievements: IAchievementFromApi[]
+) => {
   switch (sortBy) {
     case "creationDate":
       return [...games].sort(
@@ -73,20 +77,26 @@ export const sortGames = (games: IGameForUI[], sortBy: SortType) => {
       );
     case "discount":
       return [...games].sort((prev, curr) => {
+        const achievementDiscount = getAchievementDiscountSize({
+          userAchievements,
+        });
+
         const prevDisountInPercents = prev.discount
           ? prev.discount?.type === "%"
             ? prev.discount?.amount
             : ((prev.price - (prev.price - prev.discount.amount)) /
                 prev.price) *
               100
-          : 0;
+          : achievementDiscount;
+
         const currDisountInPercents = curr.discount
           ? curr.discount?.type === "%"
             ? curr.discount?.amount
             : ((curr.price - (curr.price - curr.discount.amount)) /
                 curr.price) *
               100
-          : 0;
+          : achievementDiscount;
+
         return currDisountInPercents - prevDisountInPercents;
       });
   }

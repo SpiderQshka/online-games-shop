@@ -31,5 +31,12 @@
     .gamesList {
       grid-template-columns: 1fr;
     }
+    .infoContainer {
+      flex-direction: column;
+      align-items: flex-end;
+      .sortByContainer {
+        margin-bottom: 20px;
+      }
+    }
   }
 }

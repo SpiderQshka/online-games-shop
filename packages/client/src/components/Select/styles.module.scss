@@ -5,7 +5,7 @@ $select-min-width: 160px;
 
 .selectContainer {
   @include primaryFont;
-  min-width: $select-min-width;
+  width: $select-min-width;
   border: none;
   background-color: inherit;
   color: $primary-color-light;
@@ -16,10 +16,7 @@ $select-min-width: 160px;
     display: flex;
     align-items: center;
     height: $select-height;
-    // background-color: $secondary-color-light;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.3;
     cursor: pointer;
     .icon {
       position: absolute;

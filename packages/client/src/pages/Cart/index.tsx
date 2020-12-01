@@ -40,6 +40,7 @@ export const Cart = () => {
   const [error, setError] = useState<IErrorObject>(defaultErrorObj);
   const [achievementDiscount, setAchievementDiscount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isRequestSending, setIsRequestSending] = useState<boolean>(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -130,6 +131,7 @@ export const Cart = () => {
   );
 
   const submitHandler = useCallback(async () => {
+    setIsRequestSending(true);
     await unblockGames();
     const gamesIds = games
       .filter((game) => !game.isPhysical)
@@ -154,6 +156,7 @@ export const Cart = () => {
       const orderForUI = { ...order, orderedGames: games };
       history.push("/cart/success", orderForUI);
     }
+    setIsRequestSending(false);
   }, [games]);
 
   const clearCartHandler = useCallback(async () => {
@@ -207,17 +210,15 @@ export const Cart = () => {
               <div className={styles.cartListContainer}>
                 <h2 className={styles.header}>My cart</h2>
 
-                <ul className={styles.cartList}>
-                  <li className={`${styles.cartItem} ${styles.headerItem}`}>
-                    <span className={`${styles.col} ${styles.name}`}>Name</span>
-                    <span className={`${styles.col} ${styles.price}`}>
-                      Price
-                    </span>
-                    <span className={`${styles.col} ${styles.action}`}></span>
-                  </li>
+                <table className={styles.cartList}>
+                  <tr className={`${styles.cartItem} ${styles.headerItem}`}>
+                    <td className={`${styles.col} ${styles.name}`}>Name</td>
+                    <td className={`${styles.col} ${styles.price}`}>Price</td>
+                    <td className={`${styles.col} ${styles.action}`}></td>
+                  </tr>
                   {games.map((game) => (
-                    <li className={styles.cartItem} key={game.id}>
-                      <span
+                    <tr className={styles.cartItem} key={game.id}>
+                      <td
                         className={`${styles.col} ${styles.name}`}
                         onClick={() => history.push(`/store/item/${game.id}`)}
                       >
@@ -225,16 +226,16 @@ export const Cart = () => {
                         {game.isPhysical && (
                           <span className={styles.accent}>Physical copy</span>
                         )}
-                      </span>
-                      <span className={`${styles.col} ${styles.price}`}>
+                      </td>
+                      <td className={`${styles.col} ${styles.price}`}>
                         {getOptimalGamePrice({
                           achievementDiscount,
                           game,
                           isPhysical: game.isPhysical,
                         })}
                         $
-                      </span>
-                      <span className={`${styles.col} ${styles.action}`}>
+                      </td>
+                      <td className={`${styles.col} ${styles.action}`}>
                         <button
                           className={styles.btn}
                           onClick={() =>
@@ -243,12 +244,16 @@ export const Cart = () => {
                         >
                           <FaTimes size={"100%"} />
                         </button>
-                      </span>
-                    </li>
+                      </td>
+                    </tr>
                   ))}
-                </ul>
+                </table>
               </div>
-              <div className={styles.totalBlockContainer}>
+              <div
+                className={`${styles.totalBlockContainer} ${
+                  isRequestSending && styles.sending
+                }`}
+              >
                 <h2 className={styles.header}>Total</h2>
                 <p className={styles.totalPrice}>
                   <span>Sub-total</span>
@@ -256,8 +261,10 @@ export const Cart = () => {
                 </p>
                 <div className={styles.actionsBlock}>
                   <button
-                    className={`${styles.btn} ${styles.submitBtn}`}
-                    onClick={() => submitHandler()}
+                    className={`${styles.btn} ${styles.submitBtn} ${
+                      isRequestSending && styles.blocked
+                    }`}
+                    onClick={() => !isRequestSending && submitHandler()}
                   >
                     Order
                   </button>

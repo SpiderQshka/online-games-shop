@@ -57,25 +57,41 @@
       background-color: $secondary-color-light;
       padding: 30px;
       grid-area: cartList;
+      overflow-x: auto;
       .header {
         @include primaryFont;
         color: $primary-color-light;
         text-transform: uppercase;
         font-size: 25px;
-        padding-bottom: 20px;
+        padding-bottom: 40px;
       }
 
       .cartList {
+        width: 100%;
         .cartItem {
           @include primaryFont;
-          display: grid;
-          grid-template-columns: minmax(70px, 1fr) 70px 30px;
-          margin-top: 20px;
           color: $primary-color-light;
+          position: relative;
+          &::after {
+            content: "";
+            position: absolute;
+            left: 100%;
+            width: 30px;
+            height: 1px;
+          }
+          &.headerItem {
+            font-weight: bold;
+            border-bottom: 2px solid $accent-color;
+            .col {
+              padding-top: 0;
+              padding-bottom: 15px;
+            }
+          }
           .col {
-            padding-right: 7px;
-            display: flex;
-            align-items: center;
+            padding-right: 10px;
+            padding: 15px 10px 0 0;
+            white-space: nowrap;
+            vertical-align: middle;
             &:last-of-type {
               padding-right: 0;
             }
@@ -83,9 +99,10 @@
               cursor: pointer;
             }
             &.price {
-              justify-content: end;
+              text-align: right;
             }
             &.action {
+              width: 30px;
               .btn {
                 @include basicBtn;
                 width: 30px;
@@ -99,20 +116,28 @@
             }
           }
         }
-        .headerItem {
-          font-weight: bold;
-          padding-bottom: 20px;
-          border-bottom: 2px solid $accent-color;
-          .row.name {
-            text-decoration: none;
-          }
-        }
       }
     }
     .totalBlockContainer {
       background-color: $secondary-color-light;
       padding: 30px;
       grid-area: total;
+      position: relative;
+      &.sending {
+        &::after {
+          content: "";
+          display: block;
+          position: absolute;
+          top: 15px;
+          right: 15px;
+          border: 3px solid $secondary-color-light;
+          border-top: 3px solid $accent-color;
+          border-radius: 50%;
+          width: 20px;
+          height: 20px;
+          animation: spin 1s linear infinite;
+        }
+      }
       .header {
         @include primaryFont;
         color: $primary-color-light;
@@ -144,6 +169,9 @@
           color: $primary-color-light;
           &.submitBtn {
             background-color: $accent-color;
+            &.blocked {
+              cursor: wait;
+            }
           }
           &.clearBtn {
             background-color: $primary-color-dark;
@@ -162,6 +190,15 @@
   background-color: $secondary-color-dark;
   align-items: center;
   justify-content: center;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @import "./media.module.scss";

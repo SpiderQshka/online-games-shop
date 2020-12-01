@@ -1,6 +1,6 @@
 import { SliderRange } from "components/SliderRange";
 import { IApiError, IGameCreatorFromApi, IGenreFromApi } from "interfaces/api";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { FaArrowLeft, FaWindowClose } from "react-icons/fa";
 import { IFilterConfig } from "..";
 import styles from "./styles.module.scss";
@@ -38,6 +38,36 @@ export const FiltersContainer: React.FunctionComponent<FiltersContainerProps> = 
     genres: boolean;
     gameCreators: boolean;
   }>({ gameCreators: true, genres: true });
+
+  const handleGenresInput = useCallback(
+    (e: React.MouseEvent, genreId: number) => {
+      console.log(e, genreId);
+
+      const input = e.target as HTMLInputElement;
+      if (input.checked)
+        setFilterConfig({
+          ...filterConfig,
+          genresIds: [...filterConfig.genresIds, genreId],
+        });
+      else
+        setFilterConfig({
+          ...filterConfig,
+          genresIds: [...filterConfig.genresIds.filter((id) => genreId !== id)],
+        });
+    },
+    [genres.length, filterConfig.genresIds.length]
+  );
+
+  const handleGamdCreatorsInput = useCallback(
+    (e: React.MouseEvent, gameCreatorId: number) => {
+      const input = e.target as HTMLInputElement;
+      setFilterConfig({
+        ...filterConfig,
+        gameCreatorId: input.checked ? gameCreatorId : null,
+      });
+    },
+    [gameCreators.length, filterConfig.gameCreatorId]
+  );
 
   return (
     <aside
@@ -114,23 +144,7 @@ export const FiltersContainer: React.FunctionComponent<FiltersContainerProps> = 
                     checked={filterConfig.genresIds.includes(genre.id)}
                     className={`${styles.input}`}
                     tabIndex={1}
-                    onClick={(e) => {
-                      const input = e.target as HTMLInputElement;
-                      if (input.checked)
-                        setFilterConfig({
-                          ...filterConfig,
-                          genresIds: [...filterConfig.genresIds, genre.id],
-                        });
-                      else
-                        setFilterConfig({
-                          ...filterConfig,
-                          genresIds: [
-                            ...filterConfig.genresIds.filter(
-                              (id) => genre.id !== id
-                            ),
-                          ],
-                        });
-                    }}
+                    onClick={(e) => handleGenresInput(e, genre.id)}
                   />
                   {genre.name}
                 </label>
@@ -182,13 +196,7 @@ export const FiltersContainer: React.FunctionComponent<FiltersContainerProps> = 
                     className={styles.input}
                     tabIndex={1}
                     checked={filterConfig.gameCreatorId === gameCreator.id}
-                    onClick={(e) => {
-                      const input = e.target as HTMLInputElement;
-                      setFilterConfig({
-                        ...filterConfig,
-                        gameCreatorId: input.checked ? gameCreator.id : null,
-                      });
-                    }}
+                    onClick={(e) => handleGamdCreatorsInput(e, gameCreator.id)}
                   />
                   {gameCreator.name}
                 </label>

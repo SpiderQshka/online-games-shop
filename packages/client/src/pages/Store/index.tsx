@@ -80,8 +80,10 @@ export const Store = () => {
 
   useEffect(
     () =>
-      setFilteredGames(sortGames(filterGames(games, filterConfig), sortType)),
-    [games, sortType, filterConfig]
+      setFilteredGames(
+        sortGames(filterGames(games, filterConfig), sortType, userAchievements)
+      ),
+    [games, sortType, filterConfig, userAchievements.length]
   );
 
   useEffect(
@@ -93,9 +95,11 @@ export const Store = () => {
     [games.length]
   );
 
-  useEffect(() => setFilteredGames(sortGames(filteredGames, sortType)), [
-    sortType,
-  ]);
+  useEffect(
+    () =>
+      setFilteredGames(sortGames(filteredGames, sortType, userAchievements)),
+    [sortType, userAchievements.length]
+  );
 
   useEffect(() => {
     setIsLoading(true);
@@ -147,8 +151,8 @@ export const Store = () => {
         })
       );
       setUserAchievements(userAchievements);
-      setGames(sortGames(storeGames, sortType));
-      setFilteredGames(sortGames(storeGames, sortType));
+      setGames(sortGames(storeGames, sortType, userAchievements));
+      setFilteredGames(sortGames(storeGames, sortType, userAchievements));
       setGenres(genres);
       setGameCreators(gameCreators);
       setError(errorObj);
