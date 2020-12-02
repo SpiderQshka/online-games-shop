@@ -19,8 +19,11 @@ import { Loader } from "components/Loader";
 import { FaTimes } from "react-icons/fa";
 import { Error } from "components/Error";
 import { defaultErrorObj, IErrorObject } from "interfaces/app";
+import { Counter } from "components/Counter";
 
 Aigle.mixin(_, {});
+
+type GameCopyNumber = { gameId: number; copiesNumber: number };
 
 export const Cart = () => {
   const history = useHistory();
@@ -41,6 +44,9 @@ export const Cart = () => {
   const [achievementDiscount, setAchievementDiscount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isRequestSending, setIsRequestSending] = useState<boolean>(false);
+  const [gamesCopiesNumbersArray, setGamesCopiesNumbersArray] = useState<
+    GameCopyNumber[]
+  >([]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -82,19 +88,32 @@ export const Cart = () => {
         error: userAchievementsError,
       } = await getUserAchievements();
       if (userAchievementsError) errorObj.achievements = userAchievementsError;
-
-      const formattedGames = formatGamesForUI({
+      const existingGames = (games.filter(
+        (game) => game !== undefined
+      ) as IGameFromApi[]).map((game, i) => ({
+        ...game,
+        isPhysical: gamesFromSessionData[i].isPhysical,
+      }));
+      const formattedGames: IGameForOrder[] = formatGamesForUI({
         discounts,
         gameCreators,
         genres,
         usedDiscounts,
         usedGenres,
-        games: games.filter((game) => game !== undefined) as IGameFromApi[],
+        games: existingGames,
         userAchievements,
       }).map((game, i) => ({
         ...game,
         isPhysical: gamesFromSessionData[i].isPhysical,
+        dublicatesNumber: 1,
       }));
+
+      setGamesCopiesNumbersArray(
+        formattedGames
+          .filter((game) => game.isPhysical)
+          .map((game) => game.id)
+          .map((gameId) => ({ copiesNumber: 1, gameId }))
+      );
 
       setGames(formattedGames);
       setAchievementDiscount(
@@ -130,16 +149,16 @@ export const Cart = () => {
     [games.length]
   );
 
-  const submitHandler = useCallback(async () => {
+  const submitHandler = async () => {
     setIsRequestSending(true);
     await unblockGames();
     const gamesIds = games
       .filter((game) => !game.isPhysical)
       .map((game) => +game.id);
 
-    const physicalGamesCopiesIds = games
-      .filter((game) => game.isPhysical)
-      .map((game) => +game.id);
+    const physicalGamesCopiesIds = gamesCopiesNumbersArray
+      .map((el) => new Array(el.copiesNumber).fill(el.gameId) as number[])
+      .flat();
 
     const { order, error: orderError } = await postOrder({
       gamesIds,
@@ -148,7 +167,7 @@ export const Cart = () => {
     });
 
     if (orderError) {
-      setError({ ...error, orders: orderError || null });
+      setError({ ...error, orders: orderError });
       await blockGames();
     } else {
       setGames([]);
@@ -157,7 +176,7 @@ export const Cart = () => {
       history.push("/cart/success", orderForUI);
     }
     setIsRequestSending(false);
-  }, [games]);
+  };
 
   const clearCartHandler = useCallback(async () => {
     await unblockGames();
@@ -191,7 +210,9 @@ export const Cart = () => {
           achievementDiscount,
           game: curr,
           isPhysical: curr.isPhysical,
-        }),
+        }) *
+          (gamesCopiesNumbersArray.filter((el) => el.gameId === curr.id)[0]
+            ?.copiesNumber || 1),
       0
     )
     .toFixed(2);
@@ -214,6 +235,9 @@ export const Cart = () => {
                   <tr className={`${styles.cartItem} ${styles.headerItem}`}>
                     <td className={`${styles.col} ${styles.name}`}>Name</td>
                     <td className={`${styles.col} ${styles.price}`}>Price</td>
+                    <td className={`${styles.col} ${styles.numberOfCopies}`}>
+                      Number of copies
+                    </td>
                     <td className={`${styles.col} ${styles.action}`}></td>
                   </tr>
                   {games.map((game) => (
@@ -234,6 +258,32 @@ export const Cart = () => {
                           isPhysical: game.isPhysical,
                         })}
                         $
+                      </td>
+                      <td className={`${styles.col} ${styles.numberOfCopies}`}>
+                        {game.isPhysical ? (
+                          <Counter
+                            minValue={1}
+                            maxValue={game.numberOfPhysicalCopies}
+                            value={
+                              gamesCopiesNumbersArray.filter(
+                                (el) => el.gameId === game.id
+                              )[0]?.copiesNumber || 0
+                            }
+                            handleValueChange={(value) =>
+                              setGamesCopiesNumbersArray([
+                                ...gamesCopiesNumbersArray.map((el) => {
+                                  return el.gameId === game.id
+                                    ? { ...el, copiesNumber: value }
+                                    : el;
+                                }),
+                              ])
+                            }
+                          />
+                        ) : (
+                          <span className={styles.notPermitted}>
+                            Only for physical copies
+                          </span>
+                        )}
                       </td>
                       <td className={`${styles.col} ${styles.action}`}>
                         <button

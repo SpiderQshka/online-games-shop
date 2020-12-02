@@ -7,6 +7,7 @@ import { FaPlus } from "react-icons/fa";
 import { BsThreeDots } from "react-icons/bs";
 import { IApiError } from "interfaces/api";
 import { Error } from "components/Error";
+import _ from "lodash";
 
 interface OrdersProps {
   orders: IOrderWithUserId[];
@@ -45,35 +46,46 @@ export const Orders: React.FunctionComponent<OrdersProps> = ({
             </tr>
             {orders
               .sort((a, b) => a.id - b.id)
-              .map((order) => (
-                <tr className={styles.row} key={order.id}>
-                  <td className={styles.col}>{order.id}</td>
-                  <td className={styles.col}>{order.userId}</td>
-                  <td className={styles.col}>
-                    {moment(order.createdAt).format("DD-MM-YYYY")}
-                  </td>
-                  <td className={styles.col}>{order.price}</td>
-                  <td className={styles.col}>{order.status}</td>
-                  <td className={`${styles.col} ${styles.list}`}>
-                    {order.orderedGames.map((el) => (
-                      <li className={styles.listItem} key={el.id}>
-                        {el.name}
-                        {el.isPhysical && (
-                          <span className={styles.accent}>Physical copy</span>
-                        )}
-                      </li>
-                    ))}
-                  </td>
-                  <td className={`${styles.col} ${styles.btnContainer}`}>
-                    <button
-                      className={styles.btn}
-                      onClick={() => history.push(`/admin/orders/${order.id}`)}
-                    >
-                      <BsThreeDots size="25px" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              .map((order) => {
+                // const uniqOrderedGames = _.uniqBy(order.orderedGames, "id");
+                // const gamesIds = order.orderedGames.map((el) => el.id);
+                return (
+                  <tr className={styles.row} key={order.id}>
+                    <td className={styles.col}>{order.id}</td>
+                    <td className={styles.col}>{order.userId}</td>
+                    <td className={styles.col}>
+                      {moment(order.createdAt).format("DD-MM-YYYY")}
+                    </td>
+                    <td className={styles.col}>{order.price}</td>
+                    <td className={styles.col}>{order.status}</td>
+                    <td className={`${styles.col} ${styles.list}`}>
+                      {order.orderedGames.map((el) => (
+                        <li className={styles.listItem} key={el.id}>
+                          {el.name}
+                          {el.isPhysical && (
+                            <span className={styles.accent}>Physical copy</span>
+                          )}
+                          {el.dublicatesNumber > 1 && (
+                            <span className={styles.number}>
+                              ({el.dublicatesNumber})
+                            </span>
+                          )}
+                        </li>
+                      ))}
+                    </td>
+                    <td className={`${styles.col} ${styles.btnContainer}`}>
+                      <button
+                        className={styles.btn}
+                        onClick={() =>
+                          history.push(`/admin/orders/${order.id}`)
+                        }
+                      >
+                        <BsThreeDots size="25px" />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
           </table>
         </>
       )}

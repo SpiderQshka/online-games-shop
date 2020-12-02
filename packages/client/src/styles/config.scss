@@ -24,3 +24,13 @@ $admin-menu-width: 200px;
   @include primaryFont;
   cursor: pointer;
 }
+
+@mixin basicInput {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  outline: none;
+  box-sizing: border-box;
+  -moz-appearance: textfield;
+  @include primaryFont;
+}

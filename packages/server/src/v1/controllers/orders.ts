@@ -220,6 +220,7 @@ export const ordersController: IOrdersController = {
 
     const gamesIds: number[] = ctx.request.body.gamesIds;
     const physicalGamesIds: number[] = ctx.request.body.physicalGamesCopiesIds;
+    console.log(physicalGamesIds);
 
     const userGamesIds = (
       await OrderedGame.query().where("userId", user.id)
@@ -230,7 +231,7 @@ export const ordersController: IOrdersController = {
 
     await Aigle.map(physicalGamesIds, async (id) => {
       const game = await Game.query().findById(id);
-      if (+game.numberOfPhysicalCopies === 0)
+      if (+game.numberOfPhysicalCopies <= 0)
         ctx.throw(404, `Game with id ${id} doesn't have physical copies left`);
       await Game.query().patchAndFetchById(id, {
         numberOfPhysicalCopies: +game.numberOfPhysicalCopies - 1,

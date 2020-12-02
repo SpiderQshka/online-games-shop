@@ -79,6 +79,7 @@ export interface IMyGameFromApi extends IGameFromApi {
 
 export interface IGameForOrder extends IMyGameFromApi {
   discount: IDiscountFromApi | null;
+  dublicatesNumber: number;
 }
 
 export interface IGameCreator {

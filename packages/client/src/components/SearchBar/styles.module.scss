@@ -3,15 +3,10 @@
 .searchBarContainer {
   position: relative;
   .input {
-    width: 100%;
-    min-width: 0;
-    border: none;
-    outline: none;
-    box-sizing: border-box;
+    @include basicInput;
     background-color: $secondary-color;
     padding: 15px;
     color: $primary-color-light;
-    @include primaryFont;
     &::placeholder {
       @include primaryFont;
       color: white;

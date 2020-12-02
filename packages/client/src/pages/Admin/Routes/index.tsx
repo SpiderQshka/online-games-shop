@@ -37,7 +37,7 @@ import { UpdateGenre } from "../sections/Genres/UpdateGenre";
 import {
   formatDiscountsForUI,
   formatGamesForUI,
-  formatOrdersForUIAdmin,
+  formatOrdersForUI,
 } from "utils/helpers";
 import { Error } from "components/Error";
 
@@ -132,7 +132,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         userAchievements: [],
       });
 
-      const ordersForUI = formatOrdersForUIAdmin({
+      const ordersForUI = formatOrdersForUI({
         discounts,
         orderedGames,
         orders,

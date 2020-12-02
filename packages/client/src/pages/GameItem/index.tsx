@@ -133,10 +133,6 @@ export const GameItem: React.FunctionComponent = () => {
     userGames
       .filter((userGame) => userGame.id === game?.id)
       .filter((userGame) => !userGame.isPhysical).length !== 0;
-  const isPhysicalCopyBought =
-    userGames
-      .filter((userGame) => userGame.id === game?.id)
-      .filter((userGame) => userGame.isPhysical).length !== 0;
 
   const isCopyPhysical =
     game &&
@@ -236,14 +232,11 @@ export const GameItem: React.FunctionComponent = () => {
                       className={`${styles.actionBtn} ${styles.physical} ${
                         isGameInCart && styles.active
                       } ${isCopyPhysical && styles.inCart} ${
-                        isPhysicalCopyBought && styles.bought
-                      } ${
                         +(game?.numberOfPhysicalCopies || 0) <= 0 &&
                         styles.restricted
                       }`}
                       onClick={() =>
                         !isCopyPhysical &&
-                        !isPhysicalCopyBought &&
                         !(+(game?.numberOfPhysicalCopies || 0) <= 0) &&
                         addToCartHandler(true)
                       }

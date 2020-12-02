@@ -88,7 +88,7 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
         usedDiscounts,
         orderedGames,
         orders,
-        userGames,
+        games: userGames,
       });
 
       setUser(user);

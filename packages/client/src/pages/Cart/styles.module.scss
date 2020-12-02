@@ -101,6 +101,12 @@
             &.price {
               text-align: right;
             }
+            &.numberOfCopies {
+              text-align: right;
+              & > * {
+                margin-left: auto;
+              }
+            }
             &.action {
               width: 30px;
               .btn {

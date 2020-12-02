@@ -51,6 +51,11 @@ export const Orders: React.FunctionComponent<OrdersProps> = ({
                           {el.isPhysical && (
                             <span className={styles.accent}>Physical copy</span>
                           )}
+                          {el.dublicatesNumber > 1 && (
+                            <span className={styles.number}>
+                              ({el.dublicatesNumber})
+                            </span>
+                          )}
                         </Link>
                       ))
                     ) : (

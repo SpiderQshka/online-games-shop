@@ -43,6 +43,23 @@ export const gamesController: IGamesController = {
   getMy: async (ctx) => {
     const user = verifyJwtToken(ctx);
 
+    // const myOrderedGames = await OrderedGame.query().where("userId", user.id);
+    // const uniqOrderedGames = _.uniqBy(myOrderedGames, "gameId");
+    // const gamesIds = myOrderedGames.map((orderedGame) => orderedGame.gameId);
+    // const myGames = await Aigle.map(uniqOrderedGames, async (el) => {
+    //   const game = await Game.query().findById(el.gameId);
+    //   return {
+    //     ...game,
+    //     isPhysical: el.isPhysical,
+    //     dublicatesNumber: gamesIds.reduce(
+    //       (prev, curr) => (curr === el.gameId ? prev + 1 : prev),
+    //       0
+    //     ),
+    //   };
+    // });
+
+    // console.log(myOrderedGames);
+
     const myOrderedGames = await OrderedGame.query().where("userId", user.id);
 
     const myGames = await Aigle.map(myOrderedGames, async (el) => {
