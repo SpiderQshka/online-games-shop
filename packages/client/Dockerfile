@@ -24,4 +24,4 @@ RUN yarn install
 
 COPY --from=builder /app/build ./build
 
-CMD ["serve", "-s", "build"]
+CMD sh -c "yarn serve"
