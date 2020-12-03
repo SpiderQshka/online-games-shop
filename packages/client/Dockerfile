@@ -16,8 +16,6 @@ RUN yarn build
 
 FROM node:14.15-alpine
 
-ENV NODE_ENV=production
-
 COPY package.json yarn.lock ./
 
 RUN yarn install

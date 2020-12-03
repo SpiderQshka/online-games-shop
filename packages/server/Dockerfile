@@ -4,7 +4,8 @@ WORKDIR /server
 
 ENV NODE_ENV=development
 
-COPY package.json yarn.lock ./
+COPY package.json ./
+COPY yarn.lock ./
 COPY tsconfig.json ./
 
 RUN yarn install
@@ -14,8 +15,6 @@ COPY ./src ./src
 RUN yarn build
 
 FROM node:14.15-alpine
-
-ENV NODE_ENV=production
 
 COPY package.json ./
 COPY yarn.lock ./

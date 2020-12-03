@@ -2,11 +2,6 @@ import "ts-node/register";
 import { config } from "dotenv";
 config({ path: "../../.env" });
 
-const fileExt = __filename.split(".")[1];
-
-const migrationsTableName =
-  fileExt === "js" ? "table_migrations_production" : "table_migrations"; // WTF???
-
 module.exports = {
   development: {
     client: process.env.DB_CLIENT,
@@ -17,7 +12,7 @@ module.exports = {
       password: process.env.DB_PASSWORD,
     },
     migrations: {
-      tableName: migrationsTableName,
+      tableName: "table_migrations_production",
       directory: __dirname + "/migrations",
     },
     seeds: {
@@ -29,7 +24,7 @@ module.exports = {
     client: "postgres",
     connection: process.env.DATABASE_URL,
     migrations: {
-      tableName: migrationsTableName,
+      tableName: "table_migrations_production",
       directory: __dirname + "/migrations",
     },
     seeds: {
