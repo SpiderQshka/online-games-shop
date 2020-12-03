@@ -2,11 +2,12 @@ FROM node:14.15-alpine AS builder
 
 WORKDIR /app
 
-COPY package.json ./
-COPY yarn.lock ./
+ENV NODE_ENV=development
+
+COPY package.json yarn.lock ./
 COPY tsconfig.json ./
 
-RUN yarn
+RUN yarn install
 
 COPY ./src ./src
 COPY ./public ./public
@@ -15,11 +16,12 @@ RUN yarn build
 
 FROM node:14.15-alpine
 
-COPY package.json ./
-COPY yarn.lock ./
+ENV NODE_ENV=production
+
+COPY package.json yarn.lock ./
+
+RUN yarn install
 
 COPY --from=builder /app/build ./build
-
-RUN yarn global add serve
 
 CMD ["serve", "-s", "build"]
