@@ -1,7 +1,7 @@
 @import "../../styles/config.scss";
 
 .itemContent {
-  max-width: 600px;
+  max-width: 700px;
   padding-left: $admin-menu-width;
   .header {
     @include primaryFont;
@@ -40,6 +40,7 @@
         outline: none;
         margin: 8px 0;
         background-color: $primary-color-dark;
+        appearance: none;
         &::placeholder {
           color: $primary-color;
         }

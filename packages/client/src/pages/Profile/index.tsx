@@ -21,6 +21,7 @@ import {
 } from "utils/helpers";
 import { usePopup } from "context/popup";
 import { Games } from "./Games";
+import _ from "lodash";
 
 interface IProfileProps {}
 
@@ -92,7 +93,7 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
       });
 
       setUser(user);
-      setUserGames(userGames);
+      setUserGames(_.uniqBy(userGames, "id"));
       setOrders(ordersForUI);
       setAchievements(achievements);
       setError(errorObj);

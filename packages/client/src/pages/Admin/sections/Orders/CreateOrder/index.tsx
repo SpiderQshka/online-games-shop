@@ -12,6 +12,7 @@ interface OrderFormValues {
   status: OrderStatus;
   userId: number;
   physicalGamesCopiesIds: string[];
+  physicalCopiesData: { gameId: number; numberOfCopies: number }[];
 }
 
 interface AddOrderProps {
@@ -38,20 +39,31 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
       gamesIds: [],
       physicalGamesCopiesIds: [],
       userId: 1,
+      physicalCopiesData: [],
     } as OrderFormValues,
     validationSchema: Yup.object({
       status: Yup.string().required("Required"),
-      gamesIds: Yup.array().of(Yup.string().min(1)).min(1).required("Required"),
+      gamesIds: Yup.array().of(Yup.string().min(1)).min(0),
       physicalGamesCopiesIds: Yup.array().of(Yup.string().min(1)).min(0),
       userId: Yup.number().min(1).required("Required"),
     }),
     onSubmit: (data) => {
       setIsLoading(true);
       postOrderAdmin({
-        ...data,
+        status: data.status,
+        userId: data.userId,
         gamesIds: data.gamesIds.map((id) => +id),
-        physicalGamesCopiesIds: data.physicalGamesCopiesIds.map((id) => +id),
-      }).then(({ order, error }) => {
+        physicalGamesCopiesIds: data.physicalGamesCopiesIds
+          .map((id) => +id)
+          .map((id) =>
+            new Array(
+              data.physicalCopiesData.filter(
+                (data) => data.gameId === id
+              )[0].numberOfCopies
+            ).fill(id)
+          )
+          .flat(),
+      }).then(({ error }) => {
         setIsLoading(false);
         if (error) setError(error);
         else {
@@ -127,10 +139,27 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
           <select
             name="physicalGamesCopiesIds"
             required={formik.values.gamesIds.length === 0}
-            onChange={formik.handleChange}
+            onChange={(e) => {
+              const physicalGamesCopiesIds = [...e.currentTarget.options]
+                .filter((o) => o.selected)
+                .map((option) => option.value);
+              formik.setValues({
+                ...formik.values,
+                physicalGamesCopiesIds,
+                physicalCopiesData: physicalGamesCopiesIds.map((el) => {
+                  return {
+                    gameId: +el,
+                    numberOfCopies:
+                      formik.values.physicalCopiesData.filter(
+                        (data) => data.gameId === +el
+                      )[0]?.numberOfCopies || 1,
+                  };
+                }),
+              });
+            }}
             onBlur={formik.handleBlur}
             className={`${styles.input} ${styles.gamesInput}`}
-            value={formik.values.physicalGamesCopiesIds.map((id) => `${id}`)}
+            value={formik.values.physicalGamesCopiesIds}
             multiple
           >
             {games.map((game) => (
@@ -148,6 +177,44 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
             </p>
           )}
 
+        {formik.values.physicalCopiesData.map((el) => {
+          const game = games.filter((game) => game.id === el.gameId)[0];
+          return (
+            <label className={styles.label}>
+              <span
+                className={styles.labelText}
+              >{`"${game.name}" - copies number`}</span>
+              <input
+                name={`${game.name} copies`}
+                type="number"
+                min="1"
+                max={game.numberOfPhysicalCopies}
+                onChange={(e) => {
+                  const value = e.currentTarget.value;
+                  formik.setValues({
+                    ...formik.values,
+                    physicalCopiesData: formik.values.physicalCopiesData.map(
+                      (data) =>
+                        data.gameId === game.id
+                          ? { numberOfCopies: +value, gameId: game.id }
+                          : data
+                    ),
+                  });
+                }}
+                onBlur={formik.handleBlur}
+                className={`${styles.input} ${styles.physicalCopiesDataInput}`}
+                value={
+                  formik.values.physicalCopiesData.filter(
+                    (data) => data.gameId === el.gameId
+                  )[0].numberOfCopies
+                }
+              />
+            </label>
+          );
+        })}
+        {!!formik.touched.userId && !!formik.errors.userId && (
+          <p className={styles.errorMsg}>{formik.errors.userId}</p>
+        )}
         <div
           className={`${styles.actionsBlock} ${isLoading && styles.loading}`}
         >
