@@ -1,3 +1,4 @@
+import { isInteger } from "lodash";
 import React from "react";
 import styles from "./styles.module.scss";
 
@@ -30,6 +31,16 @@ export const Counter: React.FunctionComponent<CounterProps> = ({
         value={value}
         min={minValue}
         max={maxValue}
+        onChange={(e) =>
+          isInteger(+e.currentTarget.value) &&
+          handleValueChange(
+            +e.currentTarget.value > maxValue
+              ? maxValue
+              : +e.currentTarget.value < minValue
+              ? minValue
+              : +e.currentTarget.value
+          )
+        }
       />
       <button
         className={`${styles.btn}`}

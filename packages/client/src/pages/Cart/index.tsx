@@ -20,6 +20,7 @@ import { FaTimes } from "react-icons/fa";
 import { Error } from "components/Error";
 import { defaultErrorObj, IErrorObject } from "interfaces/app";
 import { Counter } from "components/Counter";
+import { usePopup } from "context/popup";
 
 Aigle.mixin(_, {});
 
@@ -39,6 +40,7 @@ export const Cart = () => {
     getUsedGenres,
     blockGame,
   } = useApi();
+  const { showPopup } = usePopup();
   const [games, setGames] = useState<IGameForOrder[]>([]);
   const [error, setError] = useState<IErrorObject>(defaultErrorObj);
   const [achievementDiscount, setAchievementDiscount] = useState<number>(0);
@@ -132,18 +134,19 @@ export const Cart = () => {
       Aigle.map(games, (game) =>
         blockGame(game.id).then(
           ({ error: gameError }) =>
-            gameError && setError({ ...error, games: gameError || null })
+            gameError && setError({ ...error, games: gameError })
         )
       ),
     [games.length]
   );
+  console.log(games);
 
   const unblockGames = useCallback(
     () =>
       Aigle.map(games, (game) =>
         unblockGame(game.id).then(
           ({ error: gameError }) =>
-            gameError && setError({ ...error, games: gameError || null })
+            gameError && setError({ ...error, games: gameError })
         )
       ),
     [games.length]
@@ -217,6 +220,18 @@ export const Cart = () => {
     )
     .toFixed(2);
 
+  useEffect(() => {
+    error.orders &&
+      showPopup({
+        msg:
+          error.orders.msg ||
+          "Error occured while submitting order. Please try again",
+        type: "error",
+        code: error.orders.status,
+      });
+  }, [error.orders]);
+  console.log(games[0]?.numberOfPhysicalCopies);
+
   return (
     <>
       <Header />
@@ -263,7 +278,7 @@ export const Cart = () => {
                         {game.isPhysical ? (
                           <Counter
                             minValue={1}
-                            maxValue={game.numberOfPhysicalCopies}
+                            maxValue={+game.numberOfPhysicalCopies}
                             value={
                               gamesCopiesNumbersArray.filter(
                                 (el) => el.gameId === game.id

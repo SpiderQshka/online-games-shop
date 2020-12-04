@@ -1,7 +1,7 @@
 @import "../../styles/config.scss";
 
 .profileContainer {
-  padding: $header-height $default-gap 0;
+  padding: $header-height $default-gap $default-gap;
   background-color: $secondary-color-dark;
   min-height: calc(100vh - #{$header-height});
   .profileContent {
@@ -9,7 +9,7 @@
     margin: 40px auto 0;
     max-width: 1200px;
     grid-template-columns: 250px 1fr;
-    grid-template-areas: "menu data" "menu .";
+    grid-template-areas: "menu data";
     grid-column-gap: 20px;
     .menuList {
       grid-area: menu;
