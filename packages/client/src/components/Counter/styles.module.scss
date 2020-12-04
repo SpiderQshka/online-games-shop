@@ -27,7 +27,7 @@ $buttonsBorderRadius: 4px;
     @include basicInput;
     text-align: center;
     background-color: $secondary-color;
-    color: $primary-color;
+    color: $primary-color-light;
     z-index: 1;
   }
 }

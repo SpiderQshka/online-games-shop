@@ -47,6 +47,9 @@
         &:first-of-type {
           margin-top: 0;
         }
+        &.descriptionInput {
+          min-width: 50%;
+        }
       }
     }
     .actionsBlock {

@@ -278,7 +278,7 @@ export const Cart = () => {
                         {game.isPhysical ? (
                           <Counter
                             minValue={1}
-                            maxValue={+game.numberOfPhysicalCopies}
+                            maxValue={+game.numberOfPhysicalCopies + 1}
                             value={
                               gamesCopiesNumbersArray.filter(
                                 (el) => el.gameId === game.id

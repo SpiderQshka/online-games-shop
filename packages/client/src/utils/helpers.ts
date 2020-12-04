@@ -219,10 +219,11 @@ export const formatOrdersForUI: (
     const gamesIds = orderedGames
       .filter((el) => +el.orderId === +order.id)
       .map((el) => el.gameId);
-    const gamesForOrder: IGameForOrder[] = _.uniqBy(
+
+    const gamesForOrder: IGameForOrder[] = _.uniqWith(
       orderedGames
         .filter((orderedGame) => gamesIds.includes(orderedGame.gameId))
-        .map((orderedGame) => {
+        .map((orderedGame, i, filteredOrderedGames) => {
           const game = games.filter(
             (game) => game.id === orderedGame.gameId
           )[0];
@@ -243,14 +244,35 @@ export const formatOrdersForUI: (
             (prev, curr) => (curr === game.id ? prev + 1 : prev),
             0
           );
-          return {
+
+          const doesOrderContainBothDigitalAndPhysicalCopy =
+            _.uniqBy(
+              filteredOrderedGames.filter((item) => item.gameId === game.id),
+              "isPhysical"
+            ).length > 1;
+
+          const editedOrderedGame = {
             ...game,
             isPhysical,
             discount,
-            dublicatesNumber,
+            dublicatesNumber: isPhysical ? dublicatesNumber : 0,
           };
-        }),
-      "id"
+
+          return doesOrderContainBothDigitalAndPhysicalCopy
+            ? [
+                editedOrderedGame,
+                {
+                  ...editedOrderedGame,
+                  isPhysical: !editedOrderedGame.isPhysical,
+                  dublicatesNumber: !editedOrderedGame.isPhysical
+                    ? dublicatesNumber
+                    : 0,
+                },
+              ]
+            : editedOrderedGame;
+        })
+        .flat(),
+      (a, b) => a.isPhysical === b.isPhysical && a.id === b.id
     );
 
     const userId = orderedGames.filter(

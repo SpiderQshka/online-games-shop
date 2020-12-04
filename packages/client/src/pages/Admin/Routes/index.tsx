@@ -140,6 +140,8 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         games,
       });
 
+      console.log(ordersForUI);
+
       const discountsForUI = formatDiscountsForUI({
         games,
         usedDiscounts,

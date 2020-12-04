@@ -249,12 +249,12 @@ export const ordersController: IOrdersController = {
 
     await Aigle.map(physicalGamesConfig, async ({ copiesNumber, gameId }) => {
       const game = await Game.query().findById(gameId);
-      console.log(copiesNumber);
+      console.log(game.numberOfPhysicalCopies);
 
-      if (+game.numberOfPhysicalCopies - copiesNumber <= 0)
+      if (+game.numberOfPhysicalCopies - copiesNumber < 0)
         ctx.throw(
           404,
-          `Game with id ${gameId} doesn't have physical copies left`
+          `Game with id ${gameId} doesn't have ${copiesNumber} physical copies left`
         );
       await Game.query().patchAndFetchById(gameId, {
         numberOfPhysicalCopies: +game.numberOfPhysicalCopies - copiesNumber,

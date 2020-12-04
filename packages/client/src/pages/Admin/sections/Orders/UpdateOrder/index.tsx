@@ -43,12 +43,14 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
       physicalGamesCopiesIds: order.orderedGames
         .filter((el) => el.isPhysical)
         .map((el) => `${el.id}`),
-      physicalCopiesData: order.orderedGames.map((game) => {
-        return {
-          gameId: game.id,
-          numberOfCopies: game.dublicatesNumber,
-        };
-      }),
+      physicalCopiesData: order.orderedGames
+        .filter((game) => game.isPhysical)
+        .map((game) => {
+          return {
+            gameId: game.id,
+            numberOfCopies: game.dublicatesNumber,
+          };
+        }),
     } as OrderFormValues,
     validationSchema: Yup.object({
       status: Yup.string().required("Required"),
