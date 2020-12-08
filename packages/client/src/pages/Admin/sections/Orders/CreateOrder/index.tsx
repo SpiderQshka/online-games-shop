@@ -79,17 +79,18 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
       <h2 className={styles.header}>Create order</h2>
       <form onSubmit={formik.handleSubmit} className={styles.form}>
         <label className={styles.label}>
-          <span className={styles.labelText}>User ID</span>
-          <input
+          <span className={styles.labelText}>User</span>
+          <select
             name="userId"
-            type="number"
-            min="1"
-            max={users.length && users.sort((a, b) => b.id - a.id)[0].id}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
             className={`${styles.input} ${styles.userIdInput}`}
             value={formik.values.userId}
-          />
+          >
+            {users.map((user) => (
+              <option value={user.id}>{user.login}</option>
+            ))}
+          </select>
         </label>
         {!!formik.touched.userId && !!formik.errors.userId && (
           <p className={styles.errorMsg}>{formik.errors.userId}</p>

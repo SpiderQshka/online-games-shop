@@ -257,6 +257,9 @@ export const formatOrdersForUI: (
             dublicatesNumber: isPhysical ? dublicatesNumber : 0,
           };
 
+          doesOrderContainBothDigitalAndPhysicalCopy &&
+            console.log(!editedOrderedGame.isPhysical ? dublicatesNumber : 0);
+
           return doesOrderContainBothDigitalAndPhysicalCopy
             ? [
                 editedOrderedGame,
