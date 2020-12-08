@@ -6,6 +6,7 @@ import styles from "./styles.module.scss";
 import { config } from "config";
 import { BarChart } from "./BarChart";
 import { Error } from "components/Error";
+import { useWindowDimensions } from "hooks/windowDimensions";
 interface DashboardProps {
   genres: IGenreFromApi[];
   games: IGameForUI[];
@@ -26,9 +27,9 @@ export const Dashboard: React.FunctionComponent<DashboardProps> = ({
     fontFamily: "sans-serif",
     fill: "#fff",
   };
-  const shiftSize = 0.5;
+  const shiftSize = 0.6;
 
-  const genresData = genres
+  const genresData: { title: string; color: string; value: number }[] = genres
     .map((genre) => {
       const value = games.reduce(
         (prev, curr) =>
@@ -95,7 +96,7 @@ export const Dashboard: React.FunctionComponent<DashboardProps> = ({
               <h3 className={styles.header}>The most popular genres</h3>
               <div className={styles.itemContent}>
                 <PieChart
-                  className={`${styles.diagram}`}
+                  className={styles.diagram}
                   radius={PieChart.defaultProps.radius - shiftSize}
                   segmentsShift={() => shiftSize}
                   label={({ dataEntry }) => dataEntry.title}

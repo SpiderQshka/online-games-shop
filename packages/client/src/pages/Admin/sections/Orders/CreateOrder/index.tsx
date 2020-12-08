@@ -163,11 +163,13 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
             value={formik.values.physicalGamesCopiesIds}
             multiple
           >
-            {games.map((game) => (
-              <option value={game.id} key={game.id}>
-                {game.name}
-              </option>
-            ))}
+            {games
+              .filter((game) => game.numberOfPhysicalCopies > 0)
+              .map((game) => (
+                <option value={game.id} key={game.id}>
+                  {game.name}
+                </option>
+              ))}
           </select>
         </label>
 

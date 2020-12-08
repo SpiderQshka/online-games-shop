@@ -26,6 +26,10 @@ export interface IFilterConfig {
     min: number;
     max: number;
   };
+  physicalCopiesNumberBounds: {
+    min: number;
+    max: number;
+  };
 }
 
 export const Store = () => {
@@ -58,6 +62,7 @@ export const Store = () => {
     gameCreatorId: null,
     genresIds: [],
     priceBounds: { min: 0, max: 0 },
+    physicalCopiesNumberBounds: { min: 0, max: 0 },
   });
 
   const hightestGamePrice =
@@ -65,10 +70,18 @@ export const Store = () => {
       ? games.map((game) => game.optimalPrice).sort((a, b) => b - a)[0]
       : 0;
 
+  const biggestPhysicalCopiesNumber =
+    games.length > 0
+      ? games
+          .map((game) => +game.numberOfPhysicalCopies)
+          .sort((a, b) => b - a)[0]
+      : 0;
+
   const removeFilters = useCallback(() => {
     setFilterConfig({
       gameCreatorId: null,
       priceBounds: { min: 0, max: hightestGamePrice },
+      physicalCopiesNumberBounds: { min: 0, max: biggestPhysicalCopiesNumber },
       genresIds: [],
     });
   }, [games, sortType, hightestGamePrice]);
@@ -91,6 +104,10 @@ export const Store = () => {
       setFilterConfig({
         ...filterConfig,
         priceBounds: { ...filterConfig.priceBounds, max: hightestGamePrice },
+        physicalCopiesNumberBounds: {
+          ...filterConfig.physicalCopiesNumberBounds,
+          max: biggestPhysicalCopiesNumber,
+        },
       }),
     [games.length]
   );
@@ -190,6 +207,7 @@ export const Store = () => {
             isLoading={isLoading}
             removeFilters={removeFilters}
             setFilterConfig={setFilterConfig}
+            biggestPhysicalCopiesNumber={biggestPhysicalCopiesNumber}
           />
         </div>
       </div>

@@ -2,11 +2,16 @@
 @import "../styles.module.scss";
 
 .filtersContainer {
+  &.open {
+    overflow-y: scroll;
+  }
+
   .header {
     @include primaryFont;
     color: $primary-color;
-    padding: $default-gap 10px;
+    padding: $default-gap 13px;
     position: relative;
+    font-size: 0.9rem;
     &.active {
       .closeIcon {
         display: inline-block;
@@ -33,13 +38,13 @@
     .inputGroupHeader {
       @include primaryFont;
       padding: 20px $filters-menu-gap;
-      font-size: 1.2em;
-      color: $primary-color-light;
+      font-size: 1.1em;
+      color: $primary-color;
       position: relative;
       cursor: pointer;
       .icon {
         position: absolute;
-        top: 20px;
+        top: 22px;
         right: $filters-menu-gap;
         transition: 0.5s;
         transform: rotate(90deg);
@@ -56,6 +61,7 @@
     .inputGroup {
       @include primaryFont;
       display: none;
+      border-bottom: 2px solid $secondary-color-light;
       .inputGroupItem {
         &.loadingItem,
         &.errorItem {
@@ -79,6 +85,18 @@
         }
       }
       &.active {
+        display: block;
+        padding-bottom: 10px;
+      }
+      &:last-of-type {
+        border-bottom: none;
+      }
+    }
+    .sliderRangeContainer {
+      display: none;
+      border-bottom: 2px solid $secondary-color-light;
+      &.active {
+        padding-bottom: 20px;
         display: block;
       }
     }

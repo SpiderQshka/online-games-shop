@@ -1,4 +1,5 @@
 import { config } from "config";
+import { useWindowDimensions } from "hooks/windowDimensions";
 import React from "react";
 import {
   BarChart as RechartsBarChart,
@@ -15,8 +16,11 @@ interface BarChartProps {
 }
 
 export const BarChart: React.FunctionComponent<BarChartProps> = ({ data }) => {
+  const { width } = useWindowDimensions();
+
+  const chartHeight = width / 2 > 500 ? 500 : width / 2;
   return (
-    <ResponsiveContainer width={"100%"} height={500}>
+    <ResponsiveContainer width={"100%"} height={chartHeight}>
       <RechartsBarChart
         data={data}
         margin={{ top: 15, right: 20 }}

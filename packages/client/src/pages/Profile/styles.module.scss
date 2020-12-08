@@ -16,6 +16,14 @@
     .menuList {
       grid-area: menu;
       align-self: start;
+      overflow-x: scroll;
+      // &::after {
+      //   content: "";
+      //   position: absolute;
+      //   left: 100%;
+      //   width: 30px;
+      //   height: 1px;
+      // }
       .menuItem {
         background-color: $secondary-color-light;
         border-bottom: 2px solid $secondary-color;

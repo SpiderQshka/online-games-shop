@@ -158,11 +158,20 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
             value={formik.values.physicalGamesCopiesIds}
             multiple
           >
-            {games.map((game) => (
-              <option value={game.id} key={game.id}>
-                {game.name}
-              </option>
-            ))}
+            {games
+              .filter(
+                (game) =>
+                  game.numberOfPhysicalCopies > 0 ||
+                  order.orderedGames
+                    .filter((el) => el.isPhysical)
+                    .filter((orderedGame) => orderedGame.id === game.id)
+                    .length !== 0
+              )
+              .map((game) => (
+                <option value={game.id} key={game.id}>
+                  {game.name}
+                </option>
+              ))}
           </select>
         </label>
 

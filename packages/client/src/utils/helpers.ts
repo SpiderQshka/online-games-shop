@@ -55,6 +55,11 @@ export const filterGames = (games: IGameForUI[], config: IFilterConfig) =>
       +game.optimalPrice > config.priceBounds.max
     )
       return false;
+    if (
+      +game.numberOfPhysicalCopies < config.physicalCopiesNumberBounds.min ||
+      +game.numberOfPhysicalCopies > config.physicalCopiesNumberBounds.max
+    )
+      return false;
     return true;
   });
 
@@ -219,6 +224,10 @@ export const formatOrdersForUI: (
       .filter((el) => +el.orderId === +order.id)
       .map((el) => el.gameId);
 
+    const physicalGamesIds = orderedGames
+      .filter((el) => +el.orderId === +order.id && el.isPhysical)
+      .map((el) => el.gameId);
+
     const gamesForOrder: IGameForOrder[] = _.uniqWith(
       orderedGames
         .filter((orderedGame) => gamesIds.includes(orderedGame.gameId))
@@ -239,7 +248,7 @@ export const formatOrdersForUI: (
             (el) => el.gameId === game.id
           )[0].isPhysical;
 
-          const dublicatesNumber = gamesIds.reduce(
+          const dublicatesNumber = physicalGamesIds.reduce(
             (prev, curr) => (curr === game.id ? prev + 1 : prev),
             0
           );
@@ -256,9 +265,6 @@ export const formatOrdersForUI: (
             discount,
             dublicatesNumber: isPhysical ? dublicatesNumber : 0,
           };
-
-          doesOrderContainBothDigitalAndPhysicalCopy &&
-            console.log(!editedOrderedGame.isPhysical ? dublicatesNumber : 0);
 
           return doesOrderContainBothDigitalAndPhysicalCopy
             ? [

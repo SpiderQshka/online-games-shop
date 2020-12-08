@@ -7,6 +7,7 @@ interface SliderRangeProps {
   bounds: { lowerBound: number; upperBound: number };
   min: number;
   max: number;
+  step: number;
   handleChange: (config: { lowerBound: number; upperBound: number }) => void;
 }
 
@@ -15,6 +16,7 @@ export const SliderRange: React.FunctionComponent<SliderRangeProps> = ({
   min,
   max,
   handleChange,
+  step,
 }) => {
   const onLowerBoundChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleChange({ ...bounds, lowerBound: +e.target.value });
@@ -27,8 +29,6 @@ export const SliderRange: React.FunctionComponent<SliderRangeProps> = ({
   const onSliderChange = (value: number[]) => {
     handleChange({ lowerBound: value[0], upperBound: value[1] });
   };
-
-  const step = 0.01;
 
   return (
     <div className={styles.sliderRangeContainer}>
@@ -50,6 +50,7 @@ export const SliderRange: React.FunctionComponent<SliderRangeProps> = ({
             className={`${styles.input} ${styles.lower}`}
             onChange={onLowerBoundChange}
             max={bounds.upperBound}
+            min={min}
             step={step}
           />
         </label>
@@ -62,6 +63,7 @@ export const SliderRange: React.FunctionComponent<SliderRangeProps> = ({
             className={`${styles.input} ${styles.upper}`}
             onChange={onUpperBoundChange}
             min={bounds.lowerBound}
+            max={max}
             step={step}
           />
         </label>

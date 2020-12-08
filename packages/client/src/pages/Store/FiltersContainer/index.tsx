@@ -15,6 +15,7 @@ interface FiltersContainerProps {
   error: IApiError | null;
   genres: IGenreFromApi[];
   gameCreators: IGameCreatorFromApi[];
+  biggestPhysicalCopiesNumber: number;
 }
 
 export const FiltersContainer: React.FunctionComponent<FiltersContainerProps> = ({
@@ -22,27 +23,22 @@ export const FiltersContainer: React.FunctionComponent<FiltersContainerProps> = 
   isFiltersMenuOpen,
   removeFilters,
   hightestGamePrice,
+  biggestPhysicalCopiesNumber,
   setFilterConfig,
   isLoading,
   error,
   genres,
   gameCreators,
 }) => {
-  const areFiltersActive =
-    filterConfig.gameCreatorId ||
-    filterConfig.genresIds.length > 0 ||
-    filterConfig.priceBounds.min !== 0 ||
-    filterConfig.priceBounds.max !== hightestGamePrice;
-
   const [openFilters, setOpenFilters] = useState<{
     genres: boolean;
     gameCreators: boolean;
-  }>({ gameCreators: true, genres: true });
+    price: boolean;
+    physicalCopies: boolean;
+  }>({ gameCreators: true, genres: true, price: true, physicalCopies: true });
 
   const handleGenresInput = useCallback(
     (e: React.MouseEvent, genreId: number) => {
-      console.log(e, genreId);
-
       const input = e.target as HTMLInputElement;
       if (input.checked)
         setFilterConfig({
@@ -58,7 +54,7 @@ export const FiltersContainer: React.FunctionComponent<FiltersContainerProps> = 
     [genres.length, filterConfig.genresIds.length]
   );
 
-  const handleGamdCreatorsInput = useCallback(
+  const handleGameCreatorsInput = useCallback(
     (e: React.MouseEvent, gameCreatorId: number) => {
       const input = e.target as HTMLInputElement;
       setFilterConfig({
@@ -68,6 +64,14 @@ export const FiltersContainer: React.FunctionComponent<FiltersContainerProps> = 
     },
     [gameCreators.length, filterConfig.gameCreatorId]
   );
+
+  const areFiltersActive =
+    filterConfig.gameCreatorId ||
+    filterConfig.genresIds.length > 0 ||
+    filterConfig.priceBounds.min !== 0 ||
+    filterConfig.priceBounds.max !== hightestGamePrice ||
+    filterConfig.physicalCopiesNumberBounds.min !== 0 ||
+    filterConfig.physicalCopiesNumberBounds.max !== biggestPhysicalCopiesNumber;
 
   return (
     <aside
@@ -83,8 +87,25 @@ export const FiltersContainer: React.FunctionComponent<FiltersContainerProps> = 
         </span>
       </h5>
       <form className={styles.filtersForm}>
-        <h4 className={styles.inputGroupHeader}>Price</h4>
-        <div className={styles.sliderRangeContainer}>
+        <h4
+          className={`${styles.inputGroupHeader} ${
+            openFilters.price && styles.active
+          }`}
+          onClick={() =>
+            setOpenFilters({
+              ...openFilters,
+              price: !openFilters.price,
+            })
+          }
+        >
+          Price
+          <FaArrowLeft className={styles.icon} size="15px" />
+        </h4>
+        <div
+          className={`${styles.sliderRangeContainer} ${
+            openFilters.price && styles.active
+          }`}
+        >
           <SliderRange
             max={hightestGamePrice}
             min={0}
@@ -98,13 +119,49 @@ export const FiltersContainer: React.FunctionComponent<FiltersContainerProps> = 
                 priceBounds: { min, max },
               });
             }}
+            step={0.01}
+          />
+        </div>
+        <h4
+          className={`${styles.inputGroupHeader} ${
+            openFilters.physicalCopies && styles.active
+          }`}
+          onClick={() =>
+            setOpenFilters({
+              ...openFilters,
+              physicalCopies: !openFilters.physicalCopies,
+            })
+          }
+        >
+          Physical copies
+          <FaArrowLeft className={styles.icon} size="15px" />
+        </h4>
+        <div
+          className={`${styles.sliderRangeContainer} ${
+            openFilters.physicalCopies && styles.active
+          }`}
+        >
+          <SliderRange
+            max={biggestPhysicalCopiesNumber}
+            min={0}
+            bounds={{
+              upperBound: filterConfig.physicalCopiesNumberBounds.max,
+              lowerBound: filterConfig.physicalCopiesNumberBounds.min,
+            }}
+            handleChange={({ lowerBound: min, upperBound: max }) => {
+              setFilterConfig({
+                ...filterConfig,
+                physicalCopiesNumberBounds: { min, max },
+              });
+            }}
+            step={1}
           />
         </div>
         <h4
           className={`${styles.inputGroupHeader} ${
             openFilters.genres && styles.active
           }`}
-          style={{ marginTop: "10px" }}
+          // style={{ marginTop: "10px" }}
           onClick={() =>
             setOpenFilters({
               ...openFilters,
@@ -113,7 +170,7 @@ export const FiltersContainer: React.FunctionComponent<FiltersContainerProps> = 
           }
         >
           Genres
-          <FaArrowLeft className={styles.icon} size="20px" />
+          <FaArrowLeft className={styles.icon} size="15px" />
         </h4>
         <ul
           className={`${styles.inputGroup} ${
@@ -164,7 +221,7 @@ export const FiltersContainer: React.FunctionComponent<FiltersContainerProps> = 
           }
         >
           Game creators
-          <FaArrowLeft className={styles.icon} size="20px" />
+          <FaArrowLeft className={styles.icon} size="15px" />
         </h4>
         <ul
           className={`${styles.inputGroup} ${
@@ -196,7 +253,7 @@ export const FiltersContainer: React.FunctionComponent<FiltersContainerProps> = 
                     className={styles.input}
                     tabIndex={1}
                     checked={filterConfig.gameCreatorId === gameCreator.id}
-                    onClick={(e) => handleGamdCreatorsInput(e, gameCreator.id)}
+                    onClick={(e) => handleGameCreatorsInput(e, gameCreator.id)}
                   />
                   {gameCreator.name}
                 </label>
