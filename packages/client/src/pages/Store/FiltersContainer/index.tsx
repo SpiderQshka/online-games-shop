@@ -88,9 +88,8 @@ export const FiltersContainer: React.FunctionComponent<FiltersContainerProps> = 
       </h5>
       <form className={styles.filtersForm}>
         <h4
-          className={`${styles.inputGroupHeader} ${
-            openFilters.price && styles.active
-          }`}
+          className={`${styles.inputGroupHeader}
+          ${styles.sliderRangeHeader} ${openFilters.price && styles.active}`}
           onClick={() =>
             setOpenFilters({
               ...openFilters,
@@ -123,7 +122,7 @@ export const FiltersContainer: React.FunctionComponent<FiltersContainerProps> = 
           />
         </div>
         <h4
-          className={`${styles.inputGroupHeader} ${
+          className={`${styles.inputGroupHeader} ${styles.sliderRangeHeader} ${
             openFilters.physicalCopies && styles.active
           }`}
           onClick={() =>

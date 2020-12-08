@@ -37,7 +37,7 @@
     color: $primary-color;
     .inputGroupHeader {
       @include primaryFont;
-      padding: 20px $filters-menu-gap;
+      padding: $default-gap $filters-menu-gap 10px;
       font-size: 1.1em;
       color: $primary-color;
       position: relative;
@@ -54,14 +54,14 @@
           transform: rotate(-90deg);
         }
       }
-    }
-    .sliderRangeContainer {
-      padding: 0 $filters-menu-gap;
+      &.sliderRangeHeader {
+        padding-bottom: $default-gap;
+      }
     }
     .inputGroup {
       @include primaryFont;
       display: none;
-      border-bottom: 2px solid $secondary-color-light;
+      border-bottom: 1px solid $secondary-color-light;
       .inputGroupItem {
         &.loadingItem,
         &.errorItem {
@@ -73,6 +73,7 @@
           padding: $filters-menu-gap;
           border-top: 3px solid $secondary-color-dark;
           position: relative;
+          font-size: 0.9rem;
           &.active {
             background-color: $secondary-color-light;
             color: $primary-color-light;
@@ -94,7 +95,8 @@
     }
     .sliderRangeContainer {
       display: none;
-      border-bottom: 2px solid $secondary-color-light;
+      padding: 0 $filters-menu-gap;
+      border-bottom: 1px solid $secondary-color-light;
       &.active {
         padding-bottom: 20px;
         display: block;
