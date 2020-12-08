@@ -38,6 +38,7 @@ export const Games: React.FunctionComponent<OrdersProps> = ({
               <th className={styles.col}>Genres</th>
               <th className={styles.col}>Price</th>
               <th className={styles.col}>Price for physical copy</th>
+              <th className={styles.col}>Number of physical copies</th>
               <th
                 className={`${styles.col} ${styles.btnContainer}`}
                 onClick={() => history.push("/admin/games/create")}
@@ -76,6 +77,7 @@ export const Games: React.FunctionComponent<OrdersProps> = ({
                   </td>
                   <td className={styles.col}>{game.price}</td>
                   <td className={styles.col}>{game.physicalCopyPrice}</td>
+                  <td className={styles.col}>{game.numberOfPhysicalCopies}</td>
                   <td className={`${styles.col} ${styles.btnContainer}`}>
                     <button
                       className={styles.btn}

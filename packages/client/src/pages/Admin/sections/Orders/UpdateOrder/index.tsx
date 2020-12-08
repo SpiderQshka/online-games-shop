@@ -32,6 +32,14 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
   const { putOrder } = useApi();
   const order = orders.filter((order) => order.id === +id)[0];
   if (!order) history.goBack();
+  const initialPhysicalCopiesData = order.orderedGames
+    .filter((game) => game.isPhysical)
+    .map((game) => {
+      return {
+        gameId: game.id,
+        numberOfCopies: game.dublicatesNumber,
+      };
+    });
   const [error, setError] = useState<IApiError | null>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const formik = useFormik({
@@ -43,14 +51,7 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
       physicalGamesCopiesIds: order.orderedGames
         .filter((el) => el.isPhysical)
         .map((el) => `${el.id}`),
-      physicalCopiesData: order.orderedGames
-        .filter((game) => game.isPhysical)
-        .map((game) => {
-          return {
-            gameId: game.id,
-            numberOfCopies: game.dublicatesNumber,
-          };
-        }),
+      physicalCopiesData: initialPhysicalCopiesData,
     } as OrderFormValues,
     validationSchema: Yup.object({
       status: Yup.string().required("Required"),
@@ -58,8 +59,6 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
       physicalGamesCopiesIds: Yup.array().of(Yup.string().min(1)).min(0),
     }),
     onSubmit: (data) => {
-      console.log(order);
-
       if (order) {
         setIsLoading(true);
         putOrder(order.id, {
@@ -176,6 +175,9 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
 
         {formik.values.physicalCopiesData.map((el) => {
           const game = games.filter((game) => game.id === el.gameId)[0];
+          const initialCopiesNumber =
+            initialPhysicalCopiesData.filter((el) => el.gameId === game.id)[0]
+              ?.numberOfCopies || 1;
           return (
             <label className={styles.label}>
               <span
@@ -185,7 +187,7 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
                 name={`${game.name} copies`}
                 type="number"
                 min="1"
-                max={game.numberOfPhysicalCopies}
+                max={+game.numberOfPhysicalCopies + initialCopiesNumber}
                 onChange={(e) => {
                   const value = e.currentTarget.value;
                   formik.setValues({

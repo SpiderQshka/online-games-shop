@@ -84,36 +84,79 @@ export const ordersController: IOrdersController = {
       ctx.throw(403, "Access denied");
 
     const gamesIds: number[] = ctx.request.body.gamesIds;
-    const physicalGamesIds: number[] = ctx.request.body.physicalGamesCopiesIds;
-
-    const physicalGamesForChangeIds = (
+    const currentPhysicalGamesIds: number[] =
+      ctx.request.body.physicalGamesCopiesIds;
+    const previousPhysicalGamesIds = (
       await OrderedGame.query()
         .where("orderId", ctx.params.id)
         .where("isPhysical", true)
-    ).map((el) => el.id);
+    ).map((item) => item.gameId);
 
-    await Aigle.map(physicalGamesForChangeIds, async (gameId) => {
+    const physicalGamesConfig: {
+      gameId: number;
+      previousCopiesNumber: number;
+      currentCopiesNumber: number;
+    }[] = _.uniqBy(
+      previousPhysicalGamesIds.map((id) => ({
+        gameId: id,
+        previousCopiesNumber: previousPhysicalGamesIds.reduce(
+          (prev, curr) => {
+            return {
+              id,
+              copiesNumber:
+                curr === id ? prev.copiesNumber + 1 : prev.copiesNumber,
+            };
+          },
+          { id, copiesNumber: 0 }
+        ).copiesNumber,
+        currentCopiesNumber: currentPhysicalGamesIds.reduce(
+          (prev, curr) => {
+            return {
+              id,
+              copiesNumber:
+                curr === id ? prev.copiesNumber + 1 : prev.copiesNumber,
+            };
+          },
+          { id, copiesNumber: 0 }
+        ).copiesNumber,
+      })),
+      "id"
+    );
+
+    await Aigle.map(previousPhysicalGamesIds, async (gameId) => {
       const game = await Game.query().findById(gameId);
+      const previousCopiesNumber =
+        physicalGamesConfig.filter((item) => item.gameId === gameId)[0]
+          ?.previousCopiesNumber || 1;
       game &&
         (await Game.query().patchAndFetchById(gameId, {
-          numberOfPhysicalCopies: +game.numberOfPhysicalCopies + 1,
+          numberOfPhysicalCopies:
+            +game.numberOfPhysicalCopies + previousCopiesNumber,
         }));
     });
 
-    await Aigle.map(physicalGamesIds, async (id) => {
-      const game = await Game.query().findById(id);
-      if (+game.numberOfPhysicalCopies === 0)
-        ctx.throw(404, `Game with id ${id} doesn't have physical copies left`);
-      await Game.query().patchAndFetchById(id, {
-        numberOfPhysicalCopies: +game.numberOfPhysicalCopies - 1,
+    await Aigle.map(currentPhysicalGamesIds, async (gameId) => {
+      const game = await Game.query().findById(gameId);
+      const currentCopiesNumber =
+        physicalGamesConfig.filter((item) => item.gameId === gameId)[0]
+          ?.currentCopiesNumber || 1;
+      if (+game.numberOfPhysicalCopies < currentCopiesNumber)
+        ctx.throw(
+          404,
+          `Game with id ${gameId} doesn't have ${currentCopiesNumber} physical copies left`
+        );
+      await Game.query().patchAndFetchById(gameId, {
+        numberOfPhysicalCopies:
+          +game.numberOfPhysicalCopies - currentCopiesNumber,
       });
     });
 
     const digitalGames: IGame[] = await Aigle.map(gamesIds, (id) =>
       Game.query().findById(id)
     );
-    const physicalGames: IGame[] = await Aigle.map(physicalGamesIds, (id) =>
-      Game.query().findById(id)
+    const physicalGames: IGame[] = await Aigle.map(
+      currentPhysicalGamesIds,
+      (id) => Game.query().findById(id)
     );
 
     const digitalGamesWithDiscounts = await Aigle.map(
