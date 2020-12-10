@@ -93,7 +93,7 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
       });
 
       setUser(user);
-      setUserGames(_.uniqBy(userGames, "id"));
+      setUserGames(userGames.filter((userGame) => !userGame.isPhysical));
       setOrders(ordersForUI);
       setAchievements(achievements);
       setError(errorObj);

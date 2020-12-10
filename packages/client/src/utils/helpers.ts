@@ -220,21 +220,21 @@ export const formatOrdersForUI: (
   discounts,
 }) =>
   orders.map((order) => {
-    const gamesIds = orderedGames
-      .filter((el) => +el.orderId === +order.id)
-      .map((el) => el.gameId);
-
     const physicalGamesIds = orderedGames
       .filter((el) => +el.orderId === +order.id && el.isPhysical)
       .map((el) => el.gameId);
 
+    const orderedGamesForOrder = orderedGames.filter(
+      (orderedGame) => orderedGame.orderId === order.id
+    );
+
     const gamesForOrder: IGameForOrder[] = _.uniqWith(
-      orderedGames
-        .filter((orderedGame) => gamesIds.includes(orderedGame.gameId))
-        .map((orderedGame, i, filteredOrderedGames) => {
+      orderedGamesForOrder
+        .map((orderedGame, i) => {
           const game = games.filter(
             (game) => game.id === orderedGame.gameId
           )[0];
+
           const gameDiscountsIds = usedDiscounts
             .filter((el) => el.gameId === game.id)
             .map((el) => el.discountId);
@@ -244,7 +244,8 @@ export const formatOrdersForUI: (
             game,
             gameDiscountsIds,
           });
-          const isPhysical = orderedGames.filter(
+
+          const isPhysical = orderedGamesForOrder.filter(
             (el) => el.gameId === game.id
           )[0].isPhysical;
 
@@ -253,9 +254,9 @@ export const formatOrdersForUI: (
             0
           );
 
-          const doesOrderContainBothDigitalAndPhysicalCopy =
+          const doesOrderContainBothDigitalAndPhysicalCopies =
             _.uniqBy(
-              filteredOrderedGames.filter((item) => item.gameId === game.id),
+              orderedGamesForOrder.filter((item) => item.gameId === game.id),
               "isPhysical"
             ).length > 1;
 
@@ -266,7 +267,7 @@ export const formatOrdersForUI: (
             dublicatesNumber: isPhysical ? dublicatesNumber : 0,
           };
 
-          return doesOrderContainBothDigitalAndPhysicalCopy
+          return doesOrderContainBothDigitalAndPhysicalCopies
             ? [
                 editedOrderedGame,
                 {

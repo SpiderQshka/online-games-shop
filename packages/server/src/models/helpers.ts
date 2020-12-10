@@ -8,7 +8,7 @@ export const doesOrderRelateToUser = async (
   const result = await OrderedGame.query()
     .where("orderId", orderId)
     .where("userId", userId);
-  return !!result.length;
+  return result.length !== 0;
 };
 
 export const hashPassword = async (password: string) => {

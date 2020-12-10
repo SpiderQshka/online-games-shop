@@ -41,6 +41,7 @@ export const achievementsController: IAchievementsController = {
     const userAchievementsIds = (
       await UnlockedAchievement.query().where("userId", user.id)
     ).map((el) => el.achievementId);
+
     const userAchievements = await Aigle.map(
       userAchievementsIds,
       (achId: number) => Achievement.query().findById(achId)
@@ -53,9 +54,9 @@ export const achievementsController: IAchievementsController = {
 
     const userAchievementsForClient = userAchievements.map((ach) => ({
       ...ach,
-      seen: userUnlockedAchievements.filter(
-        (el) => el.achievementId === ach.id
-      )[0].seen,
+      seen:
+        userUnlockedAchievements.filter((el) => el.achievementId === ach.id)[0]
+          ?.seen || false,
     }));
 
     await UnlockedAchievement.query()

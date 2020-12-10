@@ -9,9 +9,6 @@
     .cartContent {
       grid-template-columns: 1fr;
       grid-template-areas: "cartList" "total";
-      .header {
-        text-align: center;
-      }
       .cartListContainer {
         margin-bottom: 10px;
         .cartItem {

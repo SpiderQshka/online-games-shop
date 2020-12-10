@@ -287,7 +287,9 @@ export const ordersController: IOrdersController = {
     );
 
     const userGamesIds = (
-      await OrderedGame.query().where("userId", user.id)
+      await OrderedGame.query()
+        .where("userId", user.id)
+        .where("isPhysical", false)
     ).map((el) => +el.gameId);
 
     if (_.intersection(gamesIds, userGamesIds).length !== 0)

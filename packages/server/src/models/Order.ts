@@ -1,10 +1,12 @@
 import { Model } from "objection";
 
+export type OrderStatus = "pending" | "cancelled" | "received";
+
 export class Order extends Model {
   id!: number;
   createdAt!: string;
   price!: number;
-  status!: "pending" | "cancelled" | "received";
+  status!: OrderStatus;
   static tableName = "orders";
   static get jsonSchema() {
     return {

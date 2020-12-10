@@ -127,7 +127,7 @@ export const Cart = () => {
       setIsLoading(false);
     };
     processGames();
-  }, [getCartData.length]);
+  }, [getCartData().length]);
 
   const blockGames = useCallback(
     () =>
@@ -139,7 +139,6 @@ export const Cart = () => {
       ),
     [games.length]
   );
-  console.log(games);
 
   const unblockGames = useCallback(
     () =>
@@ -152,6 +151,13 @@ export const Cart = () => {
     [games.length]
   );
 
+  console.log(
+    gamesCopiesNumbersArray,
+    gamesCopiesNumbersArray
+      .map((el) => new Array(el.copiesNumber).fill(el.gameId) as number[])
+      .flat()
+  );
+
   const submitHandler = async () => {
     setIsRequestSending(true);
     await unblockGames();
@@ -162,6 +168,7 @@ export const Cart = () => {
     const physicalGamesCopiesIds = gamesCopiesNumbersArray
       .map((el) => new Array(el.copiesNumber).fill(el.gameId) as number[])
       .flat();
+    // console.log(gamesIds, physicalGamesCopiesIds);
 
     const { order, error: orderError } = await postOrder({
       gamesIds,
@@ -230,7 +237,6 @@ export const Cart = () => {
         code: error.orders.status,
       });
   }, [error.orders]);
-  console.log(games[0]?.numberOfPhysicalCopies);
 
   return (
     <>

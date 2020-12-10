@@ -54,7 +54,7 @@
           transform: rotate(-90deg);
         }
       }
-      &.sliderRangeHeader {
+      &.sliderRangeHeader.active {
         padding-bottom: $default-gap;
       }
     }

@@ -11,7 +11,7 @@ export const checkAuth: FullHandler = (ctx: Context, next: Next) =>
   })(ctx, next);
 
 export const checkAdmin = (ctx: Context, next: Next) =>
-  passport.authenticate("jwt", (err, user, errObj) => {
+  passport.authenticate("jwt", (err, user) => {
     if (err || !user) ctx.throw(401, `Can't find this user`);
     if (!user.isAdmin) ctx.throw(403, `Access denied`);
     return next();
