@@ -13,13 +13,13 @@ export const discountsRoutesValidation: IDiscountsRoutesValidation = {
     endDate: Joi.date().iso().min(Joi.ref("startDate")).required(),
     amount: Joi.number().min(1).required(),
     type: Joi.string().allow(["%", "$"]).required(),
-    gamesIds: Joi.array().items(Joi.number().min(0).required()).required(),
+    gamesIds: Joi.array().items(Joi.number().min(1).required()).required(),
   },
   put: {
     startDate: Joi.date().iso(),
     endDate: Joi.date().iso().min(Joi.ref("startDate")),
     amount: Joi.number().min(1).required(),
     type: Joi.string().allow(["%", "$"]).required(),
-    gamesIds: Joi.array().items(Joi.number().min(0).required()).required(),
+    gamesIds: Joi.array().items(Joi.number().min(1).required()).required(),
   },
 };

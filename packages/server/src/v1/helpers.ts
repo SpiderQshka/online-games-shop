@@ -8,6 +8,7 @@ import { UnlockedAchievement } from "models/UnlockedAchievement";
 import { UsedDiscount } from "models/UsedDiscount";
 import axios from "axios";
 import FormData from "form-data";
+import { Models } from "models";
 
 export const doesCurrentDateSuitDiscount = (discount: Discount) => {
   return (
@@ -40,16 +41,22 @@ export const getHightestGameDiscount = async (game: IGame) => {
 };
 
 export const getAchievementDiscount = async (userId: number) => {
-  const achievements = await Achievement.query();
-  const achievementsIds = achievements.map((el) => el.id);
-  const unlockedAchievements = await UnlockedAchievement.query().where(
-    "userId",
-    userId
+  const userAchievements = ((await UnlockedAchievement.query()
+    .where("userId", userId)
+    .join(
+      Models.achievements.tableName,
+      `${Models.unlockedAchievements.tableName}.achievementId`,
+      `${Models.achievements.tableName}.id`
+    )
+    .select(`${Models.achievements.tableName}.discount`)) as any) as {
+    discount: number;
+  }[];
+
+  const achievementDiscount = userAchievements.reduce(
+    (prev, curr) => prev + +curr.discount,
+    0
   );
-  const userAchievements = unlockedAchievements
-    .filter((el) => achievementsIds.includes(el.achievementId))
-    .map((el) => achievements.filter((ach) => ach.id === el.achievementId)[0]);
-  return userAchievements.reduce((prev, curr) => prev + +curr.discount, 0);
+  return achievementDiscount > 100 ? 100 : achievementDiscount;
 };
 
 const getGamePriceWithDiscount: (config: {
@@ -121,18 +128,20 @@ const doesUserHaveAchievement = async (
     (el) => el.name === achName
   )[0];
 
-  const userUnlockedAchievements = await UnlockedAchievement.query().where(
-    "userId",
-    userId
-  );
-  const userAchievementsIds = userUnlockedAchievements.map(
-    (el) => el.achievementId
-  );
-  const userAchievements = (await Achievement.query()).filter((el) =>
-    userAchievementsIds.includes(el.id)
-  );
-  const resultAchievement = userAchievements.filter(
-    (el) => el.name === achName
+  const userUnlockedAchievements = ((await UnlockedAchievement.query()
+    .where("userId", userId)
+    .join(
+      Models.achievements.tableName,
+      `${Models.unlockedAchievements.tableName}.achievementId`,
+      `${Models.achievements.tableName}.id`
+    )
+    .select(
+      `${Models.achievements.tableName}.id`,
+      `${Models.achievements.tableName}.name`
+    )) as any) as { id: number; name: string }[];
+
+  const resultAchievement = userUnlockedAchievements.filter(
+    (ach) => ach.name === achName
   )[0];
 
   return { exists: !!resultAchievement, id: requiredAchievement.id };
@@ -142,12 +151,10 @@ export const checkAchievements = async (userId: number) => {
   const userOrderedGames = await OrderedGame.query().where("userId", userId);
   const userOrdersIds = userOrderedGames.map((el) => el.orderId);
   const userOrderedGamesIds = userOrderedGames.map((el) => el.gameId);
-  const userGames = (await Game.query()).filter((game) =>
-    userOrderedGamesIds.includes(game.id)
-  );
-  const userOrders = (await Order.query()).filter((order) =>
-    userOrdersIds.includes(order.id)
-  );
+  const userGames = await Game.query().whereIn("id", userOrderedGamesIds);
+
+  const userOrders = await Order.query().whereIn("id", userOrdersIds);
+
   const userPhysicalGamesIds = userOrderedGames
     .filter((el) => el.isPhysical)
     .map((el) => el.gameId);

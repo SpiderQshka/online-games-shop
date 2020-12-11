@@ -46,14 +46,8 @@ export const unlockedAchievementsController: IUnlockedAchievementsController = {
     ctx.body = response;
   },
   post: async (ctx) => {
-    const response = await UnlockedAchievement.query()
-      .insert(ctx.request.body)
-      .catch(() =>
-        ctx.throw(
-          400,
-          "Error occured while loading unlocked achievement to database"
-        )
-      );
+    const response = await UnlockedAchievement.query().insert(ctx.request.body);
+
     ctx.body = response;
   },
 };

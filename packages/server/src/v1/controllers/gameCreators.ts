@@ -62,14 +62,7 @@ export const gameCreatorsController: IGameCreatorsController = {
       logo: imageUrl,
     };
 
-    const response = await GameCreator.query()
-      .insert(gameCreator)
-      .catch(() =>
-        ctx.throw(
-          400,
-          "Error occured while inserting game creator object into database"
-        )
-      );
+    const response = await GameCreator.query().insert(gameCreator);
 
     ctx.body = response;
   },

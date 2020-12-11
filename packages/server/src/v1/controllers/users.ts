@@ -53,25 +53,22 @@ export const usersController: IUsersController = {
     ctx.body = response;
   },
   post: async (ctx) => {
-    try {
-      const response = await User.query().insert({
+    const response = await User.query()
+      .insert({
         ...ctx.request.body,
         password: await hashPassword(ctx.request.body.password),
+      })
+      .catch((e) => {
+        if (e instanceof UniqueViolationError)
+          ctx.throw(400, "Login is already taken");
+        return ctx.throw(400);
       });
 
-      const token = jwt.sign(
-        response.toJSON(),
-        process.env.JWT_SECRET_KEY as string
-      );
+    const token = jwt.sign(
+      response.toJSON(),
+      process.env.JWT_SECRET_KEY as string
+    );
 
-      ctx.body = { user: response, token };
-    } catch (e) {
-      console.log(e);
-
-      if (e instanceof UniqueViolationError)
-        ctx.throw(400, "Login is already taken");
-
-      ctx.throw(400, "Bad request");
-    }
+    ctx.body = { user: response, token };
   },
 };

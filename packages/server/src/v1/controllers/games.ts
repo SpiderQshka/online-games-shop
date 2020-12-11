@@ -27,11 +27,7 @@ interface IGamesController {
 
 export const gamesController: IGamesController = {
   get: async (ctx) => {
-    const response = await Game.query()
-      .findById(ctx.params.id)
-      .catch(() =>
-        ctx.throw(502, `Error occured while getting game from database`)
-      );
+    const response = await Game.query().findById(ctx.params.id);
 
     if (!response)
       ctx.throw(404, `Game with id '${ctx.params.id}' was not found`);
@@ -39,9 +35,7 @@ export const gamesController: IGamesController = {
     ctx.body = response;
   },
   getAll: async (ctx) => {
-    const response = await Game.query().catch(() =>
-      ctx.throw(502, `Error occured while getting games from database`)
-    );
+    const response = await Game.query();
 
     if (!response) ctx.throw(404, `No games found`);
 
@@ -69,9 +63,6 @@ export const gamesController: IGamesController = {
         `${Models.games.tableName}.createdAt`,
         `${Models.games.tableName}.physicalCopyPrice`,
         `${Models.orderedGames.tableName}.isPhysical`
-      )
-      .catch(() =>
-        ctx.throw(502, `Error occured while getting games from database`)
       );
 
     await checkAchievements(user.id);
@@ -89,43 +80,31 @@ export const gamesController: IGamesController = {
     if (logoString) {
       const { error, imageUrl } = await loadImageToHost(logoString);
 
-      if (error) ctx.throw(502, "Error occured while loading game logo");
+      if (error) ctx.throw(400, "Error occured while loading game logo");
       else gameObj.logo = imageUrl;
     }
 
     const game = await Game.query()
       .findById(ctx.params.id)
-      .patchAndFetchById(ctx.params.id, gameObj)
-      .catch(() => ctx.throw(502, "Error occured while updating game"));
+      .patchAndFetchById(ctx.params.id, gameObj);
 
     if (!game) ctx.throw(404, `Game with id '${ctx.params.id}' was not found`);
 
     const previousGenresIds = (
-      await UsedGenre.query()
-        .where("gameId", game.id)
-        .select("genreId")
-        .catch(() =>
-          ctx.throw(
-            502,
-            `Error occured while getting game genres from database`
-          )
-        )
+      await UsedGenre.query().where("gameId", game.id).select("genreId")
     ).map((usedGenre) => usedGenre.genreId);
 
     await UsedGenre.query()
       .delete()
       .where("gameId", game.id)
-      .whereIn("genreId", previousGenresIds)
-      .catch(() => ctx.throw(502, "Error occured while updating game genres"));
+      .whereIn("genreId", previousGenresIds);
 
     const genresToInsert = currentGenresIds.map((genreId) => ({
       gameId: game.id,
       genreId,
     }));
 
-    await UsedGenre.query()
-      .insert(genresToInsert)
-      .catch(() => ctx.throw(502, "Error occured while updating game genres"));
+    await UsedGenre.query().insert(genresToInsert);
 
     ctx.body = game;
   },
@@ -138,30 +117,21 @@ export const gamesController: IGamesController = {
 
     const { error, imageUrl } = await loadImageToHost(logoString);
 
-    if (error) ctx.throw(502, "Error occured while loading game logo");
+    if (error) ctx.throw(400, "Error occured while loading game logo");
 
     const gameObj = {
       ...ctx.request.body,
       logo: imageUrl,
     };
 
-    const game = await Game.query()
-      .insert(gameObj)
-      .catch(() =>
-        ctx.throw(
-          400,
-          "Error occured while inserting game object into database"
-        )
-      );
+    const game = await Game.query().insert(gameObj);
 
     const genresToInsert = genresIds.map((genreId) => ({
       gameId: game.id,
       genreId,
     }));
 
-    await UsedGenre.query()
-      .insert(genresToInsert)
-      .catch(() => ctx.throw(502, "Error occured while updating game genres"));
+    await UsedGenre.query().insert(genresToInsert);
 
     ctx.body = game;
   },

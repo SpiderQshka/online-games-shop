@@ -3,7 +3,6 @@ import knex from "db/knex";
 import { Model } from "objection";
 import { Discount } from "models/Discount";
 import { UsedDiscount } from "models/UsedDiscount";
-import Aigle from "aigle";
 
 Model.knex(knex);
 
@@ -56,22 +55,14 @@ export const discountsController: IDiscountsController = {
     const gamesIds = ctx.request.body.gamesIds as number[];
     delete ctx.request.body.gamesIds;
 
-    const discount = await Discount.query()
-      .insert(ctx.request.body)
-      .catch(() =>
-        ctx.throw(400, "Error occured while loading discount to database")
-      );
+    const discount = await Discount.query().insert(ctx.request.body);
 
     const usedDiscountsToInsert = gamesIds.map((gameId) => ({
       discountId: discount.id,
       gameId,
     }));
 
-    await UsedDiscount.query()
-      .insert(usedDiscountsToInsert)
-      .catch(() =>
-        ctx.throw(400, "Error occured while loading used discounts to database")
-      );
+    await UsedDiscount.query().insert(usedDiscountsToInsert);
 
     ctx.body = discount;
   },

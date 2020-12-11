@@ -105,7 +105,7 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
       </nav>
       <div className={`${styles.profileContainer}`}>
         <SearchBar />
-        {isLoading || error ? (
+        {isLoading || (error && error.status !== 401) ? (
           <div className={styles.profilePlaceholder}></div>
         ) : user ? (
           <>
