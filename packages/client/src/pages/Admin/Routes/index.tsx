@@ -158,6 +158,8 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
     processAsync();
   }, [updateTrigger]);
 
+  console.log(error);
+
   return isLoading ? (
     <div className={styles.loaderContainer}>
       <Loader />

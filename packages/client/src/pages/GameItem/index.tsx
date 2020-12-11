@@ -60,7 +60,13 @@ export const GameItem: React.FunctionComponent = () => {
             msg: `Yea! You've ordered this game!`,
             type: "success",
           });
-        setError(errorObj);
+        else {
+          showPopup({
+            msg: errorObj.games.msg,
+            type: "error",
+            code: errorObj.games.status,
+          });
+        }
       } else history.push("/login");
     },
     [game, token]

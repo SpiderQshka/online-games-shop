@@ -65,6 +65,7 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
           .flat(),
       }).then(({ error }) => {
         setIsLoading(false);
+
         if (error) setError(error);
         else {
           setUpdateTrigger(!updateTrigger);
@@ -73,6 +74,8 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
       });
     },
   });
+
+  console.log(error);
 
   return (
     <div className={styles.itemContent}>

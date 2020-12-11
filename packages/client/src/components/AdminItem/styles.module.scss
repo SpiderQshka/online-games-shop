@@ -85,7 +85,7 @@
     }
 
     .errorMsg {
-      margin: 10px 0 18px;
+      margin-top: $default-gap;
       @include primaryFont;
       color: $error-color;
       text-align: right;

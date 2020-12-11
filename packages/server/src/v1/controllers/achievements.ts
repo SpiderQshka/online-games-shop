@@ -6,6 +6,7 @@ import { verifyJwtToken } from "v1/auth";
 import { UnlockedAchievement } from "models/UnlockedAchievement";
 import _ from "lodash";
 import Aigle from "aigle";
+import { Models } from "models";
 
 Aigle.mixin(_, {});
 
@@ -38,32 +39,25 @@ export const achievementsController: IAchievementsController = {
   getMy: async (ctx) => {
     const user = verifyJwtToken(ctx);
 
-    const userAchievementsIds = (
-      await UnlockedAchievement.query().where("userId", user.id)
-    ).map((el) => el.achievementId);
-
-    const userAchievements = await Aigle.map(
-      userAchievementsIds,
-      (achId: number) => Achievement.query().findById(achId)
-    );
-
-    const userUnlockedAchievements = await UnlockedAchievement.query().where(
-      "userId",
-      user.id
-    );
-
-    const userAchievementsForClient = userAchievements.map((ach) => ({
-      ...ach,
-      seen:
-        userUnlockedAchievements.filter((el) => el.achievementId === ach.id)[0]
-          ?.seen || false,
-    }));
+    const userAchievements = await UnlockedAchievement.query()
+      .where("userId", user.id)
+      .join(
+        Models.achievements.tableName,
+        `${Models.unlockedAchievements.tableName}.achievementId`,
+        `${Models.achievements.tableName}.id`
+      )
+      .select(
+        `${Models.unlockedAchievements.tableName}.seen`,
+        `${Models.achievements.tableName}.id`,
+        `${Models.achievements.tableName}.name`,
+        `${Models.achievements.tableName}.discount`
+      );
 
     await UnlockedAchievement.query()
       .where("userId", user.id)
       .update({ seen: true });
 
-    ctx.body = userAchievementsForClient;
+    ctx.body = userAchievements;
   },
   put: async (ctx) => {
     const response = await Achievement.query()

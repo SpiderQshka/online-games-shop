@@ -31,9 +31,6 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
     processGames();
   }, []);
 
-  useEffect(() => {
-    if (error && error.status !== 401) history.push("/error", error);
-  }, []);
   return (
     <div
       className={`${styles.headerContainer} ${isMenuOpen && styles.overlay}`}
@@ -108,8 +105,8 @@ export const Header: React.FunctionComponent<HeaderProps> = () => {
       </nav>
       <div className={`${styles.profileContainer}`}>
         <SearchBar />
-        {isLoading ? (
-          <div className={styles.loadingProfile}></div>
+        {isLoading || error ? (
+          <div className={styles.profilePlaceholder}></div>
         ) : user ? (
           <>
             <div

@@ -57,11 +57,13 @@ export const gameCreatorsController: IGameCreatorsController = {
 
     if (error) ctx.throw(500, "Error occured while loading game creator logo");
 
+    const gameCreator = {
+      ...ctx.request.body,
+      logo: imageUrl,
+    };
+
     const response = await GameCreator.query()
-      .insert({
-        ...ctx.request.body,
-        logo: imageUrl,
-      })
+      .insert(gameCreator)
       .catch(() =>
         ctx.throw(
           400,

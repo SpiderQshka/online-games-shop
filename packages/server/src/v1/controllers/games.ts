@@ -8,6 +8,7 @@ import { UsedGenre } from "models/UsedGenre";
 import { verifyJwtToken } from "v1/auth";
 import { OrderedGame } from "models/OrderedGame";
 import { checkAchievements, loadImageToHost } from "v1/helpers";
+import { Models } from "models";
 
 Aigle.mixin(_, {});
 
@@ -26,7 +27,11 @@ interface IGamesController {
 
 export const gamesController: IGamesController = {
   get: async (ctx) => {
-    const response = await Game.query().findById(ctx.params.id);
+    const response = await Game.query()
+      .findById(ctx.params.id)
+      .catch(() =>
+        ctx.throw(502, `Error occured while getting game from database`)
+      );
 
     if (!response)
       ctx.throw(404, `Game with id '${ctx.params.id}' was not found`);
@@ -34,7 +39,9 @@ export const gamesController: IGamesController = {
     ctx.body = response;
   },
   getAll: async (ctx) => {
-    const response = await Game.query();
+    const response = await Game.query().catch(() =>
+      ctx.throw(502, `Error occured while getting games from database`)
+    );
 
     if (!response) ctx.throw(404, `No games found`);
 
@@ -43,36 +50,36 @@ export const gamesController: IGamesController = {
   getMy: async (ctx) => {
     const user = verifyJwtToken(ctx);
 
-    // const myOrderedGames = await OrderedGame.query().where("userId", user.id);
-    // const uniqOrderedGames = _.uniqBy(myOrderedGames, "gameId");
-    // const gamesIds = myOrderedGames.map((orderedGame) => orderedGame.gameId);
-    // const myGames = await Aigle.map(uniqOrderedGames, async (el) => {
-    //   const game = await Game.query().findById(el.gameId);
-    //   return {
-    //     ...game,
-    //     isPhysical: el.isPhysical,
-    //     dublicatesNumber: gamesIds.reduce(
-    //       (prev, curr) => (curr === el.gameId ? prev + 1 : prev),
-    //       0
-    //     ),
-    //   };
-    // });
-
-    // console.log(myOrderedGames);
-
-    const myOrderedGames = await OrderedGame.query().where("userId", user.id);
-
-    const myGames = await Aigle.map(myOrderedGames, async (el) => {
-      const game = await Game.query().findById(el.gameId);
-      return { ...game, isPhysical: el.isPhysical };
-    });
+    const myGames = await Game.query()
+      .where("userId", user.id)
+      .join(
+        Models.orderedGames.tableName,
+        `${Models.orderedGames.tableName}.gameId`,
+        `${Models.games.tableName}.id`
+      )
+      .select(
+        `${Models.games.tableName}.id`,
+        `${Models.games.tableName}.name`,
+        `${Models.games.tableName}.logo`,
+        `${Models.games.tableName}.description`,
+        `${Models.games.tableName}.ageRating`,
+        `${Models.games.tableName}.price`,
+        `${Models.games.tableName}.numberOfPhysicalCopies`,
+        `${Models.games.tableName}.gameCreatorId`,
+        `${Models.games.tableName}.createdAt`,
+        `${Models.games.tableName}.physicalCopyPrice`,
+        `${Models.orderedGames.tableName}.isPhysical`
+      )
+      .catch(() =>
+        ctx.throw(502, `Error occured while getting games from database`)
+      );
 
     await checkAchievements(user.id);
 
     ctx.body = myGames;
   },
   put: async (ctx) => {
-    const genresIds = [...ctx.request.body.genresIds] as number[];
+    const currentGenresIds = [...ctx.request.body.genresIds] as number[];
 
     delete ctx.request.body.genresIds;
 
@@ -82,37 +89,43 @@ export const gamesController: IGamesController = {
     if (logoString) {
       const { error, imageUrl } = await loadImageToHost(logoString);
 
-      if (error) ctx.throw(500, "Error occured while loading game logo");
+      if (error) ctx.throw(502, "Error occured while loading game logo");
       else gameObj.logo = imageUrl;
     }
 
     const game = await Game.query()
       .findById(ctx.params.id)
-      .patchAndFetchById(ctx.params.id, gameObj);
+      .patchAndFetchById(ctx.params.id, gameObj)
+      .catch(() => ctx.throw(502, "Error occured while updating game"));
 
     if (!game) ctx.throw(404, `Game with id '${ctx.params.id}' was not found`);
 
-    const usedGenres = await UsedGenre.query();
-
-    const gameGenresIds =
-      usedGenres.length > 0
-        ? _.uniq(
-            usedGenres
-              .filter((usedGenre) => usedGenre.gameId === game.id)
-              .map((usedGenre) => usedGenre.genreId)
-          )
-        : [];
-
-    await Aigle.map(gameGenresIds, (genreId) =>
-      UsedGenre.query()
-        .delete()
-        .where("genreId", genreId)
+    const previousGenresIds = (
+      await UsedGenre.query()
         .where("gameId", game.id)
-    );
+        .select("genreId")
+        .catch(() =>
+          ctx.throw(
+            502,
+            `Error occured while getting game genres from database`
+          )
+        )
+    ).map((usedGenre) => usedGenre.genreId);
 
-    await Aigle.map(genresIds, (genreId) =>
-      UsedGenre.query().insert({ gameId: game.id, genreId })
-    );
+    await UsedGenre.query()
+      .delete()
+      .where("gameId", game.id)
+      .whereIn("genreId", previousGenresIds)
+      .catch(() => ctx.throw(502, "Error occured while updating game genres"));
+
+    const genresToInsert = currentGenresIds.map((genreId) => ({
+      gameId: game.id,
+      genreId,
+    }));
+
+    await UsedGenre.query()
+      .insert(genresToInsert)
+      .catch(() => ctx.throw(502, "Error occured while updating game genres"));
 
     ctx.body = game;
   },
@@ -125,13 +138,15 @@ export const gamesController: IGamesController = {
 
     const { error, imageUrl } = await loadImageToHost(logoString);
 
-    if (error) ctx.throw(500, "Error occured while loading game logo");
+    if (error) ctx.throw(502, "Error occured while loading game logo");
+
+    const gameObj = {
+      ...ctx.request.body,
+      logo: imageUrl,
+    };
 
     const game = await Game.query()
-      .insert({
-        ...ctx.request.body,
-        logo: imageUrl,
-      })
+      .insert(gameObj)
       .catch(() =>
         ctx.throw(
           400,
@@ -139,25 +154,23 @@ export const gamesController: IGamesController = {
         )
       );
 
-    await Aigle.map(genresIds, (genreId) =>
-      UsedGenre.query().insert({
-        gameId: game.id,
-        genreId: genreId,
-      })
-    ).catch(() =>
-      ctx.throw(400, "Error occured while connecting genres to game")
-    );
+    const genresToInsert = genresIds.map((genreId) => ({
+      gameId: game.id,
+      genreId,
+    }));
+
+    await UsedGenre.query()
+      .insert(genresToInsert)
+      .catch(() => ctx.throw(502, "Error occured while updating game genres"));
 
     ctx.body = game;
   },
   query: async (ctx) => {
     const query = ctx.params.query as string;
 
-    const games = await Game.query().where(
-      raw('lower("name")'),
-      "like",
-      `%${query}%`
-    );
+    const games = await Game.query()
+      .where(raw('lower("name")'), "like", `%${query}%`)
+      .catch(() => ctx.throw(400, "Error occured while querying game"));
 
     ctx.body = games;
   },
@@ -168,9 +181,11 @@ export const gamesController: IGamesController = {
     if (game.numberOfPhysicalCopies <= 0)
       ctx.throw(404, "Game doesn't have physical copies left");
 
-    const updatedGame = await Game.query().patchAndFetchById(gameId, {
-      numberOfPhysicalCopies: +game.numberOfPhysicalCopies - 1,
-    });
+    const updatedGame = await Game.query()
+      .patchAndFetchById(gameId, {
+        numberOfPhysicalCopies: +game.numberOfPhysicalCopies - 1,
+      })
+      .catch(() => ctx.throw(400, "Error occured while blocking game"));
 
     ctx.body = updatedGame;
   },
@@ -179,9 +194,11 @@ export const gamesController: IGamesController = {
 
     const game = await Game.query().findById(gameId);
 
-    const updatedGame = await Game.query().patchAndFetchById(gameId, {
-      numberOfPhysicalCopies: +game.numberOfPhysicalCopies + 1,
-    });
+    const updatedGame = await Game.query()
+      .patchAndFetchById(gameId, {
+        numberOfPhysicalCopies: +game.numberOfPhysicalCopies + 1,
+      })
+      .catch(() => ctx.throw(400, "Error occured while unblocking game"));
 
     ctx.body = updatedGame;
   },

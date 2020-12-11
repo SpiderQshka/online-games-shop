@@ -14,7 +14,11 @@ interface IGenresController {
 
 export const genresController: IGenresController = {
   get: async (ctx) => {
-    const response = await Genre.query().findById(ctx.params.id);
+    const response = await Genre.query()
+      .findById(ctx.params.id)
+      .catch(() =>
+        ctx.throw(502, `Error occured while getting genre from database`)
+      );
 
     if (!response)
       ctx.throw(404, `Genre with id '${ctx.params.id}' was not found`);
@@ -22,7 +26,9 @@ export const genresController: IGenresController = {
     ctx.body = response;
   },
   getAll: async (ctx) => {
-    const response = await Genre.query();
+    const response = await Genre.query().catch(() =>
+      ctx.throw(502, `Error occured while getting genres from database`)
+    );
 
     if (!response) ctx.throw(404, `No genres found`);
 
@@ -31,7 +37,8 @@ export const genresController: IGenresController = {
   put: async (ctx) => {
     const response = await Genre.query()
       .findById(ctx.params.id)
-      .patchAndFetchById(ctx.params.id, ctx.request.body);
+      .patchAndFetchById(ctx.params.id, ctx.request.body)
+      .catch(() => ctx.throw(400, `Error occured while updating genre`));
 
     if (!response)
       ctx.throw(404, `Genre with id '${ctx.params.id}' was not found`);

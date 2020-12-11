@@ -43,9 +43,12 @@ export const discountsController: IDiscountsController = {
 
     await UsedDiscount.query().delete().where("discountId", discount.id);
 
-    await Aigle.map(gamesIds, (gameId) =>
-      UsedDiscount.query().insert({ discountId: discount.id, gameId })
-    );
+    const usedDiscountsToInsert = gamesIds.map((gameId) => ({
+      discountId: discount.id,
+      gameId,
+    }));
+
+    await UsedDiscount.query().insert(usedDiscountsToInsert);
 
     ctx.body = discount;
   },
@@ -59,11 +62,16 @@ export const discountsController: IDiscountsController = {
         ctx.throw(400, "Error occured while loading discount to database")
       );
 
-    await Aigle.map(gamesIds, (gameId) =>
-      UsedDiscount.query().insert({ discountId: discount.id, gameId })
-    ).catch(() =>
-      ctx.throw(400, "Error occured while loading discount to database")
-    );
+    const usedDiscountsToInsert = gamesIds.map((gameId) => ({
+      discountId: discount.id,
+      gameId,
+    }));
+
+    await UsedDiscount.query()
+      .insert(usedDiscountsToInsert)
+      .catch(() =>
+        ctx.throw(400, "Error occured while loading used discounts to database")
+      );
 
     ctx.body = discount;
   },

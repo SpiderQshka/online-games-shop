@@ -21,7 +21,7 @@ export const API: IApi = {
           order: null,
           error: {
             msg: error.request.response,
-            status: error.request.status,
+            status: error.request.status || 500,
             resource: "orders",
           },
         };
@@ -37,7 +37,7 @@ export const API: IApi = {
           token: null,
           error: {
             msg: error.request.response,
-            status: error.request.status,
+            status: error.request.status || 500,
             resource: "auth",
           },
         };
@@ -56,7 +56,7 @@ export const API: IApi = {
           token: null,
           error: {
             msg: error.request.response,
-            status: error.request.status,
+            status: error.request.status || 500,
             resource: "auth",
           },
         };
@@ -72,7 +72,7 @@ export const API: IApi = {
           games: [],
           error: {
             msg: error.request.response || "Network error",
-            status: error.request.status || 502,
+            status: error.request.status || 500,
             resource: "games",
           },
         };
@@ -87,8 +87,8 @@ export const API: IApi = {
         return {
           game: null,
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "games",
           },
         };
@@ -104,8 +104,8 @@ export const API: IApi = {
         return {
           gameCreators: [],
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "gameCreators",
           },
         };
@@ -120,8 +120,8 @@ export const API: IApi = {
         return {
           gameCreator: null,
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "gameCreators",
           },
         };
@@ -136,8 +136,8 @@ export const API: IApi = {
         return {
           discounts: [],
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "discounts",
           },
         };
@@ -152,8 +152,8 @@ export const API: IApi = {
         return {
           usedDiscounts: [],
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "usedDiscounts",
           },
         };
@@ -168,8 +168,8 @@ export const API: IApi = {
         return {
           genres: [],
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "genres",
           },
         };
@@ -184,8 +184,8 @@ export const API: IApi = {
         return {
           usedGenres: [],
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "usedGenres",
           },
         };
@@ -204,8 +204,8 @@ export const API: IApi = {
         return {
           orders: [],
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "orders",
           },
         };
@@ -224,8 +224,8 @@ export const API: IApi = {
         return {
           orderedGames: [],
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "orderedGames",
           },
         };
@@ -244,8 +244,8 @@ export const API: IApi = {
         return {
           achievements: [],
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "achievements",
           },
         };
@@ -264,8 +264,8 @@ export const API: IApi = {
         return {
           user: null,
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "auth",
           },
         };
@@ -284,8 +284,8 @@ export const API: IApi = {
         return {
           orders: [],
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "orders",
           },
         };
@@ -304,8 +304,8 @@ export const API: IApi = {
         return {
           orderedGames: [],
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "orderedGames",
           },
         };
@@ -324,8 +324,8 @@ export const API: IApi = {
         return {
           order: null,
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "orders",
           },
         };
@@ -344,8 +344,8 @@ export const API: IApi = {
         return {
           order: null,
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "orders",
           },
         };
@@ -364,8 +364,8 @@ export const API: IApi = {
         return {
           users: [],
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "users",
           },
         };
@@ -384,8 +384,8 @@ export const API: IApi = {
         return {
           game: null,
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "games",
           },
         };
@@ -404,8 +404,8 @@ export const API: IApi = {
         return {
           game: null,
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "games",
           },
         };
@@ -424,8 +424,8 @@ export const API: IApi = {
         return {
           gameCreator: null,
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "gameCreators",
           },
         };
@@ -444,8 +444,8 @@ export const API: IApi = {
         return {
           gameCreator: null,
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "gameCreators",
           },
         };
@@ -464,8 +464,8 @@ export const API: IApi = {
         return {
           achievements: [],
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "achievements",
           },
         };
@@ -484,8 +484,8 @@ export const API: IApi = {
         return {
           achievement: null,
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "achievements",
           },
         };
@@ -504,8 +504,8 @@ export const API: IApi = {
         return {
           achievement: null,
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "achievements",
           },
         };
@@ -524,8 +524,8 @@ export const API: IApi = {
         return {
           discount: null,
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "discounts",
           },
         };
@@ -544,8 +544,8 @@ export const API: IApi = {
         return {
           discount: null,
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "discounts",
           },
         };
@@ -564,8 +564,8 @@ export const API: IApi = {
         return {
           genre: null,
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "genres",
           },
         };
@@ -584,8 +584,8 @@ export const API: IApi = {
         return {
           genre: null,
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "genres",
           },
         };
@@ -608,8 +608,8 @@ export const API: IApi = {
         return {
           game: null,
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "games",
           },
         };
@@ -632,8 +632,8 @@ export const API: IApi = {
         return {
           game: null,
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "games",
           },
         };
@@ -652,8 +652,8 @@ export const API: IApi = {
         return {
           games: [],
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "games",
           },
         };
@@ -672,8 +672,8 @@ export const API: IApi = {
         return {
           games: [],
           error: {
-            msg: error.request.response,
-            status: error.request.status,
+            msg: error.request.response || "Network error",
+            status: error.request.status || 500,
             resource: "games",
           },
         };

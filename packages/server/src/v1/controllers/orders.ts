@@ -30,6 +30,41 @@ interface IOrdersController {
   postAdmin: Middleware;
 }
 
+const getPhysicalGamesConfig: (
+  previousPhysicalGamesIds: number[],
+  currentPhysicalGamesIds: number[]
+) => {
+  gameId: number;
+  previousCopiesNumber: number;
+  currentCopiesNumber: number;
+}[] = (previousPhysicalGamesIds, currentPhysicalGamesIds) =>
+  _.uniqBy(
+    previousPhysicalGamesIds.map((id) => ({
+      gameId: id,
+      previousCopiesNumber: previousPhysicalGamesIds.reduce(
+        (prev, curr) => {
+          return {
+            id,
+            copiesNumber:
+              curr === id ? prev.copiesNumber + 1 : prev.copiesNumber,
+          };
+        },
+        { id, copiesNumber: 0 }
+      ).copiesNumber,
+      currentCopiesNumber: currentPhysicalGamesIds.reduce(
+        (prev, curr) => {
+          return {
+            id,
+            copiesNumber:
+              curr === id ? prev.copiesNumber + 1 : prev.copiesNumber,
+          };
+        },
+        { id, copiesNumber: 0 }
+      ).copiesNumber,
+    })),
+    "id"
+  );
+
 export const ordersController: IOrdersController = {
   get: async (ctx) => {
     const user = verifyJwtToken(ctx);
@@ -42,7 +77,11 @@ export const ordersController: IOrdersController = {
     if (!doesOrderRelateToCurrrentUser && !user.isAdmin)
       ctx.throw(403, "Access denied");
 
-    const response = await Order.query().findById(ctx.params.id);
+    const response = await Order.query()
+      .findById(ctx.params.id)
+      .catch(() =>
+        ctx.throw(502, `Error occured while getting order from database`)
+      );
 
     if (!response)
       ctx.throw(404, `Order with id '${ctx.params.id}' was not found`);
@@ -50,7 +89,9 @@ export const ordersController: IOrdersController = {
     ctx.body = response;
   },
   getAll: async (ctx) => {
-    const response = await Order.query();
+    const response = await Order.query().catch(() =>
+      ctx.throw(502, `Error occured while getting orders from database`)
+    );
     if (!response) ctx.throw(404, `No orders found`);
 
     ctx.body = response;
@@ -58,12 +99,18 @@ export const ordersController: IOrdersController = {
   getMy: async (ctx) => {
     const user = verifyJwtToken(ctx);
 
-    const orderedGames = await OrderedGame.query().where("userId", user.id);
-    const ordersIds = [...new Set(orderedGames.map((el) => el.orderId))];
+    const orderedGames = await OrderedGame.query()
+      .where("userId", user.id)
+      .catch(() =>
+        ctx.throw(502, `Error occured while getting orders from database`)
+      );
+    const ordersIds = _.uniq(orderedGames.map((el) => el.orderId));
 
-    const orders = await Aigle.map(ordersIds, (gameId: number) =>
-      Order.query().findById(gameId)
-    );
+    const orders = await Order.query()
+      .whereIn("id", ordersIds)
+      .catch(() =>
+        ctx.throw(502, `Error occured while getting orders from database`)
+      );
 
     if (!orders)
       ctx.throw(404, `Orders for user with id '${user.id}' were not found`);
@@ -92,35 +139,9 @@ export const ordersController: IOrdersController = {
         .where("isPhysical", true)
     ).map((item) => item.gameId);
 
-    const physicalGamesConfig: {
-      gameId: number;
-      previousCopiesNumber: number;
-      currentCopiesNumber: number;
-    }[] = _.uniqBy(
-      previousPhysicalGamesIds.map((id) => ({
-        gameId: id,
-        previousCopiesNumber: previousPhysicalGamesIds.reduce(
-          (prev, curr) => {
-            return {
-              id,
-              copiesNumber:
-                curr === id ? prev.copiesNumber + 1 : prev.copiesNumber,
-            };
-          },
-          { id, copiesNumber: 0 }
-        ).copiesNumber,
-        currentCopiesNumber: currentPhysicalGamesIds.reduce(
-          (prev, curr) => {
-            return {
-              id,
-              copiesNumber:
-                curr === id ? prev.copiesNumber + 1 : prev.copiesNumber,
-            };
-          },
-          { id, copiesNumber: 0 }
-        ).copiesNumber,
-      })),
-      "id"
+    const physicalGamesConfig = getPhysicalGamesConfig(
+      previousPhysicalGamesIds,
+      currentPhysicalGamesIds
     );
 
     await Aigle.map(previousPhysicalGamesIds, async (gameId) => {
