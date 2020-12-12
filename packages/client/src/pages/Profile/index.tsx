@@ -150,22 +150,20 @@ export const Profile: React.FunctionComponent<IProfileProps> = () => {
                 </Link>
               </li>
             )}
-            {user && (
-              <li className={`${styles.menuItem} ${styles.active}`}>
-                <p
-                  className={styles.menuLink}
-                  onClick={() => {
-                    removeToken();
-                    removeCartData();
-                    history.push("/");
-                  }}
-                  title="Log out"
-                >
-                  <RiLogoutBoxRLine color="#f4f4f4" className={styles.icon} />
-                  <span className={styles.menuText}>Log out</span>
-                </p>
-              </li>
-            )}
+            <li className={`${styles.menuItem} ${styles.active}`}>
+              <p
+                className={styles.menuLink}
+                onClick={() => {
+                  removeToken();
+                  removeCartData();
+                  history.push("/");
+                }}
+                title="Log out"
+              >
+                <RiLogoutBoxRLine color="#f4f4f4" className={styles.icon} />
+                <span className={styles.menuText}>Log out</span>
+              </p>
+            </li>
           </ul>
 
           <div

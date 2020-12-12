@@ -82,7 +82,7 @@ export const GamesContainer: React.FunctionComponent<GamesListProps> = ({
                     <>
                       <span className={styles.saleSize}>
                         {`-${
-                          achievementDiscount < (game.discount || 0)
+                          achievementDiscount < (game.discount?.amount || 0)
                             ? game.discount?.amount
                             : achievementDiscount
                         }${game.discount ? game.discount.type : "%"}`}

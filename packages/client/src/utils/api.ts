@@ -20,7 +20,7 @@ export const API: IApi = {
         return {
           order: null,
           error: {
-            msg: error.request.response,
+            msg: error.request.response || "Network error",
             status: error.request.status || 500,
             resource: "orders",
           },
@@ -36,7 +36,7 @@ export const API: IApi = {
         return {
           token: null,
           error: {
-            msg: error.request.response,
+            msg: error.request.response || "Network error",
             status: error.request.status || 500,
             resource: "auth",
           },
@@ -55,7 +55,7 @@ export const API: IApi = {
         return {
           token: null,
           error: {
-            msg: error.request.response,
+            msg: error.request.response || "Network error",
             status: error.request.status || 500,
             resource: "auth",
           },
