@@ -19,6 +19,9 @@ export const config = {
     tel: "+123456789",
     mail: "super.duper@gmail.com",
     address: "Pushkina Street, Kolotushkina House",
+    mapLink:
+      "https://yandex.by/maps/157/minsk/house/Zk4YcwNkS0wBQFtpfXR5eX9mZQ==/?ll=27.544471%2C53.887782&z=18",
+    coordinates: [53.888351, 27.544296],
   },
   popupTimeout: 2000,
 };

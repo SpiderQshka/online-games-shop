@@ -13,57 +13,62 @@ export const Contacts = () => {
         <div className={styles.mapContainer}>
           <Map
             className={styles.map}
-            defaultState={{ center: [53.888351, 27.544296], zoom: 15 }}
+            defaultState={{ center: config.contacts.coordinates, zoom: 15 }}
           >
-            <Placemark geometry={[53.888351, 27.544296]} />
+            <Placemark geometry={config.contacts.coordinates} />
           </Map>
         </div>
         <div className={styles.contacts}>
           <h2 className={styles.header}>OGS Company</h2>
           <ul className={styles.contactsList}>
             <li className={styles.contactItem}>
-              <div className={styles.iconContainer}>
-                <FaPhone size={"100%"} />
-              </div>
-              <div className={styles.contentContainer}>
-                <p className={styles.contactDescription}>Give us a call</p>
-                <a
-                  className={styles.contactData}
-                  href={`tel:${config.contacts.tel}`}
-                >
-                  {config.contacts.tel}
-                </a>
-              </div>
+              <a
+                href={`tel:${config.contacts.tel}`}
+                className={styles.contactItemContent}
+              >
+                <div className={styles.iconContainer}>
+                  <FaPhone size={"100%"} />
+                </div>
+                <div className={styles.contentContainer}>
+                  <p className={styles.contactDescription}>Give us a call</p>
+                  <span className={styles.contactData}>
+                    {config.contacts.tel}
+                  </span>
+                </div>
+              </a>
             </li>
             <li className={styles.contactItem}>
-              <div className={styles.iconContainer}>
-                <FaMailBulk size={"100%"} />
-              </div>
-              <div className={styles.contentContainer}>
-                <p className={styles.contactDescription}>Send us an email</p>
-                <a
-                  className={styles.contactData}
-                  href={`mailto:${config.contacts.mail}`}
-                >
-                  {config.contacts.mail}
-                </a>
-              </div>
+              <a
+                href={`mailto:${config.contacts.mail}`}
+                className={styles.contactItemContent}
+              >
+                <div className={styles.iconContainer}>
+                  <FaMailBulk size={"100%"} />
+                </div>
+                <div className={styles.contentContainer}>
+                  <p className={styles.contactDescription}>Send us an email</p>
+                  <span className={styles.contactData}>
+                    {config.contacts.mail}
+                  </span>
+                </div>
+              </a>
             </li>
             <li className={styles.contactItem}>
-              <div className={styles.iconContainer}>
-                <FaHome size={"100%"} />
-              </div>
-              <div className={styles.contentContainer}>
-                <p className={styles.contactDescription}>Come see us</p>
-                <a
-                  className={styles.contactData}
-                  href={
-                    "https://yandex.by/maps/157/minsk/house/Zk4YcwNkS0wBQFtpfXR5eX9mZQ==/?ll=27.544471%2C53.887782&z=18"
-                  }
-                >
-                  {config.contacts.address}
-                </a>
-              </div>
+              <a
+                href={config.contacts.mapLink}
+                className={styles.contactItemContent}
+                target="_blank"
+              >
+                <div className={styles.iconContainer}>
+                  <FaHome size={"100%"} />
+                </div>
+                <div className={styles.contentContainer}>
+                  <p className={styles.contactDescription}>Come see us</p>
+                  <span className={styles.contactData}>
+                    {config.contacts.address}
+                  </span>
+                </div>
+              </a>
             </li>
           </ul>
         </div>

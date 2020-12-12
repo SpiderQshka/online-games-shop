@@ -23,7 +23,7 @@ import {
   IUsedGenre,
   IUser,
 } from "interfaces/api";
-import { LoginFormValues } from "pages/Login";
+import { LoginFormValues } from "pages/LoginAndSignUp/Login";
 
 export interface IApi {
   postOrder: (
