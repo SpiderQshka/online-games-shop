@@ -5,6 +5,7 @@ import { IOrderForUI } from "interfaces/app";
 import moment from "moment";
 import { Loader } from "components/Loader";
 import { IApiError } from "interfaces/api";
+import { setPageTitle } from "utils/helpers";
 
 interface OrdersProps {
   orders: IOrderForUI[];
@@ -17,6 +18,7 @@ export const Orders: React.FunctionComponent<OrdersProps> = ({
   isLoading,
   error,
 }) => {
+  setPageTitle("My orders");
   return (
     <>
       {isLoading ? (

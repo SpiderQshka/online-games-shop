@@ -1,10 +1,12 @@
 import { Header } from "components/Header";
 import React from "react";
 import { useHistory } from "react-router-dom";
+import { setPageTitle } from "utils/helpers";
 import styles from "./styles.module.scss";
 
 export const NotFound = () => {
   const history = useHistory();
+  setPageTitle("Oops!");
   return (
     <>
       <Header />

@@ -11,7 +11,12 @@ import {
 import moment from "moment";
 import { defaultErrorObj, IErrorObject, IGameForUI } from "interfaces/app";
 import { Loader } from "components/Loader";
-import { getCartData, setCartData, formatGamesForUI } from "utils/helpers";
+import {
+  getCartData,
+  setCartData,
+  formatGamesForUI,
+  setPageTitle,
+} from "utils/helpers";
 import { FaShoppingCart } from "react-icons/fa";
 import { useAuth } from "context/auth";
 import { isInteger, uniq } from "lodash";
@@ -80,6 +85,8 @@ export const GameItem: React.FunctionComponent = () => {
 
       const { game, error: gameError } = await getGame(id as any);
       if (gameError) errorObj.games = gameError;
+
+      setPageTitle(game?.name);
 
       const { usedGenres, error: usedGenresError } = await getUsedGenres();
       if (usedGenresError) errorObj.usedGenres = usedGenresError;

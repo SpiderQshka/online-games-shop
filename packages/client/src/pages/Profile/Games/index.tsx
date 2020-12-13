@@ -3,6 +3,7 @@ import styles from "./styles.module.scss";
 import { Loader } from "components/Loader";
 import { IApiError, IMyGameFromApi } from "interfaces/api";
 import { useHistory } from "react-router-dom";
+import { setPageTitle } from "utils/helpers";
 
 interface GamesProps {
   games: IMyGameFromApi[];
@@ -16,6 +17,7 @@ export const Games: React.FunctionComponent<GamesProps> = ({
   error,
 }) => {
   const history = useHistory();
+  setPageTitle("My games");
   return (
     <>
       {isLoading ? (

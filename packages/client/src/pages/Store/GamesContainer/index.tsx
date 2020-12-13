@@ -28,11 +28,6 @@ export const GamesContainer: React.FunctionComponent<GamesListProps> = ({
   sortType,
   isLoading,
 }) => {
-  console.log(
-    filteredGames.filter((game) => game.id === 1)[0]?.discount,
-    achievementDiscount
-  );
-
   const history = useHistory();
   return (
     <div className={styles.gamesContainer}>

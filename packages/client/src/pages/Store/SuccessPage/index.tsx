@@ -5,6 +5,7 @@ import { useHistory } from "react-router-dom";
 import { TiInputChecked } from "react-icons/ti";
 
 import styles from "./styles.module.scss";
+import { setPageTitle } from "utils/helpers";
 
 export const SuccessPage: React.FunctionComponent = () => {
   const history = useHistory();
@@ -12,6 +13,7 @@ export const SuccessPage: React.FunctionComponent = () => {
 
   const order = history.location.state as IOrderForUI;
 
+  setPageTitle("Congratulations!");
   return (
     <>
       <Header />
@@ -22,8 +24,8 @@ export const SuccessPage: React.FunctionComponent = () => {
           </div>
           <h1 className={styles.header}>That's it!</h1>
           <p className={styles.description}>
-            You successfully ordered {order.orderedGames.length} game[s]! <br />
-            Now you can see them in your profile!
+            Your order was successfully created! <br />
+            Now you can see it in your profile!
           </p>
           <button
             className={styles.btn}

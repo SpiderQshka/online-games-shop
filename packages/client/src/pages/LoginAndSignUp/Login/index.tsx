@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { useAuth } from "context/auth";
 import { useApi } from "context/api";
 import { usePopup } from "context/popup";
+import { setPageTitle } from "utils/helpers";
 
 export interface LoginFormValues {
   login: string;
@@ -24,6 +25,7 @@ export const Login = () => {
     history.push("/store");
     showPopup({ msg: "You are already logged in", type: "neutral" });
   }
+  setPageTitle("Log in");
   const formik = useFormik({
     initialValues: { login: "", password: "" } as LoginFormValues,
     validationSchema: Yup.object({

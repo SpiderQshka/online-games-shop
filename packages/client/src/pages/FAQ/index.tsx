@@ -1,8 +1,10 @@
 import { Header } from "components/Header";
 import React from "react";
+import { setPageTitle } from "utils/helpers";
 import styles from "./styles.module.scss";
 
 export const FAQ = () => {
+  setPageTitle("FAQ");
   return (
     <>
       <Header />

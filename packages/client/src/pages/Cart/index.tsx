@@ -8,6 +8,7 @@ import {
   getCartData,
   setCartData,
   removeCartData,
+  setPageTitle,
 } from "utils/helpers";
 import styles from "./styles.module.scss";
 import _ from "lodash";
@@ -52,6 +53,7 @@ export const Cart = () => {
 
   useEffect(() => {
     setIsLoading(true);
+    setPageTitle("My cart");
     const processGames = async () => {
       const errorObj = { ...defaultErrorObj } as IErrorObject;
 
@@ -151,13 +153,6 @@ export const Cart = () => {
     [games.length]
   );
 
-  console.log(
-    gamesCopiesNumbersArray,
-    gamesCopiesNumbersArray
-      .map((el) => new Array(el.copiesNumber).fill(el.gameId) as number[])
-      .flat()
-  );
-
   const submitHandler = async () => {
     setIsRequestSending(true);
     await unblockGames();
@@ -168,7 +163,6 @@ export const Cart = () => {
     const physicalGamesCopiesIds = gamesCopiesNumbersArray
       .map((el) => new Array(el.copiesNumber).fill(el.gameId) as number[])
       .flat();
-    // console.log(gamesIds, physicalGamesCopiesIds);
 
     const { order, error: orderError } = await postOrder({
       gamesIds,

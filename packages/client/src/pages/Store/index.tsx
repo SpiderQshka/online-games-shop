@@ -11,6 +11,7 @@ import {
   checkNewAchievements,
   formatGamesForUI,
   getAchievementDiscountSize,
+  setPageTitle,
 } from "utils/helpers";
 import { filterGames, sortGames } from "utils/helpers";
 import styles from "./styles.module.scss";
@@ -86,18 +87,24 @@ export const Store = () => {
     });
   }, [games, sortType, hightestGamePrice]);
 
+  // New user achievements check
+
   useEffect(() => {
     if (checkNewAchievements(userAchievements))
       showPopup({ msg: "Achievement get!", type: "success" });
   }, [userAchievements.length]);
+
+  // Updating filtered games after change of sort type
 
   useEffect(
     () =>
       setFilteredGames(
         sortGames(filterGames(games, filterConfig), sortType, userAchievements)
       ),
-    [games, sortType, filterConfig, userAchievements.length]
+    [games.length, sortType, filterConfig, userAchievements.length]
   );
+
+  // Initial setup of filter config
 
   useEffect(
     () =>
@@ -112,14 +119,11 @@ export const Store = () => {
     [games.length]
   );
 
-  useEffect(
-    () =>
-      setFilteredGames(sortGames(filteredGames, sortType, userAchievements)),
-    [sortType, userAchievements.length]
-  );
+  // Initial loading of data
 
   useEffect(() => {
     setIsLoading(true);
+    setPageTitle();
     const processAsync = async () => {
       const errorObj: IErrorObject = { ...defaultErrorObj };
 

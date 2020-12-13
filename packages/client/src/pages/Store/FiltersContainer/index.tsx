@@ -160,7 +160,6 @@ export const FiltersContainer: React.FunctionComponent<FiltersContainerProps> = 
           className={`${styles.inputGroupHeader} ${
             openFilters.genres && styles.active
           }`}
-          // style={{ marginTop: "10px" }}
           onClick={() =>
             setOpenFilters({
               ...openFilters,

@@ -11,6 +11,7 @@ $select-min-width: 160px;
   color: $primary-color-light;
   position: relative;
   font-size: 0.95em;
+  z-index: 1;
   .selectedValue {
     padding: 0 40px 0 15px;
     display: flex;

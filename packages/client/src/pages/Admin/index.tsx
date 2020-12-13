@@ -4,11 +4,14 @@ import styles from "./styles.module.scss";
 import { FaBars } from "react-icons/fa";
 import { Menu } from "./Menu";
 import { Routes } from "./Routes";
+import { setPageTitle } from "utils/helpers";
 
 export const Admin = () => {
   const [updateTrigger, setUpdateTrigger] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+
+  setPageTitle("Admin panel");
 
   return (
     <div

@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./styles.module.scss";
 import { IAchievementFromApi, IApiError } from "interfaces/api";
 import { Loader } from "components/Loader";
+import { setPageTitle } from "utils/helpers";
 
 interface AchievementsProps {
   achievements: IAchievementFromApi[];
@@ -14,6 +15,7 @@ export const Achievements: React.FunctionComponent<AchievementsProps> = ({
   isLoading,
   error,
 }) => {
+  setPageTitle("My achievements");
   return (
     <>
       {isLoading ? (

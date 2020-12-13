@@ -3,9 +3,11 @@ import { config } from "config";
 import React from "react";
 import { FaHome, FaMailBulk, FaPhone } from "react-icons/fa";
 import { Map, Placemark } from "react-yandex-maps";
+import { setPageTitle } from "utils/helpers";
 import styles from "./styles.module.scss";
 
 export const Contacts = () => {
+  setPageTitle("Contacts");
   return (
     <>
       <Header />

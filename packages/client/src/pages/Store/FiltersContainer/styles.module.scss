@@ -3,7 +3,7 @@
 
 .filtersContainer {
   &.open {
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 
   .header {

@@ -40,6 +40,7 @@ $nav-list-width: 200px;
           left: 0;
         }
         .navItem {
+          border-bottom: 1px solid $primary-color-dark;
           &:hover::after,
           &.active::after {
             height: 0 !important;
@@ -64,6 +65,9 @@ $nav-list-width: 200px;
         display: none;
       }
       .cartBtn {
+        display: none;
+      }
+      .profilePlaceholder {
         display: none;
       }
     }

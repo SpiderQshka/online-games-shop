@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { useAuth } from "context/auth";
 import { useApi } from "context/api";
 import { usePopup } from "context/popup";
+import { setPageTitle } from "utils/helpers";
 
 export interface SignUpFormValues {
   login: string;
@@ -25,6 +26,7 @@ export const SignUp = () => {
     history.push("/store");
     showPopup({ msg: "You are already logged in", type: "neutral" });
   }
+  setPageTitle("Sign up");
   const formik = useFormik({
     initialValues: {
       login: "",

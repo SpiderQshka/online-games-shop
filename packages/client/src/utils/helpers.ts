@@ -33,6 +33,9 @@ export const setTokenToLocalStorage = (token: string) =>
 export const removeTokenFromLocalStorage = () =>
   localStorage.removeItem("token");
 
+export const setPageTitle = (title?: string) =>
+  (document.title = title || "OGS");
+
 export const filterGames = (games: IGameForUI[], config: IFilterConfig) =>
   games.filter((game) => {
     if (
