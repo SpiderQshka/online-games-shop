@@ -170,7 +170,7 @@ export const GameItem: React.FunctionComponent = () => {
     <>
       <Header />
       {isLoading ? (
-        <div className={styles.container}>
+        <div className={styles.loaderContainer}>
           <Loader />
         </div>
       ) : (

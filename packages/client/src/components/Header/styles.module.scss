@@ -70,10 +70,6 @@
   .profileContainer {
     display: flex;
     align-items: center;
-    .loadingProfile {
-      @include primaryFont;
-      color: $primary-color-light;
-    }
     .profile {
       display: flex;
       align-items: center;

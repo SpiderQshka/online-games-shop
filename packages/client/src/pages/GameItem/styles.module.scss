@@ -160,7 +160,7 @@
   }
 }
 
-.container {
+.loaderContainer {
   padding: calc(#{$header-height} + 150px) $default-gap $default-gap;
   background-color: $secondary-color-dark;
   min-height: calc(100vh - #{$header-height} - 150px - #{$default-gap});

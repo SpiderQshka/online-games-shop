@@ -8,8 +8,8 @@
     max-width: 450px;
     margin: 0 auto;
     padding-top: 150px;
+    @include primaryFont;
     .error {
-      @include primaryFont;
       color: $primary-color-light;
       font-size: 100px;
       margin-bottom: 20px;
@@ -17,7 +17,6 @@
       text-align: center;
     }
     .description {
-      @include primaryFont;
       color: $primary-color;
       margin-bottom: 25px;
       font-size: 18px;
@@ -25,9 +24,8 @@
       text-align: center;
     }
     .btn {
-      border: none;
+      @include basicBtn;
       display: block;
-      cursor: pointer;
       margin: 0 auto;
       background-color: $secondary-color-light;
       padding: 20px 30px;
