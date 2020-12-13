@@ -43,10 +43,13 @@ export const GameItem: React.FunctionComponent = () => {
   const [game, setGame] = useState<IGameForUI | null>(null);
   const [userGames, setUserGames] = useState<IMyGameFromApi[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isCartHandling, setIsCartHandling] = useState<boolean>(false);
 
   const addToCartHandler = useCallback(
     async (isPhysical: boolean) => {
       if (game && token) {
+        setIsCartHandling(true);
+
         const errorObj = { ...defaultErrorObj } as IErrorObject;
 
         const games = uniq([...getCartData(), { id: game.id, isPhysical }]);
@@ -72,6 +75,7 @@ export const GameItem: React.FunctionComponent = () => {
             code: errorObj.games.status,
           });
         }
+        setIsCartHandling(false);
       } else history.push("/login");
     },
     [game, token]
@@ -229,6 +233,7 @@ export const GameItem: React.FunctionComponent = () => {
                       onClick={() =>
                         !isCopyDigital &&
                         !isDigitalCopyBought &&
+                        !isCartHandling &&
                         addToCartHandler(false)
                       }
                     >
@@ -251,6 +256,7 @@ export const GameItem: React.FunctionComponent = () => {
                       onClick={() =>
                         !isCopyPhysical &&
                         !(+(game?.numberOfPhysicalCopies || 0) <= 0) &&
+                        !isCartHandling &&
                         addToCartHandler(true)
                       }
                     >
