@@ -2,7 +2,7 @@ import { useApi } from "context/api";
 import { useFormik } from "formik";
 import { IApiError, IUser, OrderStatus } from "interfaces/api";
 import { IGameForUI } from "interfaces/app";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
@@ -20,6 +20,7 @@ interface AddOrderProps {
   users: IUser[];
   updateTrigger: boolean;
   setUpdateTrigger: (trigger: boolean) => void;
+  error: IApiError | null;
 }
 
 export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
@@ -27,6 +28,7 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
   users,
   setUpdateTrigger,
   updateTrigger,
+  error: propsError,
 }) => {
   const history = useHistory();
   const { postOrderAdmin } = useApi();
@@ -75,7 +77,9 @@ export const CreateOrder: React.FunctionComponent<AddOrderProps> = ({
     },
   });
 
-  console.log(error);
+  useEffect(() => {
+    if (propsError) history.push("/admin/orders");
+  }, [propsError]);
 
   return (
     <div className={styles.itemContent}>

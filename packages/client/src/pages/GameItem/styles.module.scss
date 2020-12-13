@@ -120,24 +120,24 @@
             border-top-left-radius: 0;
             border-bottom-left-radius: 0;
           }
-          &.active {
-            &.inCart,
-            &.bought {
-              background-color: $primary-color-light;
-              color: $secondary-color-dark;
-              cursor: not-allowed;
+
+          &.inCart,
+          &.bought {
+            background-color: $primary-color-light;
+            color: $secondary-color-dark;
+            cursor: not-allowed;
+            .msg {
+              display: flex;
+            }
+            &.physical {
               .msg {
                 display: flex;
-              }
-              &.physical {
-                .msg {
-                  display: flex;
-                  left: auto;
-                  right: -15px;
-                }
+                left: auto;
+                right: -15px;
               }
             }
           }
+
           &.restricted {
             background-color: $error-color;
             cursor: not-allowed;

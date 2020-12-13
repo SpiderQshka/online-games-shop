@@ -140,11 +140,11 @@ export const GameItem: React.FunctionComponent = () => {
     processGame();
   }, [id]);
 
-  const isGameInCart =
-    game &&
-    getCartData()
-      .map((game) => game.id)
-      .includes(game.id);
+  // const isGameInCart =
+  //   game &&
+  //   getCartData()
+  //     .map((game) => game.id)
+  //     .includes(game.id);
 
   const isDigitalCopyBought =
     userGames
@@ -164,6 +164,7 @@ export const GameItem: React.FunctionComponent = () => {
       .filter((gameFromUserData) => gameFromUserData.id === game.id)
       .map((el) => el.isPhysical)
       .some((el) => !el);
+  console.log(isCopyDigital, isDigitalCopyBought);
 
   return (
     <>
@@ -226,14 +227,11 @@ export const GameItem: React.FunctionComponent = () => {
                   <div className={styles.buttonsBlock}>
                     <button
                       className={`${styles.actionBtn} ${styles.digital} ${
-                        isGameInCart && styles.active
-                      } ${isCopyDigital && styles.inCart} ${
-                        isDigitalCopyBought && styles.bought
-                      }`}
+                        isCopyDigital && styles.inCart
+                      } ${isDigitalCopyBought && styles.bought}`}
                       onClick={() =>
                         !isCopyDigital &&
                         !isDigitalCopyBought &&
-                        !isCartHandling &&
                         addToCartHandler(false)
                       }
                     >
@@ -248,8 +246,8 @@ export const GameItem: React.FunctionComponent = () => {
                     </button>
                     <button
                       className={`${styles.actionBtn} ${styles.physical} ${
-                        isGameInCart && styles.active
-                      } ${isCopyPhysical && styles.inCart} ${
+                        isCopyPhysical && styles.inCart
+                      } ${
                         +(game?.numberOfPhysicalCopies || 0) <= 0 &&
                         styles.restricted
                       }`}

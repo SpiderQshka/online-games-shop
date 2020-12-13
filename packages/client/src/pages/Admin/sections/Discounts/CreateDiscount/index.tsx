@@ -7,6 +7,7 @@ import { useHistory } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
 import moment from "moment";
+import { usePopup } from "context/popup";
 
 interface DiscountFormValues {
   gamesIds: number[];
@@ -20,12 +21,14 @@ interface CreateDiscountProps {
   games: IGameForUI[];
   updateTrigger: boolean;
   setUpdateTrigger: (trigger: boolean) => void;
+  error: IApiError | null;
 }
 
 export const CreateDiscount: React.FunctionComponent<CreateDiscountProps> = ({
   games,
   setUpdateTrigger,
   updateTrigger,
+  error: propsError,
 }) => {
   const history = useHistory();
   const { postDiscount } = useApi();
@@ -50,7 +53,7 @@ export const CreateDiscount: React.FunctionComponent<CreateDiscountProps> = ({
     }),
     onSubmit: (data) => {
       setIsLoading(true);
-      postDiscount(data).then(({ discount, error }) => {
+      postDiscount(data).then(({ error }) => {
         setIsLoading(false);
         if (error) setError(error);
         else {
@@ -60,6 +63,10 @@ export const CreateDiscount: React.FunctionComponent<CreateDiscountProps> = ({
       });
     },
   });
+
+  useEffect(() => {
+    if (propsError) history.push("/admin/discounts");
+  }, [propsError]);
 
   useEffect(() => {
     setChoosenGames(

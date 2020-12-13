@@ -35,7 +35,7 @@ export const AdminRoute: React.FunctionComponent<PrivateRouteProps> = ({
         ) : isUserAdmin ? (
           <Component {...props} />
         ) : (
-          <Redirect to="/store" />
+          <Redirect to="/" />
         )
       }
     />

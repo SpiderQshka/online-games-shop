@@ -1,7 +1,7 @@
 import { useApi } from "context/api";
 import { useFormik } from "formik";
 import { IApiError, IGenre, IGenreFromApi } from "interfaces/api";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
@@ -10,12 +10,14 @@ interface UpdateGenreProps {
   genres: IGenreFromApi[];
   updateTrigger: boolean;
   setUpdateTrigger: (trigger: boolean) => void;
+  error: IApiError | null;
 }
 
 export const UpdateGenre: React.FunctionComponent<UpdateGenreProps> = ({
   genres,
   setUpdateTrigger,
   updateTrigger,
+  error: propsError,
 }) => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
@@ -48,6 +50,10 @@ export const UpdateGenre: React.FunctionComponent<UpdateGenreProps> = ({
       });
     },
   });
+
+  useEffect(() => {
+    if (propsError) history.push("/admin/genres");
+  }, [propsError]);
 
   return (
     <div className={styles.itemContent}>

@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
 import { useHistory, useParams } from "react-router-dom";
@@ -19,6 +19,7 @@ interface OrderItemProps {
   games: IGameForUI[];
   updateTrigger: boolean;
   setUpdateTrigger: (trigger: boolean) => void;
+  error: IApiError | null;
 }
 
 export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
@@ -26,6 +27,7 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
   games,
   setUpdateTrigger,
   updateTrigger,
+  error: propsError,
 }) => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
@@ -85,6 +87,10 @@ export const UpdateOrder: React.FunctionComponent<OrderItemProps> = ({
       }
     },
   });
+
+  useEffect(() => {
+    if (propsError) history.push("/admin/orders");
+  }, [propsError]);
 
   return (
     <div className={styles.itemContent}>

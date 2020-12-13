@@ -13,6 +13,7 @@ interface CreateGameProps {
   genres: IGenreFromApi[];
   updateTrigger: boolean;
   setUpdateTrigger: (trigger: boolean) => void;
+  error: IApiError | null;
 }
 
 export const CreateGame: React.FunctionComponent<CreateGameProps> = ({
@@ -20,6 +21,7 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = ({
   updateTrigger,
   genres,
   gameCreators,
+  error: propsError,
 }) => {
   const history = useHistory();
   const { postGame } = useApi();
@@ -74,6 +76,10 @@ export const CreateGame: React.FunctionComponent<CreateGameProps> = ({
       });
     },
   });
+
+  useEffect(() => {
+    if (propsError) history.push("/admin/games");
+  }, [propsError]);
 
   useEffect(() => {
     const processAsync = async () => {

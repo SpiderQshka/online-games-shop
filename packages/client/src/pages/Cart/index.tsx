@@ -132,30 +132,30 @@ export const Cart = () => {
   }, [getCartData().length]);
 
   const blockGames = useCallback(
-    () =>
+    (games: IGameForOrder[]) =>
       Aigle.map(games, (game) =>
         blockGame(game.id).then(
           ({ error: gameError }) =>
             gameError && setError({ ...error, games: gameError })
         )
       ),
-    [games.length]
+    []
   );
 
   const unblockGames = useCallback(
-    () =>
+    (games: IGameForOrder[]) =>
       Aigle.map(games, (game) =>
         unblockGame(game.id).then(
           ({ error: gameError }) =>
             gameError && setError({ ...error, games: gameError })
         )
       ),
-    [games.length]
+    []
   );
 
   const submitHandler = async () => {
     setIsRequestSending(true);
-    await unblockGames();
+    await unblockGames(games);
     const gamesIds = games
       .filter((game) => !game.isPhysical)
       .map((game) => +game.id);
@@ -172,7 +172,7 @@ export const Cart = () => {
 
     if (orderError) {
       setError({ ...error, orders: orderError });
-      await blockGames();
+      await blockGames(games);
     } else {
       setGames([]);
       setCartData([]);
@@ -183,10 +183,10 @@ export const Cart = () => {
   };
 
   const clearCartHandler = useCallback(async () => {
-    await unblockGames();
+    await unblockGames(games);
     removeCartData();
     history.push("/");
-  }, []);
+  }, [games.length]);
 
   const removeCartItemHandler = useCallback(
     (gameId: number, isPhysical: boolean) => {

@@ -145,20 +145,18 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         usedDiscounts,
         discounts,
       });
-      setGames(gamesForUI);
-      setGenres(genres);
-      setGameCreators(gameCreators);
-      setOrders(ordersForUI);
-      setAchievements(achievements);
-      setUsers(users);
-      setDiscounts(discountsForUI);
+      !errorObj.games && setGames(gamesForUI);
+      !errorObj.genres && setGenres(genres);
+      !errorObj.gameCreators && setGameCreators(gameCreators);
+      !errorObj.orders && setOrders(ordersForUI);
+      !errorObj.achievements && setAchievements(achievements);
+      !errorObj.users && setUsers(users);
+      !errorObj.discounts && setDiscounts(discountsForUI);
       setError(errorObj);
       setIsLoading(false);
     };
     processAsync();
   }, [updateTrigger]);
-
-  console.log(error);
 
   return isLoading ? (
     <div className={styles.loaderContainer}>
@@ -229,6 +227,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         path="/admin/orders/create"
         component={() => (
           <CreateOrder
+            error={error.orders}
             setUpdateTrigger={setUpdateTrigger}
             updateTrigger={updateTrigger}
             users={users}
@@ -241,6 +240,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         path="/admin/games/create"
         component={() => (
           <CreateGame
+            error={error.games}
             setUpdateTrigger={setUpdateTrigger}
             updateTrigger={updateTrigger}
             gameCreators={gameCreators}
@@ -253,6 +253,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         path="/admin/gameCreators/create"
         component={() => (
           <CreateGameCreator
+            error={error.gameCreators}
             setUpdateTrigger={setUpdateTrigger}
             updateTrigger={updateTrigger}
           />
@@ -263,6 +264,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         path="/admin/discounts/create"
         component={() => (
           <CreateDiscount
+            error={error.discounts}
             setUpdateTrigger={setUpdateTrigger}
             updateTrigger={updateTrigger}
             games={games}
@@ -274,6 +276,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         path="/admin/genres/create"
         component={() => (
           <CreateGenre
+            error={error.genres}
             setUpdateTrigger={setUpdateTrigger}
             updateTrigger={updateTrigger}
           />
@@ -283,6 +286,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         path="/admin/orders/:id"
         component={() => (
           <UpdateOrder
+            error={error.orders}
             setUpdateTrigger={setUpdateTrigger}
             updateTrigger={updateTrigger}
             games={games}
@@ -294,6 +298,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         path="/admin/games/:id"
         component={() => (
           <UpdateGame
+            error={error.games}
             games={games}
             gameCreators={gameCreators}
             genres={genres}
@@ -309,6 +314,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
             setUpdateTrigger={setUpdateTrigger}
             updateTrigger={updateTrigger}
             achievements={achievements}
+            error={error.achievements}
           />
         )}
       />
@@ -316,6 +322,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         path="/admin/gameCreators/:id"
         component={() => (
           <UpdateGameCreator
+            error={error.gameCreators}
             setUpdateTrigger={setUpdateTrigger}
             updateTrigger={updateTrigger}
             gameCreators={gameCreators}
@@ -326,6 +333,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         path="/admin/discounts/:id"
         component={() => (
           <UpdateDiscount
+            error={error.discounts}
             setUpdateTrigger={setUpdateTrigger}
             updateTrigger={updateTrigger}
             games={games}
@@ -337,6 +345,7 @@ export const Routes: React.FunctionComponent<RoutesProps> = ({
         path="/admin/genres/:id"
         component={() => (
           <UpdateGenre
+            error={error.genres}
             setUpdateTrigger={setUpdateTrigger}
             updateTrigger={updateTrigger}
             genres={genres}

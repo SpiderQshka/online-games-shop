@@ -2,23 +2,12 @@
 
 .loader {
   display: inline-block;
-  border: 16px solid $secondary-color;
-  border-top: 16px solid $accent-color;
-  // border-bottom: 16px solid $accent-color;
+  border: 14px solid $secondary-color;
+  border-top: 14px solid $accent-color;
   border-radius: 50%;
   width: 120px;
   height: 120px;
   animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 .centered {

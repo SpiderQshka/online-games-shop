@@ -1,21 +1,24 @@
 import { useApi } from "context/api";
 import { useFormik } from "formik";
 import { IAchievement, IAchievementFromApi, IApiError } from "interfaces/api";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import styles from "components/AdminItem/styles.module.scss";
 import * as Yup from "yup";
+import { usePopup } from "context/popup";
 
 interface UpdateAchievementProps {
   achievements: IAchievementFromApi[];
   updateTrigger: boolean;
   setUpdateTrigger: (trigger: boolean) => void;
+  error: IApiError | null;
 }
 
 export const UpdateAchievement: React.FunctionComponent<UpdateAchievementProps> = ({
   achievements,
   setUpdateTrigger,
   updateTrigger,
+  error: propsError,
 }) => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
@@ -24,7 +27,7 @@ export const UpdateAchievement: React.FunctionComponent<UpdateAchievementProps> 
     (achievement) => achievement.id === +id
   )[0];
   const { putAchievement } = useApi();
-  if (!achievement) history.goBack();
+
   const [error, setError] = useState<IApiError | null>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -41,16 +44,20 @@ export const UpdateAchievement: React.FunctionComponent<UpdateAchievementProps> 
     }),
     onSubmit: (data) => {
       setIsLoading(true);
-      putAchievement(achievement.id, data).then(({ achievement, error }) => {
-        setIsLoading(false);
+      putAchievement(achievement.id, data).then(({ error }) => {
         if (error) setError(error);
         else {
           setUpdateTrigger(!updateTrigger);
           history.push("/admin/achievements");
         }
+        setIsLoading(false);
       });
     },
   });
+
+  useEffect(() => {
+    if (propsError) history.push("/admin/achievements");
+  }, [propsError]);
 
   return (
     <div className={styles.itemContent}>

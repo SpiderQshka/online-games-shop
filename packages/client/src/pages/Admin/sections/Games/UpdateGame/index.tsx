@@ -20,6 +20,7 @@ interface UpdateGameProps {
   genres: IGenreFromApi[];
   updateTrigger: boolean;
   setUpdateTrigger: (trigger: boolean) => void;
+  error: IApiError | null;
 }
 
 export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
@@ -28,6 +29,7 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
   genres,
   setUpdateTrigger,
   updateTrigger,
+  error: propsError,
 }) => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
@@ -101,6 +103,10 @@ export const UpdateGame: React.FunctionComponent<UpdateGameProps> = ({
       });
     },
   });
+
+  useEffect(() => {
+    if (propsError) history.push("/admin/games");
+  }, [propsError]);
 
   useEffect(() => {
     const processAsync = async () => {

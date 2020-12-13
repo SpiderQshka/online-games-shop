@@ -7,6 +7,7 @@ import { IApiError } from "interfaces/api";
 import { useApi } from "context/api";
 import { IDiscountForUI, IGameForUI } from "interfaces/app";
 import moment from "moment";
+import { usePopup } from "context/popup";
 
 interface DiscountFormValues {
   gamesIds: number[];
@@ -21,6 +22,7 @@ interface UpdateDiscountProps {
   discounts: IDiscountForUI[];
   updateTrigger: boolean;
   setUpdateTrigger: (trigger: boolean) => void;
+  error: IApiError | null;
 }
 
 export const UpdateDiscount: React.FunctionComponent<UpdateDiscountProps> = ({
@@ -28,6 +30,7 @@ export const UpdateDiscount: React.FunctionComponent<UpdateDiscountProps> = ({
   discounts,
   updateTrigger,
   setUpdateTrigger,
+  error: propsError,
 }) => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
@@ -56,7 +59,7 @@ export const UpdateDiscount: React.FunctionComponent<UpdateDiscountProps> = ({
     onSubmit: (data) => {
       if (discount) {
         setIsLoading(true);
-        putDiscount(discount.id, data).then(({ discount, error }) => {
+        putDiscount(discount.id, data).then(({ error }) => {
           setIsLoading(false);
           if (error) setError(error);
           else {
@@ -67,6 +70,10 @@ export const UpdateDiscount: React.FunctionComponent<UpdateDiscountProps> = ({
       }
     },
   });
+
+  useEffect(() => {
+    if (propsError) history.push("/admin/discounts");
+  }, [propsError]);
 
   useEffect(() => {
     setChoosenGames(

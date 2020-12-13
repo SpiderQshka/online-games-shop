@@ -11,12 +11,14 @@ interface UpdateGameCreatorProps {
   gameCreators: IGameCreatorFromApi[];
   updateTrigger: boolean;
   setUpdateTrigger: (trigger: boolean) => void;
+  error: IApiError | null;
 }
 
 export const UpdateGameCreator: React.FunctionComponent<UpdateGameCreatorProps> = ({
   gameCreators,
   setUpdateTrigger,
   updateTrigger,
+  error: propsError,
 }) => {
   const { id } = useParams<{ id: string }>();
   const history = useHistory();
@@ -68,6 +70,10 @@ export const UpdateGameCreator: React.FunctionComponent<UpdateGameCreatorProps> 
       );
     },
   });
+
+  useEffect(() => {
+    if (propsError) history.push("/admin/gameCreators");
+  }, [propsError]);
 
   useEffect(() => {
     const processAsync = async () => {

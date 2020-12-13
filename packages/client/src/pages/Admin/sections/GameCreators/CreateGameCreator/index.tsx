@@ -10,11 +10,13 @@ import { toBase64 } from "utils/helpers";
 interface CreateGameCreatorProps {
   updateTrigger: boolean;
   setUpdateTrigger: (trigger: boolean) => void;
+  error: IApiError | null;
 }
 
 export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> = ({
   setUpdateTrigger,
   updateTrigger,
+  error: propsError,
 }) => {
   const history = useHistory();
   const { postGameCreator } = useApi();
@@ -50,6 +52,10 @@ export const CreateGameCreator: React.FunctionComponent<CreateGameCreatorProps> 
       });
     },
   });
+
+  useEffect(() => {
+    if (propsError) history.push("/admin/gameCreators");
+  }, [propsError]);
 
   useEffect(() => {
     const processAsync = async () => {

@@ -138,7 +138,7 @@ export async function seed(knex: Knex): Promise<void> {
 
     {
       id: 11,
-      name: "This war of mine",
+      name: "This War of Mine",
       logo: "https://www.linkpicture.com/q/81XoHV9PxdL._SL1500.jpg",
       description:
         "В «This War of Mine» вы играете не за солдата элитных войск, а за группу мирных жителей, пытающихся выжить в осажденном городе, испытывая нехватку еды, лекарств и постоянную опасность со стороны снайперов и мародеров. ",
