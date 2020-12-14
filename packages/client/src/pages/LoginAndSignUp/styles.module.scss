@@ -1,0 +1,94 @@
+@import "../../styles/config.scss";
+
+.formContainer {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  background-color: $secondary-color-dark;
+  .formContent {
+    @include primaryFont;
+    max-width: 300px;
+    width: 100%;
+    padding: 40px 50px;
+    background-color: $secondary-color-light;
+    position: relative;
+    &.loading {
+      &::after {
+        content: "";
+        display: block;
+        position: absolute;
+        bottom: 15px;
+        right: 15px;
+        border: 3px solid $secondary-color-light;
+        border-top: 3px solid $accent-color;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+      }
+    }
+    .header {
+      margin-bottom: 30px;
+      font-size: 1.6rem;
+      text-align: center;
+      color: $primary-color-light;
+    }
+    .form {
+      .input {
+        @include basicInput;
+        padding: 15px;
+        color: $primary-color-light;
+        border-radius: 4px;
+        margin: 8px 0;
+        background-color: $primary-color-dark;
+        &::placeholder {
+          color: $primary-color;
+        }
+        &:first-of-type {
+          margin-top: 0;
+        }
+      }
+      .errorMsg {
+        color: $error-color;
+      }
+      .button {
+        @include basicBtn;
+        width: 100%;
+        padding: 20px 25px;
+        border-radius: 4px;
+        margin: 15px 0;
+        color: white;
+        text-transform: uppercase;
+        transition: 0.7s;
+        cursor: not-allowed;
+        &.submitButton {
+          background-color: $secondary-color;
+          border-color: $secondary-color;
+          &.active {
+            cursor: pointer;
+            background-color: $accent-color;
+            &:hover,
+            &:focus {
+              background-color: $accent-color;
+            }
+          }
+        }
+      }
+    }
+    .links {
+      margin-top: 15px;
+      .link {
+        display: block;
+        color: $primary-color-light;
+        margin-bottom: 10px;
+        text-decoration: none;
+        &:last-of-type {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
+@import "./media.module.scss";

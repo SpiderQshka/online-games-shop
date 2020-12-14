@@ -1,0 +1,7 @@
+@import "../../styles/config.scss";
+
+@media all and (max-width: 1000px) {
+  .itemContent {
+    padding-left: 0;
+  }
+}

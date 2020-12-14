@@ -1,5 +1,5 @@
 {
   "ext": "ts",
-  "exec": "node --inspect -r ts-node/register -r dotenv/config -r tsconfig-paths/register ./src/index.ts",
+  "exec": "yarn build && node -r dotenv/config ./dist/index.js",
   "watch": ["./src/**", "./.env"]
 }

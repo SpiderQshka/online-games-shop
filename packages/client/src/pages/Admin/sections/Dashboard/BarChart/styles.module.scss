@@ -1,0 +1,6 @@
+@import "../../../../../styles/config.scss";
+
+.barChart {
+  color: $primary-color-dark !important;
+  @include primaryFont;
+}

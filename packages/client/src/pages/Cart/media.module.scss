@@ -1,0 +1,20 @@
+@import "../../styles/config.scss";
+
+@media all and (max-width: 1000px) {
+  .cartContainer {
+    .emptyCartContent,
+    .cartContent {
+      margin-top: $default-gap;
+    }
+    .cartContent {
+      grid-template-columns: 1fr;
+      grid-template-areas: "cartList" "total";
+      .cartListContainer {
+        margin-bottom: 10px;
+        .cartItem {
+          word-break: break-all;
+        }
+      }
+    }
+  }
+}

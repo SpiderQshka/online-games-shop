@@ -1,0 +1,81 @@
+@import "../../styles/config.scss";
+
+.profileContainer {
+  padding: $header-height $default-gap 0;
+  background-color: $secondary-color-dark;
+  min-height: calc(100vh - #{$header-height});
+  .profileContent {
+    display: grid;
+    margin: 40px auto 0;
+    padding-bottom: $default-gap;
+    max-width: 1200px;
+    grid-template-columns: 250px 1fr;
+    grid-template-areas: "menu data";
+    grid-column-gap: 20px;
+    .menuList {
+      grid-area: menu;
+      align-self: start;
+      overflow-x: auto;
+      .menuItem {
+        background-color: $secondary-color-light;
+        border-bottom: 2px solid $secondary-color;
+        cursor: pointer;
+        .menuLink {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-decoration: none;
+          padding: 20px;
+          box-sizing: border-box;
+          min-height: 100%;
+          color: inherit;
+          line-height: 1.3;
+          .menuText {
+            @include primaryFont;
+            display: block;
+            text-decoration: none;
+            color: $primary-color-light;
+          }
+          .icon {
+            margin-right: 10px;
+          }
+        }
+      }
+    }
+    .dataContainer {
+      grid-area: data;
+      align-self: start;
+      background-color: $secondary-color-light;
+      padding: 30px;
+      box-sizing: border-box;
+      overflow-x: auto;
+      overflow-y: hidden;
+      &.loading {
+        background-color: $secondary-color-dark;
+      }
+    }
+    .errorContainer {
+      @include primaryFont;
+      text-align: center;
+      .errorHeader {
+        font-size: 50px;
+        margin-bottom: 20px;
+        color: $accent-color;
+      }
+      .errorStatus {
+        font-size: 30px;
+        margin-bottom: 15px;
+        color: $primary-color-light;
+      }
+      .errorMsg {
+        color: $primary-color;
+        margin-bottom: 15px;
+      }
+      .errorAdvise {
+        color: $primary-color;
+      }
+    }
+  }
+}
+
+@import "./media.module.scss";

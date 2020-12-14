@@ -1,0 +1,97 @@
+@import "../../styles/config.scss";
+
+.itemContent {
+  max-width: 700px;
+  padding-left: $admin-menu-width;
+  .header {
+    @include primaryFont;
+    color: $primary-color-light;
+    text-transform: uppercase;
+    font-size: 25px;
+    margin-bottom: 30px;
+  }
+  .form {
+    background-color: $secondary-color-light;
+    padding: 30px;
+    .previewImage {
+      margin-left: auto;
+      display: block;
+      max-width: 50%;
+      margin-bottom: 20px;
+      &.hidden {
+        display: none;
+      }
+    }
+    .label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      .labelText {
+        @include primaryFont;
+        color: $primary-color-light;
+        margin-right: 10px;
+      }
+      .input {
+        padding: 15px;
+        color: $primary-color-light;
+        border-radius: 4px;
+        border: none;
+        outline: none;
+        margin: 8px 0;
+        background-color: $primary-color-dark;
+        appearance: none;
+        &::placeholder {
+          color: $primary-color;
+        }
+        &:first-of-type {
+          margin-top: 0;
+        }
+        &.descriptionInput {
+          min-width: 70%;
+          min-height: 15rem;
+        }
+      }
+    }
+    .actionsBlock {
+      position: relative;
+      .button {
+        background-color: $accent-color;
+        border: none;
+        color: $primary-color-light;
+        padding: 15px 20px;
+        margin-top: 10px;
+        cursor: pointer;
+        outline: none;
+        &.resetButton {
+          margin-left: 10px;
+          background-color: $primary-color-dark;
+        }
+      }
+      &.loading {
+        &::after {
+          content: "";
+          display: block;
+          position: absolute;
+          top: 20px;
+          right: 0;
+          border: 3px solid $secondary-color-light;
+          border-top: 3px solid $accent-color;
+          border-radius: 50%;
+          width: 20px;
+          height: 20px;
+          animation: spin 1s linear infinite;
+        }
+      }
+    }
+
+    .errorMsg {
+      margin-top: $default-gap;
+      @include primaryFont;
+      color: $error-color;
+      text-align: right;
+    }
+  }
+}
+
+@import "./media.module.scss";

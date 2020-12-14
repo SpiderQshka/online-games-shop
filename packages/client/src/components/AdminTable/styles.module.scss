@@ -1,0 +1,74 @@
+@import "../../styles/config.scss";
+
+.itemsContent {
+  padding-left: $admin-menu-width;
+  .header {
+    @include primaryFont;
+    color: $primary-color-light;
+    text-transform: uppercase;
+    font-size: 25px;
+    margin-bottom: 30px;
+  }
+  .itemsTable {
+    background-color: $secondary-color-light;
+    .row {
+      @include primaryFont;
+      display: table-row;
+      vertical-align: middle;
+      position: relative;
+      white-space: nowrap;
+      color: $primary-color-light;
+      border-bottom: 2px solid $secondary-color-dark;
+      .col {
+        display: table-cell;
+        padding: 20px 0;
+        line-height: 1.4;
+        padding-right: 20px;
+        vertical-align: inherit;
+        &:first-of-type {
+          padding-left: 20px;
+        }
+        &.largeText {
+          min-width: 500px;
+          white-space: normal;
+        }
+        &.list {
+          list-style: none;
+          .listItem {
+            .accent {
+              color: $accent-color;
+              font-weight: bold;
+              margin-left: 10px;
+            }
+            .number {
+              margin-left: 10px;
+            }
+          }
+        }
+        &.imgContainer {
+          min-width: 200px;
+          .img {
+            width: 100%;
+            min-height: 20rem;
+            background: no-repeat center/contain $primary-color-dark;
+          }
+        }
+        &.btnContainer {
+          .btn {
+            margin-left: auto;
+            @include basicBtn;
+            display: flex;
+            align-items: center;
+          }
+        }
+      }
+    }
+    .headerRow {
+      font-weight: bold;
+      text-align: left;
+      border-bottom: 2px solid $accent-color;
+    }
+  }
+}
+
+@import "./media.module.scss";

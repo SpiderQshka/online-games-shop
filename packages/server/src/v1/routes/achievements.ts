@@ -30,6 +30,13 @@ router.route({
 });
 
 router.route({
+  method: "get",
+  path: "/api/v1/my/achievements",
+  validate: {},
+  handler: achievementsController.getMy,
+});
+
+router.route({
   method: "put",
   path: "/api/v1/achievements/:id",
   validate: {

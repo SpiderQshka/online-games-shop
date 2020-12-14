@@ -1,0 +1,67 @@
+@import "../../../styles/config.scss";
+
+.header {
+  @include primaryFont;
+  color: $primary-color-light;
+  text-transform: uppercase;
+  font-size: 25px;
+  margin-bottom: 25px;
+}
+
+.loaderContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.achievementsTable {
+  width: 100%;
+  .achievementItem {
+    @include primaryFont;
+    color: $primary-color-light;
+    width: 100%;
+    position: relative;
+    line-height: 1.3;
+    &::after {
+      content: "";
+      position: absolute;
+      left: 100%;
+      width: 30px;
+      height: 1px;
+    }
+    .row {
+      padding: 15px 15px 0 0;
+      white-space: nowrap;
+      &:nth-of-type(2) {
+        text-align: right;
+      }
+      &:last-of-type {
+        padding-right: 0;
+      }
+    }
+    &.headerItem {
+      font-weight: bold;
+      border-bottom: 2px solid $accent-color;
+      .row {
+        padding-top: 0;
+        padding-bottom: 15px;
+      }
+    }
+    &.footerItem {
+      font-weight: bold;
+      border-top: 2px solid $primary-color;
+      .row {
+        padding-top: 15px;
+      }
+    }
+    &.lastItem {
+      .row {
+        padding-bottom: 15px;
+      }
+    }
+  }
+  .notFound {
+    @include primaryFont;
+    color: $primary-color-light;
+  }
+}

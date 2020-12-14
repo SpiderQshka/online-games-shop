@@ -1,0 +1,108 @@
+@import "../../../styles/config.scss";
+@import "../styles.module.scss";
+
+.filtersContainer {
+  &.open {
+    overflow-y: auto;
+  }
+
+  .header {
+    @include primaryFont;
+    color: $primary-color;
+    padding: $default-gap 13px;
+    position: relative;
+    font-size: 0.9rem;
+    &.active {
+      .closeIcon {
+        display: inline-block;
+      }
+    }
+    .filtersAmount {
+      @include primaryFont;
+      color: $primary-color;
+      margin: 0 10px;
+    }
+    .closeIcon {
+      cursor: pointer;
+      position: absolute;
+      display: none;
+      right: 0;
+    }
+  }
+  .filtersForm {
+    display: block;
+    width: 100%;
+    background-color: inherit;
+    border: none;
+    color: $primary-color;
+    .inputGroupHeader {
+      @include primaryFont;
+      padding: $default-gap $filters-menu-gap 10px;
+      font-size: 1.1em;
+      color: $primary-color;
+      position: relative;
+      cursor: pointer;
+      .icon {
+        position: absolute;
+        top: 22px;
+        right: $filters-menu-gap;
+        transition: 0.5s;
+        transform: rotate(90deg);
+      }
+      &.active {
+        .icon {
+          transform: rotate(-90deg);
+        }
+      }
+      &.sliderRangeHeader.active {
+        padding-bottom: $default-gap;
+      }
+    }
+    .inputGroup {
+      @include primaryFont;
+      display: none;
+      border-bottom: 1px solid $secondary-color-light;
+      .inputGroupItem {
+        &.loadingItem,
+        &.errorItem {
+          padding: $filters-menu-gap;
+        }
+        .label {
+          display: block;
+          cursor: pointer;
+          padding: $filters-menu-gap;
+          border-top: 3px solid $secondary-color-dark;
+          position: relative;
+          font-size: 0.9rem;
+          &.active {
+            background-color: $secondary-color-light;
+            color: $primary-color-light;
+          }
+          .input {
+            position: absolute;
+            right: 5px;
+            display: none;
+          }
+        }
+      }
+      &.active {
+        display: block;
+        padding-bottom: 10px;
+      }
+      &:last-of-type {
+        border-bottom: none;
+      }
+    }
+    .sliderRangeContainer {
+      display: none;
+      padding: 0 $filters-menu-gap;
+      border-bottom: 1px solid $secondary-color-light;
+      &.active {
+        padding-bottom: 20px;
+        display: block;
+      }
+    }
+  }
+}
+
+@import "./media.module.scss";

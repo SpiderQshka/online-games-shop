@@ -1,0 +1,173 @@
+@import "../../styles/config.scss";
+
+.gameItemContainer {
+  padding: $header-height $default-gap 0;
+  background-color: $secondary-color-dark;
+  min-height: calc(100vh - #{$header-height});
+  .gameItemContent {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 0;
+    .gameInfoBlock {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      grid-template-areas: "logo header" "logo info";
+      grid-column-gap: 50px;
+      padding-bottom: 40px;
+      .gameLogo {
+        grid-area: logo;
+        background: no-repeat top/cover $secondary-color;
+        height: 380px;
+      }
+      .gameName {
+        grid-area: header;
+        @include primaryFont;
+        color: $primary-color-light;
+        font-size: 40px;
+        margin-bottom: 20px;
+        line-height: 1.3;
+      }
+      .gameInfoContent {
+        grid-area: info;
+        display: flex;
+        flex-direction: column;
+        .gameInfoList {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          .gameInfoItem {
+            @include primaryFont;
+            display: grid;
+            width: 100%;
+            grid-template-columns: 150px 1fr;
+            padding: 25px 0;
+            line-height: 1.3;
+            align-items: center;
+            .fieldName {
+              color: $primary-color;
+            }
+            .fieldValue {
+              text-align: right;
+              color: $primary-color-light;
+            }
+          }
+        }
+      }
+    }
+    .gameDescriptionBlock {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      grid-column-gap: 50px;
+      padding-bottom: 40px;
+      .header {
+        @include primaryFont;
+        color: $primary-color-light;
+        font-size: 30px;
+      }
+      .description {
+        @include primaryFont;
+        color: $primary-color;
+        line-height: 1.6;
+        font-size: 1.1rem;
+      }
+    }
+    .actionsBlock {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      .priceBlock {
+        margin: 15px 0;
+        @include primaryFont;
+        .saleSize {
+          display: inline-block;
+          color: $primary-color-light;
+          background-color: $success-color;
+          border-radius: 5px;
+          padding: 5px;
+          font-size: 12px;
+        }
+        .previousPrice {
+          color: $primary-color;
+          text-decoration: line-through;
+          margin: 0 7px;
+        }
+        .currentPrice {
+          color: $primary-color-light;
+        }
+      }
+      .buttonsBlock {
+        display: flex;
+        width: 100%;
+        justify-content: flex-end;
+        .actionBtn {
+          position: relative;
+          color: $primary-color-light;
+          border: none;
+          padding: 20px 20px;
+          border-radius: 5px;
+          font-size: 17px;
+          @include primaryFont;
+          text-transform: uppercase;
+          outline: none;
+          cursor: pointer;
+          background-color: $accent-color;
+          &.digital {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            border-right: 3px solid $secondary-color-dark;
+          }
+          &.physical {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+          }
+
+          &.inCart,
+          &.bought {
+            background-color: $primary-color-light;
+            color: $secondary-color-dark;
+            cursor: not-allowed;
+            .msg {
+              display: flex;
+            }
+            &.physical {
+              .msg {
+                display: flex;
+                left: auto;
+                right: -15px;
+              }
+            }
+          }
+
+          &.restricted {
+            background-color: $error-color;
+            cursor: not-allowed;
+          }
+          .msg {
+            position: absolute;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: $accent-color;
+            top: -15px;
+            left: -15px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.loaderContainer {
+  padding: calc(#{$header-height} + 150px) $default-gap $default-gap;
+  background-color: $secondary-color-dark;
+  min-height: calc(100vh - #{$header-height} - 150px - #{$default-gap});
+  padding-right: $default-gap;
+  padding-left: $default-gap;
+  display: flex;
+  justify-content: center;
+}
+
+@import "./media.module.scss";

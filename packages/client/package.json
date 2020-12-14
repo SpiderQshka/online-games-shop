@@ -1,25 +1,37 @@
 {
   "name": "client",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
-    "@types/jest": "^24.0.0",
-    "@types/node": "^12.0.0",
-    "@types/react": "^16.9.0",
-    "@types/react-dom": "^16.9.0",
+    "aigle": "^1.14.1",
+    "axios": "^0.20.0",
+    "form-data": "^3.0.0",
+    "formik": "^2.1.5",
+    "http-proxy-middleware": "^1.0.5",
+    "moment": "^2.29.0",
+    "node-sass": "^4.14.1",
+    "rc-slider": "^9.5.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-icons": "^3.11.0",
+    "react-minimal-pie-chart": "^8.0.1",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.3",
-    "typescript": "~3.7.2"
+    "react-yandex-maps": "^4.4.0",
+    "recharts": "^1.8.5",
+    "serve": "^11.3.2",
+    "typescript": "^4.0.3",
+    "yup": "^0.29.3"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "serve": "serve -s build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -35,5 +47,17 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.0",
+    "@types/jest": "^24.0.0",
+    "@types/lodash": "^4.14.161",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.49",
+    "@types/react-dom": "^16.9.0",
+    "@types/react-router-dom": "^5.1.5",
+    "@types/react-select": "^3.0.22",
+    "@types/recharts": "^1.8.16",
+    "@types/yup": "^0.29.6"
   }
 }

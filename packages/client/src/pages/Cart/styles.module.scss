@@ -1,0 +1,193 @@
+@import "../../styles/config.scss";
+
+.cartContainer {
+  padding: $header-height $default-gap 0;
+  background-color: $secondary-color-dark;
+  min-height: calc(100vh - #{$header-height});
+  .emptyCartContent {
+    margin: 40px auto 0;
+    padding: 30px;
+    background-color: $secondary-color-light;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    @include primaryFont;
+    text-align: center;
+    &.error {
+      background-color: inherit;
+    }
+    .iconContainer {
+      max-width: 200px;
+      margin-bottom: 30px;
+    }
+    .header {
+      color: $primary-color-light;
+      text-transform: uppercase;
+      font-size: 35px;
+      margin-bottom: 20px;
+    }
+    .text {
+      color: $primary-color;
+      margin-bottom: 20px;
+    }
+    .btn {
+      @include basicBtn;
+      padding: 15px 20px;
+      border-radius: 5px;
+      font-size: 17px;
+      color: $primary-color-light;
+      background-color: $accent-color;
+    }
+  }
+  .cartContent {
+    display: grid;
+    margin: 40px auto 0;
+    max-width: 1200px;
+    grid-template-columns: 1fr 300px;
+    grid-template-areas: "cartList total" "cartList .";
+    grid-column-gap: 20px;
+    .cartListContainer {
+      background-color: $secondary-color-light;
+      padding: 30px;
+      grid-area: cartList;
+      overflow-x: auto;
+      .header {
+        @include primaryFont;
+        color: $primary-color-light;
+        text-transform: uppercase;
+        font-size: 25px;
+        padding-bottom: 40px;
+      }
+
+      .cartList {
+        width: 100%;
+        .cartItem {
+          @include primaryFont;
+          color: $primary-color-light;
+          position: relative;
+          &::after {
+            content: "";
+            position: absolute;
+            left: 100%;
+            width: 30px;
+            height: 1px;
+          }
+          &.headerItem {
+            font-weight: bold;
+            border-bottom: 2px solid $accent-color;
+            .col {
+              padding-top: 0;
+              padding-bottom: 15px;
+            }
+          }
+          .col {
+            padding-right: 10px;
+            padding: 15px 10px 0 0;
+            white-space: nowrap;
+            vertical-align: middle;
+            &:last-of-type {
+              padding-right: 0;
+            }
+            &.name {
+              cursor: pointer;
+            }
+            &.price {
+              text-align: right;
+            }
+            &.numberOfCopies {
+              text-align: right;
+              & > * {
+                margin-left: auto;
+              }
+            }
+            &.action {
+              width: 30px;
+              .btn {
+                @include basicBtn;
+                width: 30px;
+                height: 30px;
+              }
+            }
+            .accent {
+              color: $accent-color;
+              font-weight: bold;
+              margin-left: 10px;
+            }
+          }
+        }
+      }
+    }
+    .totalBlockContainer {
+      background-color: $secondary-color-light;
+      padding: 30px;
+      grid-area: total;
+      position: relative;
+      @include primaryFont;
+      color: $primary-color-light;
+      &.sending {
+        &::after {
+          content: "";
+          display: block;
+          position: absolute;
+          top: 15px;
+          right: 15px;
+          border: 3px solid $secondary-color-light;
+          border-top: 3px solid $accent-color;
+          border-radius: 50%;
+          width: 20px;
+          height: 20px;
+          animation: spin 1s linear infinite;
+        }
+      }
+      .header {
+        text-transform: uppercase;
+        font-size: 25px;
+        padding-bottom: 20px;
+      }
+      .totalPrice {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        font-weight: bold;
+        padding-bottom: 20px;
+        border-bottom: 2px solid $primary-color;
+        .price {
+          font-weight: normal;
+        }
+      }
+      .actionsBlock {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        .btn {
+          @include basicBtn;
+          padding: 15px 20px;
+          border-radius: 5px;
+          color: $primary-color-light;
+          &.submitBtn {
+            background-color: $accent-color;
+            &.blocked {
+              cursor: wait;
+            }
+          }
+          &.clearBtn {
+            background-color: $primary-color-dark;
+            margin-left: 10px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.loaderContainer {
+  display: flex;
+  padding-top: $header-height;
+  min-height: calc(100vh - #{$header-height});
+  background-color: $secondary-color-dark;
+  align-items: center;
+  justify-content: center;
+}
+
+@import "./media.module.scss";

@@ -1,4 +1,3 @@
-require("tsconfig-paths/register");
 import Knex from "knex";
 import { Models } from "models";
 

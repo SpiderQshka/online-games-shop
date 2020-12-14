@@ -2,6 +2,7 @@ import { Middleware } from "koa";
 import knex from "db/knex";
 import { Model } from "objection";
 import { GameCreator } from "models/GameCreator";
+import { loadImageToHost } from "v1/helpers";
 
 Model.knex(knex);
 
@@ -14,24 +15,12 @@ interface IGameCreatorsController {
 
 export const gameCreatorsController: IGameCreatorsController = {
   get: async (ctx) => {
-    try {
-      const response = await GameCreator.query().findById(ctx.params.id);
+    const response = await GameCreator.query().findById(ctx.params.id);
 
-      if (!response) ctx.throw(404);
+    if (!response)
+      ctx.throw(404, `Game creator with id '${ctx.params.id}' was not found`);
 
-      ctx.body = response;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(
-            404,
-            `Game creator with id '${ctx.params.id}' was not found`
-          );
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = response;
   },
   getAll: async (ctx) => {
     const response = await GameCreator.query();
@@ -41,34 +30,40 @@ export const gameCreatorsController: IGameCreatorsController = {
     ctx.body = response;
   },
   put: async (ctx) => {
-    try {
-      const response = await GameCreator.query()
-        .findById(ctx.params.id)
-        .patchAndFetchById(ctx.params.id, ctx.request.body);
+    const logoString = ctx.request.body.logo as string;
+    const gameCreatorObj = ctx.request.body;
 
-      if (!response) ctx.throw(404);
+    if (logoString) {
+      const { error, imageUrl } = await loadImageToHost(logoString);
 
-      ctx.body = response;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(
-            404,
-            `Game creator with id '${ctx.params.id}' was not found`
-          );
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
+      if (error)
+        ctx.throw(500, "Error occured while loading game creator logo");
+      else gameCreatorObj.logo = imageUrl;
     }
+
+    const response = await GameCreator.query()
+      .findById(ctx.params.id)
+      .patchAndFetchById(ctx.params.id, gameCreatorObj);
+
+    if (!response)
+      ctx.throw(404, `Game creator with id '${ctx.params.id}' was not found`);
+
+    ctx.body = response;
   },
   post: async (ctx) => {
-    try {
-      const response = await GameCreator.query().insert(ctx.request.body);
+    const logoString = ctx.request.body.logo as string;
 
-      ctx.body = response;
-    } catch (e) {
-      ctx.throw(400, "Bad request");
-    }
+    const { error, imageUrl } = await loadImageToHost(logoString);
+
+    if (error) ctx.throw(500, "Error occured while loading game creator logo");
+
+    const gameCreator = {
+      ...ctx.request.body,
+      logo: imageUrl,
+    };
+
+    const response = await GameCreator.query().insert(gameCreator);
+
+    ctx.body = response;
   },
 };

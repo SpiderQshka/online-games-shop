@@ -2,6 +2,7 @@ import { Middleware } from "koa";
 import knex from "db/knex";
 import { Model } from "objection";
 import { Discount } from "models/Discount";
+import { UsedDiscount } from "models/UsedDiscount";
 
 Model.knex(knex);
 
@@ -14,21 +15,12 @@ interface IDiscountsController {
 
 export const discountsController: IDiscountsController = {
   get: async (ctx) => {
-    try {
-      const response = await Discount.query().findById(ctx.params.id);
+    const response = await Discount.query().findById(ctx.params.id);
 
-      if (!response) ctx.throw(404);
+    if (!response)
+      ctx.throw(404, `Discount with id '${ctx.params.id}' was not found`);
 
-      ctx.body = response;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(404, `Discount with id '${ctx.params.id}' was not found`);
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = response;
   },
   getAll: async (ctx) => {
     const response = await Discount.query();
@@ -38,33 +30,40 @@ export const discountsController: IDiscountsController = {
     ctx.body = response;
   },
   put: async (ctx) => {
-    let response;
+    const gamesIds = ctx.request.body.gamesIds as number[];
+    delete ctx.request.body.gamesIds;
 
-    try {
-      const response = await Discount.query()
-        .findById(ctx.params.id)
-        .patchAndFetchById(ctx.params.id, ctx.request.body);
+    const discount = await Discount.query()
+      .findById(ctx.params.id)
+      .patchAndFetchById(ctx.params.id, ctx.request.body);
 
-      if (!response) ctx.throw(404);
+    if (!discount)
+      ctx.throw(404, `Discount with id '${ctx.params.id}' was not found`);
 
-      ctx.body = response;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(404, `Discount with id '${ctx.params.id}' was not found`);
+    await UsedDiscount.query().delete().where("discountId", discount.id);
 
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    const usedDiscountsToInsert = gamesIds.map((gameId) => ({
+      discountId: discount.id,
+      gameId,
+    }));
+
+    await UsedDiscount.query().insert(usedDiscountsToInsert);
+
+    ctx.body = discount;
   },
   post: async (ctx) => {
-    try {
-      const response = await Discount.query().insert(ctx.request.body);
+    const gamesIds = ctx.request.body.gamesIds as number[];
+    delete ctx.request.body.gamesIds;
 
-      ctx.body = response;
-    } catch (e) {
-      ctx.throw(400, "Bad request");
-    }
+    const discount = await Discount.query().insert(ctx.request.body);
+
+    const usedDiscountsToInsert = gamesIds.map((gameId) => ({
+      discountId: discount.id,
+      gameId,
+    }));
+
+    await UsedDiscount.query().insert(usedDiscountsToInsert);
+
+    ctx.body = discount;
   },
 };

@@ -7,13 +7,15 @@ export class Game extends Model {
   description!: string;
   ageRating!: number;
   price!: number;
-  numberOfPhysicalCopies!: number | null;
+  numberOfPhysicalCopies!: number;
   gameCreatorId!: number;
+  creationDate!: Date;
+  physicalCopyPrice!: number;
   static tableName = "games";
   static get jsonSchema() {
     return {
       type: "object",
-      required: ["name", "price", "gameCreatorId"],
+      required: ["name", "price", "gameCreatorId", "physicalCopyPrice"],
       properties: {
         id: { type: "integer" },
         name: { type: "string" },
@@ -23,6 +25,8 @@ export class Game extends Model {
         price: { type: "number" },
         numberOfPhysicalCopies: { type: "integer" },
         gameCreatorId: { type: "integer" },
+        creationDate: { type: "date" },
+        physicalCopyPrice: { type: "integer" },
       },
     };
   }

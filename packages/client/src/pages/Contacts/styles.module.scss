@@ -1,0 +1,90 @@
+@import "../../styles/config.scss";
+
+.contactsContainer {
+  padding-top: $header-height;
+  background-color: $secondary-color-dark;
+  min-height: calc(100vh - #{$header-height});
+  .mapContainer {
+    width: 100%;
+    height: 400px;
+    background: linear-gradient(
+      -45deg,
+      $secondary-color-light,
+      $primary-color-dark
+    );
+    background-size: 400% 400%;
+    animation: gradient 2s ease infinite;
+    .map {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .contacts {
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 40px $default-gap $default-gap;
+    .header {
+      @include primaryFont;
+      color: $primary-color-light;
+      font-size: 30px;
+      margin-bottom: 20px;
+    }
+    .contactsList {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-column-gap: 20px;
+      .contactItem {
+        min-width: 0;
+        .contactItemContent {
+          background-color: $secondary-color-light;
+          padding: 20px;
+          display: flex;
+          justify-content: flex-start;
+          text-decoration: none;
+          .iconContainer {
+            width: 50px;
+            min-width: 50px;
+            padding-right: 20px;
+          }
+          .contentContainer {
+            @include primaryFont;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 0;
+            .contactDescription,
+            .contactData {
+              color: $primary-color;
+              margin-bottom: 10px;
+              display: inline-block;
+              color: $primary-color;
+              text-decoration: none;
+              line-height: 1.3;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+            .contactData {
+              margin-bottom: 0;
+              color: $primary-color-light;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@import "./media.styles.scss";

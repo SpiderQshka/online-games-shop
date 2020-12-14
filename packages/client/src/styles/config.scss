@@ -1,0 +1,46 @@
+$primary-color-dark: #3a3a3a;
+$primary-color: #999;
+$primary-color-light: #f4f4f4;
+$secondary-color-dark: #121212;
+$secondary-color: #191919;
+$secondary-color-light: #2a2a2a;
+$accent-color: #f0810f;
+$error-color: #e32b2b;
+$success-color: #5a9516;
+$basic-shadow: rgba(0, 0, 0, 0.5) 0px 2px 35px 0px;
+
+$default-gap: 20px;
+$header-height: 70px;
+$admin-menu-width: 200px;
+
+@mixin primaryFont {
+  font-family: "Brutal", "Open Sans", "Helvetica Neue", sans-serif;
+  line-height: 1.25;
+}
+
+@mixin basicBtn {
+  background-color: inherit;
+  border: none;
+  outline: none;
+  @include primaryFont;
+  cursor: pointer;
+}
+
+@mixin basicInput {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  outline: none;
+  box-sizing: border-box;
+  -moz-appearance: textfield;
+  @include primaryFont;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

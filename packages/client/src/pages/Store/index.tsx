@@ -1,0 +1,222 @@
+import { Header } from "components/Header";
+import { useApi } from "context/api";
+import {
+  IGameCreatorFromApi,
+  IGenreFromApi,
+  IMyAchievementFromApi,
+} from "interfaces/api";
+import { defaultErrorObj, IErrorObject, IGameForUI } from "interfaces/app";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  checkNewAchievements,
+  formatGamesForUI,
+  getAchievementDiscountSize,
+  setPageTitle,
+} from "utils/helpers";
+import { filterGames, sortGames } from "utils/helpers";
+import styles from "./styles.module.scss";
+import { usePopup } from "context/popup";
+import { GamesContainer } from "./GamesContainer";
+import { FiltersContainer } from "./FiltersContainer";
+
+export type SortType = "creationDate" | "alphabet" | "discount";
+export interface IFilterConfig {
+  genresIds: number[];
+  gameCreatorId: number | null;
+  priceBounds: {
+    min: number;
+    max: number;
+  };
+  physicalCopiesNumberBounds: {
+    min: number;
+    max: number;
+  };
+}
+
+export const Store = () => {
+  const {
+    getGames,
+    getGameCreators,
+    getDiscounts,
+    getUsedDiscounts,
+    getGenres,
+    getUsedGenres,
+    getUserAchievements,
+  } = useApi();
+
+  const { showPopup } = usePopup();
+  const [games, setGames] = useState<IGameForUI[]>([]);
+  const [gameCreators, setGameCreators] = useState<IGameCreatorFromApi[]>([]);
+  const [genres, setGenres] = useState<IGenreFromApi[]>([]);
+
+  const [error, setError] = useState<IErrorObject>(defaultErrorObj);
+  const [sortType, setSortType] = useState<SortType>("alphabet");
+  const [filteredGames, setFilteredGames] = useState<IGameForUI[]>([]);
+  const [isFiltersMenuOpen, setIsFiltersMenuOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [achievementDiscount, setAchievementDiscount] = useState<number>(0);
+  const [userAchievements, setUserAchievements] = useState<
+    IMyAchievementFromApi[]
+  >([]);
+
+  const [filterConfig, setFilterConfig] = useState<IFilterConfig>({
+    gameCreatorId: null,
+    genresIds: [],
+    priceBounds: { min: 0, max: 0 },
+    physicalCopiesNumberBounds: { min: 0, max: 0 },
+  });
+
+  const hightestGamePrice =
+    games.length > 0
+      ? games.map((game) => game.optimalPrice).sort((a, b) => b - a)[0]
+      : 0;
+
+  const biggestPhysicalCopiesNumber =
+    games.length > 0
+      ? games
+          .map((game) => +game.numberOfPhysicalCopies)
+          .sort((a, b) => b - a)[0]
+      : 0;
+
+  const removeFilters = useCallback(() => {
+    setFilterConfig({
+      gameCreatorId: null,
+      priceBounds: { min: 0, max: hightestGamePrice },
+      physicalCopiesNumberBounds: { min: 0, max: biggestPhysicalCopiesNumber },
+      genresIds: [],
+    });
+  }, [games, sortType, hightestGamePrice]);
+
+  // New user achievements check
+
+  useEffect(() => {
+    if (checkNewAchievements(userAchievements))
+      showPopup({ msg: "Achievement get!", type: "success" });
+  }, [userAchievements.length]);
+
+  // Updating filtered games after change of sort type
+
+  useEffect(
+    () =>
+      setFilteredGames(
+        sortGames(filterGames(games, filterConfig), sortType, userAchievements)
+      ),
+    [games.length, sortType, filterConfig, userAchievements.length]
+  );
+
+  // Initial setup of filter config
+
+  useEffect(
+    () =>
+      setFilterConfig({
+        ...filterConfig,
+        priceBounds: { ...filterConfig.priceBounds, max: hightestGamePrice },
+        physicalCopiesNumberBounds: {
+          ...filterConfig.physicalCopiesNumberBounds,
+          max: biggestPhysicalCopiesNumber,
+        },
+      }),
+    [games.length]
+  );
+
+  // Initial loading of data
+
+  useEffect(() => {
+    setIsLoading(true);
+    setPageTitle();
+    const processAsync = async () => {
+      const errorObj: IErrorObject = { ...defaultErrorObj };
+
+      const { games, error: gamesError } = await getGames();
+      if (gamesError) errorObj.games = gamesError;
+
+      const {
+        gameCreators,
+        error: gameCreatorsError,
+      } = await getGameCreators();
+      if (gameCreatorsError) errorObj.gameCreators = gameCreatorsError;
+
+      const { discounts, error: discountsError } = await getDiscounts();
+      if (discountsError) errorObj.discounts = discountsError;
+
+      const {
+        usedDiscounts,
+        error: usedDiscountsError,
+      } = await getUsedDiscounts();
+      if (usedDiscountsError) errorObj.usedDiscounts = usedDiscountsError;
+
+      const { genres, error: genresError } = await getGenres();
+      if (genresError) errorObj.genres = genresError;
+
+      const { usedGenres, error: usedGenresError } = await getUsedGenres();
+      if (usedGenresError) errorObj.usedGenres = usedGenresError;
+
+      const {
+        achievements: userAchievements,
+        error: userAchievementsError,
+      } = await getUserAchievements();
+      if (userAchievementsError) errorObj.achievements = userAchievementsError;
+      const storeGames = formatGamesForUI({
+        discounts,
+        gameCreators,
+        games,
+        genres,
+        usedDiscounts,
+        usedGenres,
+        userAchievements,
+      });
+
+      setAchievementDiscount(
+        getAchievementDiscountSize({
+          userAchievements,
+        })
+      );
+      setUserAchievements(userAchievements);
+      setGames(sortGames(storeGames, sortType, userAchievements));
+      setFilteredGames(sortGames(storeGames, sortType, userAchievements));
+      setGenres(genres);
+      setGameCreators(gameCreators);
+      setError(errorObj);
+      setIsLoading(false);
+    };
+    processAsync();
+  }, []);
+
+  return (
+    <>
+      <Header />
+      <div className={styles.storeContainer}>
+        <div
+          className={`${styles.storeContent} ${
+            isFiltersMenuOpen && styles.overlay
+          }`}
+          onClick={() => isFiltersMenuOpen && setIsFiltersMenuOpen(false)}
+        >
+          <GamesContainer
+            achievementDiscount={achievementDiscount}
+            filteredGames={filteredGames}
+            error={error.games}
+            isLoading={isLoading}
+            setIsFiltersMenuOpen={setIsFiltersMenuOpen}
+            setSortType={setSortType}
+            sortType={sortType}
+          />
+          <FiltersContainer
+            filterConfig={filterConfig}
+            gameCreators={gameCreators}
+            genres={genres}
+            hightestGamePrice={hightestGamePrice}
+            error={error.gameCreators || error.genres}
+            isFiltersMenuOpen={isFiltersMenuOpen}
+            isLoading={isLoading}
+            removeFilters={removeFilters}
+            setFilterConfig={setFilterConfig}
+            biggestPhysicalCopiesNumber={biggestPhysicalCopiesNumber}
+          />
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Store;

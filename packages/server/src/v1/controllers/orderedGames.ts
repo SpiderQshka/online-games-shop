@@ -2,36 +2,26 @@ import { Middleware } from "koa";
 import knex from "db/knex";
 import { Model } from "objection";
 import { OrderedGame } from "models/OrderedGame";
+import { verifyJwtToken } from "../auth";
 
 Model.knex(knex);
 
 interface IOrderedGamesController {
   get: Middleware;
   getAll: Middleware;
+  getMy: Middleware;
   put: Middleware;
   post: Middleware;
 }
 
 export const orderedGamesController: IOrderedGamesController = {
   get: async (ctx) => {
-    try {
-      const response = await OrderedGame.query().findById(ctx.params.id);
+    const response = await OrderedGame.query().findById(ctx.params.id);
 
-      if (!response) ctx.throw(404);
+    if (!response)
+      ctx.throw(404, `Ordered game with id '${ctx.params.id}' was not found`);
 
-      ctx.body = response;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(
-            404,
-            `Ordered game with id '${ctx.params.id}' was not found`
-          );
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = response;
   },
   getAll: async (ctx) => {
     const response = await OrderedGame.query();
@@ -40,35 +30,32 @@ export const orderedGamesController: IOrderedGamesController = {
 
     ctx.body = response;
   },
+  getMy: async (ctx) => {
+    const user = verifyJwtToken(ctx);
+
+    const orderedGames = await OrderedGame.query().where("userId", user.id);
+
+    if (!orderedGames)
+      ctx.throw(
+        404,
+        `Ordered games for user with id '${user.id}' were not found`
+      );
+
+    ctx.body = orderedGames;
+  },
   put: async (ctx) => {
-    try {
-      const response = await OrderedGame.query()
-        .findById(ctx.params.id)
-        .patchAndFetchById(ctx.params.id, ctx.request.body);
+    const response = await OrderedGame.query()
+      .findById(ctx.params.id)
+      .patchAndFetchById(ctx.params.id, ctx.request.body);
 
-      if (!response) ctx.throw(404);
+    if (!response)
+      ctx.throw(404, `Ordered game with id '${ctx.params.id}' was not found`);
 
-      ctx.body = response;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(
-            404,
-            `Ordered game with id '${ctx.params.id}' was not found`
-          );
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = response;
   },
   post: async (ctx) => {
-    try {
-      const response = await OrderedGame.query().insert(ctx.request.body);
+    const response = await OrderedGame.query().insert(ctx.request.body);
 
-      ctx.body = response;
-    } catch (e) {
-      ctx.throw(400, "Bad request");
-    }
+    ctx.body = response;
   },
 };

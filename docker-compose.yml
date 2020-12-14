@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:11
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=postgres
+  client:
+    stdin_open: true
+    build: ./packages/client
+    ports:
+      - 80:5000
+  server:
+    build: ./packages/server
+    ports:
+      - 3333:3333
+    environment:
+      - PORT=3333
+      - DB_HOST=db
+      - DB_CLIENT=postgres
+      - DN_NAME=postgres
+      - DB_USER=postgres
+      - DB_PASSWORD=password
+      - JWT_SECRET_KEY="secret key"
+      - IMAGE_HOST_API_KEY=6d207e02198a847aa98d0a2a901485a5
+    command: sh -c "yarn migrate && yarn server"

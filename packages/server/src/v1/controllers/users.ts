@@ -1,35 +1,34 @@
 import { Middleware } from "koa";
 import knex from "db/knex";
-import { Model } from "objection";
+import { Model, UniqueViolationError } from "objection";
 import { User } from "models/User";
 import { hashPassword } from "models/helpers";
+import jwt from "jsonwebtoken";
+import { verifyJwtToken } from "v1/auth";
 
 Model.knex(knex);
 
 interface IUsersController {
   get: Middleware;
   getAll: Middleware;
+  getMy: Middleware;
   put: Middleware;
   post: Middleware;
 }
 
 export const usersController: IUsersController = {
   get: async (ctx) => {
-    try {
-      const response = await User.query().findById(ctx.params.id);
+    const user = verifyJwtToken(ctx);
 
-      if (!response) ctx.throw(404);
+    const response = await User.query().findById(ctx.params.id);
 
-      ctx.body = response;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(404, `User with id '${ctx.params.id}' was not found`);
+    if (!response)
+      ctx.throw(404, `User with id '${ctx.params.id}' was not found`);
 
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    if (user.id !== ctx.params.id && !user.isAdmin)
+      ctx.throw(403, `Access denied`);
+
+    ctx.body = response;
   },
   getAll: async (ctx) => {
     const response = await User.query();
@@ -38,35 +37,38 @@ export const usersController: IUsersController = {
 
     ctx.body = response;
   },
+  getMy: async (ctx) => {
+    const user = verifyJwtToken(ctx);
+
+    ctx.body = user;
+  },
   put: async (ctx) => {
-    try {
-      const response = await User.query()
-        .findById(ctx.params.id)
-        .patchAndFetchById(ctx.params.id, ctx.request.body);
+    const response = await User.query()
+      .findById(ctx.params.id)
+      .patchAndFetchById(ctx.params.id, ctx.request.body);
 
-      if (!response) ctx.throw(404);
+    if (!response)
+      ctx.throw(404, `User with id '${ctx.params.id}' was not found`);
 
-      ctx.body = response;
-    } catch (e) {
-      switch (e.status) {
-        case 404:
-          ctx.throw(404, `User with id '${ctx.params.id}' was not found`);
-
-        default:
-          ctx.throw(400, "Bad request");
-      }
-    }
+    ctx.body = response;
   },
   post: async (ctx) => {
-    try {
-      const response = await User.query().insert({
+    const response = await User.query()
+      .insert({
         ...ctx.request.body,
-        password: hashPassword(ctx.request.body.password),
+        password: await hashPassword(ctx.request.body.password),
+      })
+      .catch((e) => {
+        if (e instanceof UniqueViolationError)
+          ctx.throw(400, "Login is already taken");
+        return ctx.throw(400);
       });
 
-      ctx.body = response;
-    } catch (e) {
-      ctx.throw(400, "Bad request");
-    }
+    const token = jwt.sign(
+      response.toJSON(),
+      process.env.JWT_SECRET_KEY as string
+    );
+
+    ctx.body = { user: response, token };
   },
 };

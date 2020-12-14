@@ -16,6 +16,17 @@ router.route({
 });
 
 router.route({
+  method: "post",
+  path: "/api/v1/admin/orders",
+  validate: {
+    type: "json",
+    body: ordersRoutesValidation.postAdmin,
+  },
+  pre: checkAdmin,
+  handler: ordersController.postAdmin,
+});
+
+router.route({
   method: "get",
   path: "/api/v1/orders/:id",
   validate: {},
@@ -29,6 +40,14 @@ router.route({
   validate: {},
   pre: checkAdmin,
   handler: ordersController.getAll,
+});
+
+router.route({
+  method: "get",
+  path: "/api/v1/my/orders",
+  validate: {},
+  pre: checkAuth,
+  handler: ordersController.getMy,
 });
 
 router.route({

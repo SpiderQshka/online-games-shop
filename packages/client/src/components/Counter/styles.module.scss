@@ -1,0 +1,33 @@
+@import "../../styles/config.scss";
+
+$counter-max-width: 120px;
+$counter-height: 40px;
+$buttonsBorderRadius: 4px;
+
+.counterContainer {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  max-width: $counter-max-width;
+  height: $counter-height;
+  .btn {
+    @include basicBtn;
+    background-color: $primary-color-dark;
+    &:first-of-type {
+      border-top-left-radius: $buttonsBorderRadius;
+      border-bottom-left-radius: $buttonsBorderRadius;
+    }
+    &:last-of-type {
+      border-top-right-radius: $buttonsBorderRadius;
+      border-bottom-right-radius: $buttonsBorderRadius;
+    }
+    color: $primary-color-light;
+    font-size: 18px;
+  }
+  .input {
+    @include basicInput;
+    text-align: center;
+    background-color: $secondary-color;
+    color: $primary-color-light;
+    z-index: 1;
+  }
+}

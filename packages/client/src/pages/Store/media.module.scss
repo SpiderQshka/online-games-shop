@@ -1,0 +1,28 @@
+@import "../../styles/config.scss";
+
+@media all and (max-width: 900px) {
+  .storeContainer {
+    .storeContent {
+      grid-template-columns: 1fr;
+      position: relative;
+      &:after {
+        content: "";
+        position: fixed;
+        top: -#{$header-height};
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0);
+        transition: 0.7s;
+        z-index: -1;
+      }
+      &.overlay {
+        &:after {
+          background-color: rgba(0, 0, 0, 0.3);
+          z-index: 2;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

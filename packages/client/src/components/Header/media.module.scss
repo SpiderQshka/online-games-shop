@@ -1,0 +1,79 @@
+@import "../../styles/config.scss";
+
+$nav-list-width: 200px;
+
+@media all and (max-width: 800px) {
+  .headerContainer {
+    padding-right: $default-gap;
+    &:after {
+      content: "";
+      top: $header-height;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      position: fixed;
+      background-color: rgba(0, 0, 0, 0);
+      display: none;
+    }
+    &.overlay {
+      &:after {
+        display: block;
+        background-color: rgba(0, 0, 0, 0.7);
+        cursor: pointer;
+      }
+    }
+    .navContainer {
+      .openMenuBtn {
+        margin-right: $default-gap;
+        display: flex;
+        align-items: center;
+      }
+      .navList {
+        position: fixed;
+        width: $nav-list-width;
+        top: $header-height;
+        bottom: 0;
+        left: -#{$nav-list-width};
+        background-color: $secondary-color-light;
+        transition: 0.7s;
+        &.open {
+          left: 0;
+        }
+        .navItem {
+          border-bottom: 1px solid $primary-color-dark;
+          &:hover::after,
+          &.active::after {
+            height: 0 !important;
+          }
+          &.active .link {
+            color: $primary-color-light;
+          }
+          &.mobileOnlyItem {
+            display: block;
+          }
+          display: block;
+          .link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        }
+      }
+    }
+    .profileContainer {
+      .profile {
+        display: none;
+      }
+      .cartBtn {
+        display: none;
+      }
+      .profilePlaceholder {
+        display: none;
+      }
+    }
+    .unauthProfile,
+    .loadingProfile {
+      display: none;
+    }
+  }
+}

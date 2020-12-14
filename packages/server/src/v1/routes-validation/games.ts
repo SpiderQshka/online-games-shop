@@ -5,6 +5,8 @@ const Joi = koaRouter.Joi;
 interface IGamesRoutesValidation {
   post: JoiNamespace.SchemaLike;
   put: JoiNamespace.SchemaLike;
+  block: JoiNamespace.SchemaLike;
+  unblock: JoiNamespace.SchemaLike;
 }
 
 export const gamesRoutesValidation: IGamesRoutesValidation = {
@@ -15,7 +17,10 @@ export const gamesRoutesValidation: IGamesRoutesValidation = {
     ageRating: Joi.number().min(0).max(18).default(null),
     price: Joi.number().min(0).required(),
     numberOfPhysicalCopies: Joi.number().min(0).default(0),
-    gameCreatorId: Joi.string().guid().required(),
+    gameCreatorId: Joi.number().required(),
+    createdAt: Joi.date().iso().required(),
+    genresIds: Joi.array().items(Joi.number().min(0).required()).required(),
+    physicalCopyPrice: Joi.number().min(0).required(),
   },
   put: {
     name: Joi.string().min(5),
@@ -24,6 +29,15 @@ export const gamesRoutesValidation: IGamesRoutesValidation = {
     ageRating: Joi.number().min(0),
     price: Joi.number().min(0),
     numberOfPhysicalCopies: Joi.number().min(0).default(0),
-    gameCreatorId: Joi.string().guid(),
+    gameCreatorId: Joi.number(),
+    createdAt: Joi.date().iso(),
+    genresIds: Joi.array().items(Joi.number().min(0).required()),
+    physicalCopyPrice: Joi.number().min(0).required(),
+  },
+  block: {
+    gameId: Joi.number().min(1).required(),
+  },
+  unblock: {
+    gameId: Joi.number().min(1).required(),
   },
 };

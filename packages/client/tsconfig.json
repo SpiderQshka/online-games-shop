@@ -15,7 +15,9 @@
     "noEmit": true,
     "jsx": "react",
     "baseUrl": "src",
-    "typeRoots": ["./types", "./node_modules/@types"]
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "downlevelIteration": true,
+    "importsNotUsedAsValues": "preserve"
   },
   "include": ["src"],
   "exclude": ["node_modules", "typings"]

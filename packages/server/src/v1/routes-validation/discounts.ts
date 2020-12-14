@@ -9,13 +9,17 @@ interface IDiscountsRoutesValidation {
 
 export const discountsRoutesValidation: IDiscountsRoutesValidation = {
   post: {
-    startDate: Joi.date().required(),
-    duration: Joi.number().min(0).required(),
-    amount: Joi.string().required(),
+    startDate: Joi.date().iso().required(),
+    endDate: Joi.date().iso().min(Joi.ref("startDate")).required(),
+    amount: Joi.number().min(1).required(),
+    type: Joi.string().allow(["%", "$"]).required(),
+    gamesIds: Joi.array().items(Joi.number().min(1).required()).required(),
   },
   put: {
-    startDate: Joi.date(),
-    duration: Joi.number(),
-    amount: Joi.string(),
+    startDate: Joi.date().iso(),
+    endDate: Joi.date().iso().min(Joi.ref("startDate")),
+    amount: Joi.number().min(1).required(),
+    type: Joi.string().allow(["%", "$"]).required(),
+    gamesIds: Joi.array().items(Joi.number().min(1).required()).required(),
   },
 };

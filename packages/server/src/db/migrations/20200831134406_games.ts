@@ -12,6 +12,7 @@ export async function up(knex: Knex): Promise<void> {
     table.bigInteger("price").notNullable();
     table.bigInteger("numberOfPhysicalCopies").notNullable();
     table.integer("gameCreatorId").notNullable().references("game_creators.id");
+    table.date("createdAt").notNullable();
   });
 }
 

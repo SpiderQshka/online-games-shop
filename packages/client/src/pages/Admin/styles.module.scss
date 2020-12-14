@@ -1,0 +1,45 @@
+@import "../../styles/config.scss";
+
+$actions-block-width: 110px;
+
+.adminContainer {
+  min-height: 100vh;
+  min-width: 100%;
+  background-color: $secondary-color-dark;
+  display: inline-block;
+  .dataContainer {
+    background-color: inherit;
+    padding: 30px;
+    .loaderContainer {
+      padding: 30px;
+      display: flex;
+      justify-content: center;
+    }
+    .actionsBlock {
+      position: fixed;
+      background-color: $secondary-color-light;
+      right: 0;
+      max-width: $actions-block-width;
+      top: 0;
+      padding: 15px;
+      z-index: 1;
+      box-shadow: $basic-shadow;
+      display: flex;
+      justify-content: space-around;
+      .btn {
+        padding: 0;
+        background-color: inherit;
+        border: none;
+        outline: none;
+        height: 40px;
+        cursor: pointer;
+        &.menuBtn {
+          display: none;
+          margin-left: 15px;
+        }
+      }
+    }
+  }
+}
+
+@import "./media.module.scss";

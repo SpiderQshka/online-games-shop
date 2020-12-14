@@ -1,0 +1,45 @@
+@import "../../styles/config.scss";
+
+@media all and (max-width: 800px) {
+  .gameItemContainer {
+    .gameItemContent {
+      padding: $default-gap 0;
+      .gameInfoBlock {
+        grid-template-columns: 1fr;
+        grid-template-areas: "header header" "logo logo" "info info";
+        border-bottom: 1px solid $primary-color-dark;
+        padding-bottom: 30px;
+        .gameLogo {
+          height: 400px;
+          width: calc(100% + #{$default-gap} * 2);
+          margin-left: -$default-gap;
+        }
+        .gameName {
+          text-align: center;
+        }
+        .gameInfoContent {
+          .gameInfoList {
+            &:first-child {
+              margin-top: $default-gap;
+            }
+          }
+        }
+      }
+      .gameDescriptionBlock {
+        grid-template-columns: 1fr;
+        padding-top: 30px;
+        text-align: center;
+        .header {
+          margin-bottom: 20px;
+        }
+      }
+      .actionsBlock {
+        .buttonsBlock {
+          .actionBtn {
+            flex-basis: 100%;
+          }
+        }
+      }
+    }
+  }
+}

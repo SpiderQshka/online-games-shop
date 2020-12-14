@@ -1,0 +1,23 @@
+@import "../../styles/config.scss";
+
+.errorContainer {
+  @include primaryFont;
+  text-align: center;
+  .errorHeader {
+    font-size: 50px;
+    margin-bottom: 20px;
+    color: $accent-color;
+  }
+  .errorStatus {
+    font-size: 30px;
+    margin-bottom: 15px;
+    color: $primary-color-light;
+  }
+  .errorMsg {
+    color: $primary-color;
+    margin-bottom: 15px;
+  }
+  .errorAdvise {
+    color: $primary-color;
+  }
+}

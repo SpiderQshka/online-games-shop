@@ -2,19 +2,19 @@ import { Model } from "objection";
 
 export class Discount extends Model {
   id!: number;
-  startDate!: Date;
-  duration!: number;
+  startDate!: string;
+  endDate!: string;
   amount!: number;
-  type!: string;
+  type!: "%" | "$";
   static tableName = "discounts";
   static get jsonSchema() {
     return {
       type: "object",
-      required: ["startDate", "duration", "amount"],
+      required: ["startDate", "endDate", "amount", "type"],
       properties: {
         id: { type: "integer" },
         startDate: { type: "date" },
-        duration: { type: "number" },
+        endDate: { type: "date" },
         amount: { type: "number" },
         type: { type: "string" },
       },

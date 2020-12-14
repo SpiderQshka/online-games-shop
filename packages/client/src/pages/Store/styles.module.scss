@@ -1,0 +1,20 @@
+@import "../../styles/config.scss";
+
+$filters-menu-width: 250px;
+$filters-menu-gap: 13px;
+
+.storeContainer {
+  background-color: $secondary-color-dark;
+  padding-top: $header-height;
+  min-height: calc(100vh - #{$header-height});
+  .storeContent {
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 5px $default-gap;
+    display: grid;
+    grid-template-columns: 1fr $filters-menu-width;
+    grid-column-gap: 30px;
+  }
+}
+
+@import "./media.module.scss";

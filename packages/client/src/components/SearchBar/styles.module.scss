@@ -1,0 +1,35 @@
+@import "../../styles/config.scss";
+
+.searchBarContainer {
+  position: relative;
+  .input {
+    @include basicInput;
+    background-color: $secondary-color;
+    padding: 15px;
+    color: $primary-color-light;
+    &::placeholder {
+      @include primaryFont;
+      color: white;
+    }
+  }
+  .searchResultsList {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    box-shadow: $basic-shadow;
+    .searchResultItem,
+    .notFound {
+      @include primaryFont;
+      background-color: $primary-color-dark;
+      padding: 15px;
+      color: $primary-color-light;
+    }
+    .searchResultItem {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+    }
+  }
+}

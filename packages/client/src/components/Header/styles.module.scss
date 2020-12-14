@@ -1,0 +1,122 @@
+@import "../../styles/config.scss";
+
+.headerContainer {
+  background-color: $secondary-color-light;
+  height: $header-height;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 2;
+  box-shadow: $basic-shadow;
+  .navContainer {
+    display: flex;
+    z-index: 2;
+    margin-left: $default-gap;
+    .openMenuBtn {
+      @include basicBtn;
+      padding: 0;
+      display: none;
+    }
+    .logoContainer {
+      width: 40px;
+      margin-right: 20px;
+      cursor: pointer;
+    }
+    .navList {
+      .navItem {
+        display: inline-block;
+        position: relative;
+        &.mobileOnlyItem {
+          display: none;
+        }
+        &::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 0;
+          height: 0;
+          transition: 0.3s;
+          top: calc(100% - 5px);
+          background-color: $accent-color;
+        }
+        &:hover::after,
+        &.active::after {
+          height: 5px;
+        }
+        .link {
+          @include primaryFont;
+          color: $primary-color;
+          display: flex;
+          height: $header-height;
+          align-items: center;
+          padding: 0 10px;
+          text-decoration: none;
+          text-transform: uppercase;
+          outline: none;
+          font-size: 14px;
+        }
+        &:hover {
+          .link {
+            color: $primary-color-light;
+          }
+        }
+      }
+    }
+  }
+  .profileContainer {
+    display: flex;
+    align-items: center;
+    .profile {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      margin-left: $default-gap;
+      height: $header-height;
+      .iconContainer {
+        max-width: 20px;
+        margin-right: 10px;
+      }
+      .username {
+        @include primaryFont;
+        color: $primary-color-light;
+        text-transform: uppercase;
+        font-size: 14px;
+      }
+    }
+    .cartBtn {
+      @include basicBtn;
+      background-color: $accent-color;
+      height: $header-height;
+      margin-left: $default-gap;
+      width: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .iconContainer {
+        max-width: 20px;
+      }
+    }
+    .unauthProfile {
+      margin-left: 20px;
+      .actionBtn {
+        @include basicBtn;
+        height: $header-height;
+        padding: 0 20px;
+        color: $primary-color-light;
+        text-transform: uppercase;
+        &.signUpBtn {
+          background-color: $accent-color;
+        }
+      }
+    }
+    .profilePlaceholder {
+      margin-left: 20px;
+    }
+  }
+}
+
+@import "./media.module.scss";

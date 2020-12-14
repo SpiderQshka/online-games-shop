@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "scripts": {
     "start": "nodemon",
-    "test": "jest --runInBand",
-    "migrate:make": "knex --knexfile src/db/knexfile.ts migrate:make",
-    "migrate:latest": "knex --knexfile src/db/knexfile.ts migrate:latest",
-    "migrate:rollback": "knex --knexfile src/db/knexfile.ts migrate:rollback",
-    "seed:run": "knex --knexfile src/db/knexfile.ts seed:run",
-    "seed:make": "knex --knexfile src/db/knexfile.ts seed:make"
+    "migrate:make": "knex --knexfile dist/db/knexfile.js migrate:make",
+    "migrate": "knex --knexfile dist/db/knexfile.js migrate:latest",
+    "migrate:rollback": "knex --knexfile dist/db/knexfile.js migrate:rollback",
+    "seed:make": "knex --knexfile dist/db/knexfile.js seed:make",
+    "seed": "knex --knexfile dist/db/knexfile.js seed:run",
+    "build": "ttsc",
+    "server": "node ./dist/index.js",
+    "production": "yarn migrate && yarn server"
   },
   "license": "ISC",
   "devDependencies": {
@@ -24,22 +26,24 @@
     "@types/koa-passport": "^4.0.2",
     "@types/koa-router": "^7.4.1",
     "@types/koa-session": "^5.10.2",
+    "@types/koa__cors": "^3.0.2",
     "@types/lodash": "^4.14.161",
-    "@types/node": "^14.6.0",
+    "@types/node": "^14.14.8",
     "@types/passport-jwt": "^3.0.3",
     "@types/passport-local": "^1.0.33",
-    "concurrently": "^4.1.0",
-    "dotenv": "^8.2.0",
     "nodemon": "^2.0.2",
     "prettier": "^2.1.1",
-    "ts-node": "^9.0.0",
-    "tsconfig-paths": "^3.9.0",
-    "typescript": "^3.7.5"
+    "ttypescript": "^1.5.12",
+    "typescript": "^4.0.5",
+    "typescript-transform-paths": "^2.0.3"
   },
   "dependencies": {
+    "@koa/cors": "^3.1.0",
     "aigle": "^1.14.1",
+    "axios": "^0.21.0",
     "bcrypt": "^5.0.0",
     "faker": "^4.1.0",
+    "form-data": "^3.0.0",
     "knex": "^0.21.5",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
@@ -55,6 +59,8 @@
     "objection": "^2.2.3",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "pg": "^8.3.2"
+    "pg": "^8.3.2",
+    "ts-node": "^9.1.0",
+    "dotenv": "^8.2.0"
   }
 }
